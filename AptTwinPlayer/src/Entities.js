@@ -138,19 +138,58 @@ class Window {
 	}
 }
 
+class Drawer {
+    constructor(object) {
+        this.object = object;
+        const geometry = object.geometry;
+        const parameters = geometry.parameters;
+        this.depth = parameters.depth;
+
+        this.state = 0; // 0 is closed
+        this.moved = 0;
+    }
+
+    click() {
+        this.moved = 0;
+        if(this.state == 0) {
+            this.state = 1; // 1 is opening
+        } else if(this.state == 2) {
+            this.state = 3; // 3 is closing
+        }
+    }
+
+    update(timeElapsed) {
+        if(this.state == 1) {
+            this.object.position.z += 0.01;
+
+            this.moved +=  0.01;
+            if(this.moved >= this.depth) {
+                this.state = 2; // 2 is opened
+            }
+        } else if(this.state == 3) {
+            this.object.position.z -= 0.01;
+
+            this.moved += 0.01;
+            if(this.moved >= this.depth) {
+                this.state = 0;
+            }
+        }
+	}
+}
+
 export class EntityManager {
     constructor(scene) {
         this.scene = scene;
 
+        this.arGroup = [];
         this.arAnimEntity = [];
+        this.arAnimObj = [];
+        this.map = new Map();
 
         this.build();
     }
 
     build() {
-        this.arGroup = [];
-        this.arAnimEntity = [];
-
         var scope = this;
         this.scene.traverse(function(object) {
             if(object.parent == scope.scene && object.type == 'Group') {
@@ -161,9 +200,18 @@ export class EntityManager {
                 if(type == 'door') {
                     let door = new Door(object);
                     scope.arAnimEntity.push(door);
+                    scope.arAnimObj.push(object);
+                    scope.map.set(object, door);
                 } else if(type == 'window') {
                     let window = new Window(object);
                     scope.arAnimEntity.push(window);
+                    scope.arAnimObj.push(object);
+                    scope.map.set(object, window);
+                } else if(type == 'drawer') {
+                    let drawer = new Drawer(object);
+                    scope.arAnimEntity.push(drawer);
+                    scope.arAnimObj.push(object);
+                    scope.map.set(object, drawer);
                 }
             }
         });
@@ -174,14 +222,11 @@ export class EntityManager {
     }
 
     handleMouseClick(raycaster) {
-		for(let i=0; i<this.arAnimEntity.length; i++) {
-            let entity = this.arAnimEntity[i];
-            let object = entity.object;
-
-            var intersects = raycaster.intersectObject(object);
-             if (intersects.length > 0) {
-                entity.click();
-            }
+        let intersects = raycaster.intersectObjects(this.arAnimObj);
+        if (intersects.length > 0) {
+            const obj = intersects[0].object;
+            const entity = this.map.get(obj);
+            entity.click();
         }
 	}
 
