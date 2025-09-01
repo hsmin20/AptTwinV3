@@ -1,0 +1,15 @@
+// Init npm (installs webpack and everything) 
+npm init
+
+// Install Three
+npm install three --save-dev
+
+
+// Install WebPack Dev-server
+npm install webpack webpack-cli webpack-dev-server webpack-merge ts-loader --save-dev
+
+
+
+------------------------------------------------------------------------------------------------------------------
+// starts server at 8080 port
+npm start

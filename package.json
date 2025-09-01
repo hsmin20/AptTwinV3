@@ -1,0 +1,6 @@
+{
+
+  "scripts": {
+	"start": "webpack serve --config webpack.config.js --host localhost --port 8080 --open"
+  }
+}

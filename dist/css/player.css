@@ -1,0 +1,141 @@
+:root {
+	color-scheme: light dark;
+}
+
+[hidden] {
+	display: none !important;
+}
+
+body {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	margin: 0;
+	overflow: hidden;
+}
+
+.Panel {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+
+	/* No support for these yet */
+	-o-user-select: none;
+	user-select: none;
+}
+
+#viewport {
+	position: absolute;
+	top: 32px;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+    
+    #viewport .Text {
+		text-shadow: 1px 1px 0 rgba(0,0,0,0.25);
+		pointer-events: none;
+	}
+
+#menubar {
+	position: absolute;
+	width: 100%;
+	height: 32px;
+	background: #eee;
+	padding: 0;
+	margin: 0;
+	right: 0;
+	top: 0;
+}
+
+	#menubar .menu {
+		float: left;
+		cursor: pointer;
+		padding-right: 8px;
+	}
+
+	#menubar .menu.right {
+		float: right;
+		cursor: auto;
+		padding-right: 0;
+		text-align: right;
+	}
+
+		#menubar .menu .title {
+			display: inline-block;
+			color: #888;
+			margin: 0;
+			padding: 8px;
+			line-height: 16px;
+		}
+
+		#menubar .menu .key {
+			position: absolute;
+			right: 10px;
+			color: #ccc;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			font-size: 9px;
+			padding: 2px 4px;
+			right: 10px;
+			pointer-events: none;
+		}
+
+		#menubar .menu .options {
+			position: fixed;
+			z-index: 1; /* higher than resizer */
+			display: none;
+			padding: 5px 0;
+			background: #eee;
+			min-width: 150px;
+			max-height: calc(100vh - 80px);
+			overflow: auto;
+		}
+
+		#menubar .menu:hover .options {
+			display: block;
+			box-shadow: 0 10px 10px -5px #00000033;
+		}
+
+			#menubar .menu .options hr {
+				border-color: #ddd;
+			}
+
+			#menubar .menu .options .option {
+				color: #666;
+				background-color: transparent;
+				padding: 5px 10px;
+				margin: 0 !important;
+			}
+
+				#menubar .menu .options .option:hover {
+					color: #fff;
+					background-color: #08f;
+				}
+
+				#menubar .menu .options .option:not(.submenu-title):active {
+					color: #666;
+					background: transparent;
+				}
+
+				#menubar .menu .options .option.toggle::before {
+					content: ' ';
+					display: inline-block;
+					width: 16px;
+				}
+
+				#menubar .menu .options .option.toggle-on::before {
+					content: '✔';
+					font-size: 12px;
+				}
+
+				#menubar .submenu-title::after {
+					content: '⏵';
+					float: right;
+				}
+
+		#menubar .menu .options .inactive {
+			color: #bbb;
+			background-color: transparent;
+			padding: 5px 10px;
+			margin: 0 !important;
+			cursor: not-allowed;
