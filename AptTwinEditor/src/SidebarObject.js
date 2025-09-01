@@ -141,8 +141,6 @@ export class SidebarObject {
         this.container.add( this.objectUserDataRow );
     }
 
-    
-
     objectNameUpdated() {
         this.editor.execute( new SetValueCommand( this.editor, this.editor.selected, 'name', this.objectName.getValue() ) );
     }
@@ -274,13 +272,18 @@ export class SidebarObject {
             var pivotDir = document.querySelector('input[name=pivotDir]:checked').value;
             var openDir = document.querySelector('input[name=openDir]:checked').value;
             document.body.removeChild(dialog)
-            
-            object.userData.type = 'door';
-            object.userData.pivotDir = pivotDir;
-            object.userData.openDir = openDir;
 
-            // sidebarObject.updateUI(object);
-            editor.objectChanged(object);
+            // temporary obj for userData
+            var obj = new THREE.Object3D();
+            obj.userData.type = 'door';
+            obj.userData.pivotDir = pivotDir;
+            obj.userData.openDir = openDir;
+
+            const userData = obj.userData;
+
+            if ( JSON.stringify( object.userData ) != JSON.stringify( userData ) ) {
+                this.editor.execute( new SetValueCommand( this.editor, object, 'userData', userData ) );
+            }
         });
 
         addDoorUserDataDialog.showModal();
@@ -325,11 +328,16 @@ export class SidebarObject {
             var openDir = document.querySelector('input[name=openDir]:checked').value;
             document.body.removeChild(dialog)
             
-            object.userData.type = 'window';
-            object.userData.openDir = openDir;
-            // sidebarObject.updateUI(object);
+            // temporary obj for userData
+            var obj = new THREE.Object3D();
+            obj.userData.type = 'window';
+            obj.userData.openDir = openDir;
 
-            editor.objectChanged(object);
+            const userData = obj.userData;
+
+            if ( JSON.stringify( object.userData ) != JSON.stringify( userData ) ) {
+                this.editor.execute( new SetValueCommand( this.editor, object, 'userData', userData ) );
+            }
         });
 
         addWindowUserDataDialog.showModal();

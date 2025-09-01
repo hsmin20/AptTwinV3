@@ -89,8 +89,19 @@ export class Wardrobe {
         pole.parent = group;
 
         // Add 2 doors
-        const doorLTexture = textureHelper.get('DrawerDoorRight', 1, 1);
-        const doorRTexture = textureHelper.get('DrawerDoorLeft', 1, 1);
+        const doorDepth = 0.03;
+        
+        const doorGroup = new THREE.Group();
+        doorGroup.name = 'DoorGroup';
+        doorGroup.position.x = 0;
+        doorGroup.position.y = 0;
+        doorGroup.position.z = (depth + doorDepth) / 2.0;
+
+        group.children.push( doorGroup );
+        doorGroup.parent = group;
+
+        const doorRTexture = textureHelper.get('DrawerDoorRight', 1, 1);
+        const doorLTexture = textureHelper.get('DrawerDoorLeft', 1, 1);
 
         let door_height = height;
         let pos_y = height / 2.0;
@@ -99,7 +110,6 @@ export class Wardrobe {
             pos_y = door_height;
         }
 
-        const doorDepth = 0.03;
         const bodyDepth = depth - doorDepth;
         const halfWidth = width / 2.0;
         const leftDoor = new THREE.Mesh( new THREE.BoxGeometry(halfWidth, door_height, doorDepth), [  
@@ -110,12 +120,13 @@ export class Wardrobe {
         leftDoor.name = name + "_LeftDoor";
         leftDoor.position.x = -halfWidth / 2.0;
         leftDoor.position.y = pos_y;
-        leftDoor.position.z = (depth + doorDepth) / 2.0;
+        leftDoor.position.z = 0.0;
+        leftDoor.userData.type = 'door';
         leftDoor.userData.pivotDir = 'left';
-        leftDoor.userData.openDir = 'outward';
+        leftDoor.userData.openDir = 'inward';
 
-        group.children.push( leftDoor );
-        leftDoor.parent = group;
+        doorGroup.children.push( leftDoor );
+        leftDoor.parent = doorGroup;
 
         const rightDoor = new THREE.Mesh( new THREE.BoxGeometry(halfWidth, door_height, doorDepth), [  
             new THREE.MeshStandardMaterial( { map: shinyTexture} ), new THREE.MeshStandardMaterial( { map: shinyTexture} ),
@@ -125,73 +136,48 @@ export class Wardrobe {
         rightDoor.name = name + "_RightDoor";
         rightDoor.position.x = halfWidth / 2.0;
         rightDoor.position.y = pos_y;
-        rightDoor.position.z = (depth + doorDepth) / 2.0;
+        rightDoor.position.z = 0.0;
+        rightDoor.userData.type = 'door';
         rightDoor.userData.pivotDir = 'right';
-        rightDoor.userData.openDir = 'outward';
+        rightDoor.userData.openDir = 'inward';
 
-        group.children.push( rightDoor );
-        rightDoor.parent = group;
+        doorGroup.children.push( rightDoor );
+        rightDoor.parent = doorGroup;
 
         // Add drawers
         if(wardrobetype == 'drawer') {
+            const bottomPanel2 = new THREE.Mesh( new THREE.BoxGeometry(width, panelDepth, depth-panelDepth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
+            bottomPanel2.name = name + "_BottomPanel2";
+            bottomPanel2.position.x = 0.0;
+            bottomPanel2.position.y = height / 3.0 + panelDepth / 2.0;
+            bottomPanel2.position.z = 0.0;
+
+            group.children.push( bottomPanel2 );
+            bottomPanel2.parent = group;
+
             const drawersTotalHeight = height / 3.0;
             const oneDrawerHeight = drawersTotalHeight / noOfDrawers;
             const drawerWidth = width - (panelDepth * 2);
             let pos_y = oneDrawerHeight / 2.0;
 
+            const drawerInsideTexture = textureHelper.get('DrawerInside', 1, 1);
             const drawerDoorTexture = textureHelper.get('DrawerDoorFront', 1, 1);
 
             for(let i=1; i<=noOfDrawers; i++) {
-                const bottomPanel = new THREE.Mesh( new THREE.BoxGeometry(drawerWidth, panelDepth, depth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
-                bottomPanel.name = name + "_DrawerBottomPanel" + i;
-                bottomPanel.position.x = 0.0;
-                bottomPanel.position.y = panelDepth / 2.0 + (pos_y - oneDrawerHeight / 2.0);
-                bottomPanel.position.z = 0.0;
+                const drawer = new THREE.Mesh( new THREE.BoxGeometry(drawerWidth, oneDrawerHeight, depth), [  
+                            new THREE.MeshStandardMaterial( { map: panelTexture } ), new THREE.MeshStandardMaterial( { map: panelTexture } ),
+                            new THREE.MeshStandardMaterial( { map: drawerInsideTexture } ), new THREE.MeshStandardMaterial( { map: panelTexture } ),
+                            new THREE.MeshStandardMaterial( { map: drawerDoorTexture } ), new THREE.MeshStandardMaterial( { map: panelTexture } )
+                        ] );
+                drawer.name = 'drawer' + i;
+                drawer.userData.type = 'drawer';
+                drawer.position.x = 0.0;
+                drawer.position.y = pos_y;
+                drawer.position.z = 0.0;
 
-                group.children.push( bottomPanel );
-                bottomPanel.parent = group;
 
-                // Add Left & Right
-                const leftPanel = new THREE.Mesh( new THREE.BoxGeometry(panelDepth, oneDrawerHeight, depth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
-                leftPanel.name = name + "_DrawerLeftPanel" + i;
-                leftPanel.position.x = -(width - panelDepth * 3) / 2.0;
-                leftPanel.position.y = pos_y;
-                leftPanel.position.z = 0.0;
-
-                group.children.push( leftPanel );
-                leftPanel.parent = group;
-
-                const rightPanel = new THREE.Mesh( new THREE.BoxGeometry(panelDepth, oneDrawerHeight, depth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
-                rightPanel.name = name + "_DrawerRightPanel" + i;
-                rightPanel.position.x = (width - panelDepth * 3) / 2.0;
-                rightPanel.position.y = pos_y;
-                rightPanel.position.z = 0.0;
-
-                group.children.push( rightPanel );
-                rightPanel.parent = group;
-
-                // Add Back
-                const backPanel = new THREE.Mesh( new THREE.BoxGeometry(drawerWidth, oneDrawerHeight, panelDepth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
-                backPanel.name = name + "_DrawerBackPanel" + i;
-                backPanel.position.x = 0.0;
-                backPanel.position.y = pos_y;
-                backPanel.position.z = -(depth - panelDepth) / 2.0;
-
-                group.children.push( backPanel );
-                backPanel.parent = group;
-
-                // Add Door
-                const door = new THREE.Mesh( new THREE.BoxGeometry(drawerWidth, oneDrawerHeight, doorDepth), new THREE.MeshStandardMaterial( { map: drawerDoorTexture} ) );
-                door.name = name + "_DrawerFrontDoor" + i;
-                door.position.x = 0.0;
-                door.position.y = pos_y;
-                door.position.z = (depth + doorDepth) / 2.0;
-
-                door.userData.pivotDir = 'center';
-                door.userData.openDir = 'outward';
-
-                group.children.push( door );
-                door.parent = group;
+                group.children.push( drawer );
+                drawer.parent = group;
 
                 pos_y += oneDrawerHeight;
             }
