@@ -22,7 +22,7 @@ class TextureHelper {
             ['WhitePlastic', './textures/whitePlastic.jpg'], ['DrawerDoorFront', './textures/drawerFront.jpg'], ['DrumMachineFront', './textures/drummachine_front.jpg'],
             ['WashingMachineBack', './textures/drummachine_back.jpg'], ['WashingMachineLeft', './textures/drummachine_left.jpg'], ['WashingMachineRight', './textures/drummachine_right.jpg'],
             ['TopLoading', './textures/topLoading.jpg'], ['Leather', './textures/leather.jpg'], ['Fabric', './textures/wool.jpg'],['BlackFabric', './textures/blackfablic.jpg'],
-            ['GreyPlastic', './textures/greyPlastic.jpg'],['AC', './textures/AC.jpg'],['ACside', './textures/ACside.jpg']
+            ['GreyPlastic', './textures/greyPlastic.jpg'],['AC', './textures/AC.jpg'],['ACside', './textures/ACside.jpg'],['WallAC', './textures/WallAC.jpg']
         ]);
 	}
 
