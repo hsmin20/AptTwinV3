@@ -6,7 +6,7 @@ import { RemoveObjectCommand } from '../../../src_common/commands/RemoveObjectCo
 import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class Bookshelf {
-    static add_Internal(editor, parent, name, width, height, depth, noOfLayers, oldPos, oldRot) {
+    static add_Internal(editor, parent, name, width, height, depth, noOfLayers, materialType, oldPos, oldRot) {
         // Add a group first
         const group = new THREE.Group();
         group.name = name;
@@ -18,81 +18,83 @@ export class Bookshelf {
         if(oldRot != null)
             group.rotation.copy(oldRot);
 
-        editor.execute( new AddGroupCommand( editor, group, parent ) );
+        editor.execute(new AddGroupCommand(editor, group, parent));
+
+        // ===== 패널 재질 선택 =====
+        let panelTexture;
+        if (materialType === "Wood") {
+            panelTexture = textureHelper.get('Wood', 4, 6);
+        } else if (materialType === "WhitePlastic") {
+            panelTexture = textureHelper.get('WhitePlastic', 1, 1);
+        } else {
+            panelTexture = textureHelper.get('Wood', 4, 6); // 기본 Wood
+        }
+
+        const panelDepth = 0.01;
 
         // Add Top & Bottom
-        const panelDepth = 0.01;
-        let panelTexture = textureHelper.get('Wood', 4, 6);
-
-        const topPanel = new THREE.Mesh( new THREE.BoxGeometry(width, panelDepth, depth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
+        const topPanel = new THREE.Mesh(
+            new THREE.BoxGeometry(width, panelDepth, depth),
+            new THREE.MeshStandardMaterial({ map: panelTexture })
+        );
         topPanel.name = name + "_TopPanel";
-        topPanel.position.x = 0.0;
-        topPanel.position.y = height - (panelDepth / 2.0);
-        topPanel.position.z = 0.0;
+        topPanel.position.set(0, height - panelDepth / 2, 0);
+        group.add(topPanel);
 
-        group.children.push( topPanel );
-        topPanel.parent = group;
-
-        const bottomPanel = new THREE.Mesh( new THREE.BoxGeometry(width, panelDepth, depth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
+        const bottomPanel = new THREE.Mesh(
+            new THREE.BoxGeometry(width, panelDepth, depth),
+            new THREE.MeshStandardMaterial({ map: panelTexture })
+        );
         bottomPanel.name = name + "_BottomPanel";
-        bottomPanel.position.x = 0.0;
-        bottomPanel.position.y = panelDepth / 2.0;
-        bottomPanel.position.z = 0.0;
-
-        group.children.push( bottomPanel );
-        bottomPanel.parent = group;
+        bottomPanel.position.set(0, panelDepth / 2, 0);
+        group.add(bottomPanel);
 
         // Add Left & Right
-        const leftPanel = new THREE.Mesh( new THREE.BoxGeometry(panelDepth, height, depth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
+        const leftPanel = new THREE.Mesh(
+            new THREE.BoxGeometry(panelDepth, height, depth),
+            new THREE.MeshStandardMaterial({ map: panelTexture })
+        );
         leftPanel.name = name + "_LeftPanel";
-        leftPanel.position.x = -(width - panelDepth) / 2.0;
-        leftPanel.position.y = height / 2.0;
-        leftPanel.position.z = 0.0;
+        leftPanel.position.set(-(width - panelDepth) / 2, height / 2, 0);
+        group.add(leftPanel);
 
-        group.children.push( leftPanel );
-        leftPanel.parent = group;
-
-        const rightPanel = new THREE.Mesh( new THREE.BoxGeometry(panelDepth, height, depth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
+        const rightPanel = new THREE.Mesh(
+            new THREE.BoxGeometry(panelDepth, height, depth),
+            new THREE.MeshStandardMaterial({ map: panelTexture })
+        );
         rightPanel.name = name + "_RightPanel";
-        rightPanel.position.x = (width - panelDepth) / 2.0;
-        rightPanel.position.y = height / 2.0;
-        rightPanel.position.z = 0.0;
-
-        group.children.push( rightPanel );
-        rightPanel.parent = group;
+        rightPanel.position.set((width - panelDepth) / 2, height / 2, 0);
+        group.add(rightPanel);
 
         // Add Back
-        const backPanel = new THREE.Mesh( new THREE.BoxGeometry(width, height, panelDepth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
+        const backPanel = new THREE.Mesh(
+            new THREE.BoxGeometry(width, height, panelDepth),
+            new THREE.MeshStandardMaterial({ map: panelTexture })
+        );
         backPanel.name = name + "_BackPanel";
-        backPanel.position.x = 0.0;
-        backPanel.position.y = height / 2.0;
-        backPanel.position.z = -(depth - panelDepth) / 2.0;
-
-        group.children.push( backPanel );
-        backPanel.parent = group;
+        backPanel.position.set(0, height / 2, -(depth - panelDepth) / 2);
+        group.add(backPanel);
 
         // Add Layers
-        const layer_width = width - (panelDepth  * 2);
+        const layer_width = width - (panelDepth * 2);
         const height_inside = height - (panelDepth * 2);
         const one_layer_height = height_inside / noOfLayers;
         let cur_height = one_layer_height;
-        for(let i=1; i<=noOfLayers; i++) {
-            const layer = new THREE.Mesh( new THREE.BoxGeometry(layer_width, panelDepth, depth), new THREE.MeshStandardMaterial( { map: panelTexture} ));
+        for (let i = 1; i <= noOfLayers; i++) {
+            const layer = new THREE.Mesh(
+                new THREE.BoxGeometry(layer_width, panelDepth, depth),
+                new THREE.MeshStandardMaterial({ map: panelTexture })
+            );
             layer.name = name + "_layer" + i;
-            layer.position.x = 0.0;
-            layer.position.y = cur_height;
-            layer.position.z = 0.0;
-
-            group.children.push( layer );
-            layer.parent = group;
-
+            layer.position.set(0, cur_height, 0);
+            group.add(layer);
             cur_height += one_layer_height;
         }
 
         editor.objectChanged(group);
     }
 
-    static add(editor, modify=false) {
+    static add(editor, modify = false) {
         const _html = `
             <dialog id="bookshelfTypeDialog">
             <form>
@@ -105,24 +107,41 @@ export class Bookshelf {
                         <p>Width : <input type="text" id="width" name="width" value="0.57">
                            Height : <input type="text" id="height" name="height" value="1.5">
                            Depth : <input type="text" id="depth" name="depth" value="0.3"></p>
+
                         <div class="clearfix"></div>
                         <h2>No of Layers</h2>
                         <p>Name : <input type="text" id="layers" name="layers" value="4">
                         </p>
+
+                        <div class="clearfix"></div>
+                        <h2>Material</h2>
+                            <div style="display:flex; gap:20px;">
+                            <div class="gallery">
+                                <img src="./images/Bookself_Wood.JPG" alt="wood" style="width:120px; height:170px;">
+                                <br>
+                                <input type="radio" id="wood" name="frametype" value="Wood" checked>Wood
+                            </div>
+
+                            <div class="gallery">
+                                <img src="./images/Bookself_White.JPG" alt="whitePlastic" style="width:120px; height:170px;">
+                                <br>
+                                <input type="radio" id="whitePlastic" name="frametype" value="WhitePlastic">White
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+
                 </label>
                 </p>
                 <div>
-                <p>
                 <button value="cancel" formmethod="dialog">Cancel</button>
                 <button id="confirmBtn" value="default">Apply</button>
-                </p>
                 </div>
             </form>
-    `
+        `;
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");
-        document.body.appendChild(dialog)
+        document.body.appendChild(dialog);
 
         const bookshelfTypeDialog = document.getElementById("bookshelfTypeDialog");
         const inputNameBox = document.getElementById("bookshelfName");
@@ -133,16 +152,13 @@ export class Bookshelf {
 
         const confirmBtn = bookshelfTypeDialog.querySelector("#confirmBtn");
 
-        // "Cancel" button closes the dialog without submitting because of [formmethod="dialog"], triggering a close event.
         bookshelfTypeDialog.addEventListener("close", (e) => {
-            document.body.removeChild(dialog)
+            document.body.removeChild(dialog);
         });
 
-        // Prevent the "confirm" button from the default behavior of submitting the form, and close the dialog with the `close()` method, which triggers the "close" event.
         confirmBtn.addEventListener("click", (event) => {
-            event.preventDefault(); // We don't want to submit this fake form
-            
-            // bookshelfTypeDialog.close(); // Have to send the select box value here.
+            event.preventDefault();
+
             var parent = editor.selected;
             var oldPos = null;
             var oldRot = null;
@@ -151,7 +167,7 @@ export class Bookshelf {
                 oldPos = editor.selected.position;
                 oldRot = editor.selected.rotation;
 
-                editor.execute( new RemoveObjectCommand( editor, editor.selected ) );
+                editor.execute(new RemoveObjectCommand(editor, editor.selected));
             }
 
             var name = inputNameBox.value;
@@ -159,10 +175,11 @@ export class Bookshelf {
             const height = parseFloat(heightBox.value);
             const depth = parseFloat(depthBox.value);
             const noOfLayers = parseInt(layersBox.value);
+            const materialType = document.querySelector('input[name=material]:checked').value;
 
-            document.body.removeChild(dialog)
-            
-            this.add_Internal(editor, parent, name, width, height, depth, noOfLayers, oldPos, oldRot);
+            document.body.removeChild(dialog);
+
+            this.add_Internal(editor, parent, name, width, height, depth, noOfLayers, materialType, oldPos, oldRot);
         });
 
         bookshelfTypeDialog.showModal();

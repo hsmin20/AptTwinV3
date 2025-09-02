@@ -123,7 +123,7 @@ export class Bed {
                             <div class="gallery">
                                 <img src="./images/Bed_Wood.JPG" alt="wood" style="width:150px; height:120px;">
                                 <br>
-                                <input type="radio" id="wood" name="frametype" value="wood">Wood
+                                <input type="radio" id="wood" name="frametype" value="wood" checked>Wood
                             </div>
 
                             <div class="gallery">

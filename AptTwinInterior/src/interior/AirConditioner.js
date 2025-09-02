@@ -101,7 +101,7 @@ export class AirConditioner {
                             <div class="gallery">
                                 <img src="./images/AC.jpg" alt="StandAC" style="width:65px; height:160px;">
                                 <br>
-                                <input type="radio" id="StandAC" name="actype" value="StandAC">StandAC
+                                <input type="radio" id="StandAC" name="actype" value="StandAC" checked>StandAC
                             </div>
 
                             <div class="gallery">
