@@ -201,17 +201,26 @@ export class Wardrobe {
                            Depth : <input type="text" id="depth" name="depth" value="0.6"></p>
                         <div class="clearfix"></div>
                         <h2>Wardrobe Option</h2>
-                        <p><input type="radio" id="long" name="wardrobetype" value="long" checked>Long
-                           <input type="radio" id="drawer" name="wardrobetype" value="drawer">With Drawer
-                           <p>No of Drawers : <input type="text" id="noOfDrawers" name="noOfDrawers" value="3"> </p>
-                        </p>
+                          <div style="display:flex; gap:20px;">
+                            <div class="gallery">
+                                <img src="./images/Long.JPG" alt="long" style="width:120px; height:180px;">
+                                <br>
+                                <input type="radio" id="long" name="wardrobetype" value="long">Long
+                            </div>
+
+                            <div class="gallery">
+                                <img src="./images/WithDraw.JPG" alt="drawer" style="width:120px; height:180px;">
+                                <br>
+                                <input type="radio" id="drawer" name="wardrobetype" value="drawer">With Drawer
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+
                 </label>
                 </p>
                 <div>
-                <p>
                 <button value="cancel" formmethod="dialog">Cancel</button>
                 <button id="confirmBtn" value="default">Apply</button>
-                </p>
                 </div>
             </form>
     `

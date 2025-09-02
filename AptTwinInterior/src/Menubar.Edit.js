@@ -39,39 +39,39 @@ export class MenubarEdit {
         this.container.add( options );
 
         // Room
-        const roomSubmenuTitle = new UIRow().setTextContent( 'Room' ).addClass( 'option' ).addClass( 'submenu-title' );
-        roomSubmenuTitle.onMouseOver( function () {
-            const { top, right } = roomSubmenuTitle.dom.getBoundingClientRect();
+        const funitureSubmenuTitle = new UIRow().setTextContent( 'Funiture' ).addClass( 'option' ).addClass( 'submenu-title' );
+        funitureSubmenuTitle.onMouseOver( function () {
+            const { top, right } = funitureSubmenuTitle.dom.getBoundingClientRect();
             const { paddingTop } = getComputedStyle( this.dom );
-            roomSubmenu.setLeft( right + 'px' );
-            roomSubmenu.setTop( top - parseFloat( paddingTop ) + 'px' );
-            roomSubmenu.setStyle( 'max-height', [ `calc( 100vh - ${top}px )` ] );
-            roomSubmenu.setDisplay( 'block' );
+            funitureSubmenu.setLeft( right + 'px' );
+            funitureSubmenu.setTop( top - parseFloat( paddingTop ) + 'px' );
+            funitureSubmenu.setStyle( 'max-height', [ `calc( 100vh - ${top}px )` ] );
+            funitureSubmenu.setDisplay( 'block' );
         } );
-        roomSubmenuTitle.onMouseOut( function () {
-            roomSubmenu.setDisplay( 'none' );
+        funitureSubmenuTitle.onMouseOut( function () {
+            funitureSubmenu.setDisplay( 'none' );
         } );
-        options.add( roomSubmenuTitle );
+        options.add( funitureSubmenuTitle );
 
-        const roomSubmenu = new UIPanel().setPosition( 'fixed' ).addClass( 'options' ).setDisplay( 'none' );
-        roomSubmenuTitle.add( roomSubmenu );
+        const funitureSubmenu = new UIPanel().setPosition( 'fixed' ).addClass( 'options' ).setDisplay( 'none' );
+        funitureSubmenuTitle.add( funitureSubmenu );
 
         let option = new UIRow();
-        option.setClass( 'option' );
-        option.setTextContent( 'Add a TV' );
-        option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
+        // option.setClass( 'option' );
+        // option.setTextContent( 'Add a TV' );
+        // option.onClick( function () {
+        //     if(editorscope.selected == null) {
+        //         alert('Select an item first');
+        //         return;
+        //     }
 
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
-            TV.add(editorscope);
-        } );
-        roomSubmenu.add( option );
+        //     if(editorscope.selected.type != 'Group') {
+        //         alert('Select a Group');
+        //         return;
+        //     }
+        //     TV.add(editorscope);
+        // } );
+        // roomSubmenu.add( option );
 
         option = new UIRow();
         option.setClass( 'option' );
@@ -88,7 +88,7 @@ export class MenubarEdit {
             }
             Bed.add(editorscope);
         } );
-        roomSubmenu.add( option );
+        funitureSubmenu.add( option );
 
         option = new UIRow();
         option.setClass( 'option' );
@@ -105,7 +105,7 @@ export class MenubarEdit {
             }
             Desk.add(editorscope);
         } );
-        roomSubmenu.add( option );
+        funitureSubmenu.add( option );
 
         option = new UIRow();
         option.setClass( 'option' );
@@ -122,7 +122,7 @@ export class MenubarEdit {
             }
             OfficeChair.add(editorscope);
         } );
-        roomSubmenu.add( option );
+        funitureSubmenu.add( option );
 
         option = new UIRow();
         option.setClass( 'option' );
@@ -139,7 +139,7 @@ export class MenubarEdit {
             }
             Bookshelf.add(editorscope);
         } );
-        roomSubmenu.add( option );
+        funitureSubmenu.add( option );
 
         option = new UIRow();
         option.setClass( 'option' );
@@ -156,42 +156,7 @@ export class MenubarEdit {
             }
             Wardrobe.add(editorscope);
         } );
-        roomSubmenu.add( option );
-
-        option = new UIRow();
-        option.setClass( 'option' );
-        option.setTextContent( 'Add a Dressing Table' );
-        option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
-            DressingTable.add(editorscope);
-        } );
-        roomSubmenu.add( option );
-
-        // LivingRoom
-        const livingroomSubmenuTitle = new UIRow().setTextContent( 'Living Room' ).addClass( 'option' ).addClass( 'submenu-title' );
-        livingroomSubmenuTitle.onMouseOver( function () {
-            const { top, right } = livingroomSubmenuTitle.dom.getBoundingClientRect();
-            const { paddingTop } = getComputedStyle( this.dom );
-            livingroomSubmenu.setLeft( right + 'px' );
-            livingroomSubmenu.setTop( top - parseFloat( paddingTop ) + 'px' );
-            livingroomSubmenu.setStyle( 'max-height', [ `calc( 100vh - ${top}px )` ] );
-            livingroomSubmenu.setDisplay( 'block' );
-        } );
-        livingroomSubmenuTitle.onMouseOut( function () {
-            livingroomSubmenu.setDisplay( 'none' );
-        } );
-        options.add( livingroomSubmenuTitle );
-
-        const livingroomSubmenu = new UIPanel().setPosition( 'fixed' ).addClass( 'options' ).setDisplay( 'none' );
-        livingroomSubmenuTitle.add( livingroomSubmenu );
+        funitureSubmenu.add( option );
 
         option = new UIRow();
         option.setClass( 'option' );
@@ -208,7 +173,7 @@ export class MenubarEdit {
             }
             Sofa.add(editorscope);
         } );
-        livingroomSubmenu.add( option );
+        funitureSubmenu.add( option );
 
         option = new UIRow();
         option.setClass( 'option' );
@@ -225,24 +190,7 @@ export class MenubarEdit {
             }
             CoffeeTable.add(editorscope);
         } );
-        livingroomSubmenu.add( option );
-
-        option = new UIRow();
-        option.setClass( 'option' );
-        option.setTextContent( 'Add a TV' );
-        option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
-            roomInterior.addTV(editorscope);
-        } );
-        livingroomSubmenu.add( option );
+        funitureSubmenu.add( option );
 
         option = new UIRow();
         option.setClass( 'option' );
@@ -259,94 +207,7 @@ export class MenubarEdit {
             }
             TVTable.add(editorscope);
         } );
-        livingroomSubmenu.add( option );
-
-        option = new UIRow();
-        option.setClass( 'option' );
-        option.setTextContent( 'Add a Air-Conditioner' );
-        option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
-            AirConditioner.add(editorscope);
-        } );
-        livingroomSubmenu.add( option );
-
-        // Kitchen
-        const kitchenSubmenuTitle = new UIRow().setTextContent( 'Kitchen' ).addClass( 'option' ).addClass( 'submenu-title' );
-        kitchenSubmenuTitle.onMouseOver( function () {
-            const { top, right } = kitchenSubmenuTitle.dom.getBoundingClientRect();
-            const { paddingTop } = getComputedStyle( this.dom );
-            kitchenSubmenu.setLeft( right + 'px' );
-            kitchenSubmenu.setTop( top - parseFloat( paddingTop ) + 'px' );
-            kitchenSubmenu.setStyle( 'max-height', [ `calc( 100vh - ${top}px )` ] );
-            kitchenSubmenu.setDisplay( 'block' );
-
-        } );
-        kitchenSubmenuTitle.onMouseOut( function () {
-            kitchenSubmenu.setDisplay( 'none' );
-        } );
-        options.add( kitchenSubmenuTitle );
-
-        const kitchenSubmenu = new UIPanel().setPosition( 'fixed' ).addClass( 'options' ).setDisplay( 'none' );
-        kitchenSubmenuTitle.add( kitchenSubmenu );
-
-        option = new UIRow();
-        option.setClass( 'option' );
-        option.setTextContent( 'Add a Refrigerator' );
-        option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-             if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
-
-            Refrigerator.add(editorscope);
-        } );
-        kitchenSubmenu.add( option );
-
-        option = new UIRow();
-        option.setClass( 'option' );
-        option.setTextContent( 'Add a Dining Table' );
-        option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-          if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
-
-            DiningTable.add(editorscope);
-        } );
-        kitchenSubmenu.add( option );
-
-        option = new UIRow();
-        option.setClass( 'option' );
-        option.setTextContent( 'Add a Washing Machine' );
-        option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-          if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
-
-            WashingMachine.add(editorscope);
-        } );
-        kitchenSubmenu.add( option );
+        funitureSubmenu.add( option );
 
         option = new UIRow();
         option.setClass( 'option' );
@@ -364,7 +225,7 @@ export class MenubarEdit {
             Chair.add(editorscope);
         } );
 
-        kitchenSubmenu.add( option );
+        funitureSubmenu.add( option );
 
         option = new UIRow();
         option.setClass( 'option' );
@@ -381,9 +242,128 @@ export class MenubarEdit {
 
             Bench.add(editorscope);
         } );
-        kitchenSubmenu.add( option );
+        funitureSubmenu.add( option );
 
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Add a Dining Table' );
+        option.onClick( function () {
+            if(editorscope.selected == null) {
+                alert('Select an item first');
+                return;
+            }
+          if(editorscope.selected.type != 'Group') {
+                alert('Select a Group');
+                return;
+            }
 
+            DiningTable.add(editorscope);
+        } );
+        funitureSubmenu.add( option );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Add a Dressing Table' );
+        option.onClick( function () {
+            if(editorscope.selected == null) {
+                alert('Select an item first');
+                return;
+            }
+
+            if(editorscope.selected.type != 'Group') {
+                alert('Select a Group');
+                return;
+            }
+            DressingTable.add(editorscope);
+        } );
+        funitureSubmenu.add( option );
+
+        // Kitchen
+        const applicanceSubmenuTitle = new UIRow().setTextContent( 'Home applicances' ).addClass( 'option' ).addClass( 'submenu-title' );
+        applicanceSubmenuTitle.onMouseOver( function () {
+            const { top, right } = applicanceSubmenuTitle.dom.getBoundingClientRect();
+            const { paddingTop } = getComputedStyle( this.dom );
+            applicanceSubmenu.setLeft( right + 'px' );
+            applicanceSubmenu.setTop( top - parseFloat( paddingTop ) + 'px' );
+            applicanceSubmenu.setStyle( 'max-height', [ `calc( 100vh - ${top}px )` ] );
+            applicanceSubmenu.setDisplay( 'block' );
+
+        } );
+        applicanceSubmenuTitle.onMouseOut( function () {
+            applicanceSubmenu.setDisplay( 'none' );
+        } );
+        options.add( applicanceSubmenuTitle );
+
+        const applicanceSubmenu = new UIPanel().setPosition( 'fixed' ).addClass( 'options' ).setDisplay( 'none' );
+        applicanceSubmenuTitle.add( applicanceSubmenu );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Add a Refrigerator' );
+        option.onClick( function () {
+            if(editorscope.selected == null) {
+                alert('Select an item first');
+                return;
+            }
+             if(editorscope.selected.type != 'Group') {
+                alert('Select a Group');
+                return;
+            }
+
+            Refrigerator.add(editorscope);
+        } );
+        applicanceSubmenu.add( option );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Add a TV' );
+        option.onClick( function () {
+            if(editorscope.selected == null) {
+                alert('Select an item first');
+                return;
+            }
+
+            if(editorscope.selected.type != 'Group') {
+                alert('Select a Group');
+                return;
+            }
+            TV.add(editorscope);
+        } );
+        applicanceSubmenu.add( option );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Add a Air-Conditioner' );
+        option.onClick( function () {
+            if(editorscope.selected == null) {
+                alert('Select an item first');
+                return;
+            }
+
+            if(editorscope.selected.type != 'Group') {
+                alert('Select a Group');
+                return;
+            }
+            AirConditioner.add(editorscope);
+        } );
+        applicanceSubmenu.add( option );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Add a Washing Machine' );
+        option.onClick( function () {
+            if(editorscope.selected == null) {
+                alert('Select an item first');
+                return;
+            }
+          if(editorscope.selected.type != 'Group') {
+                alert('Select a Group');
+                return;
+            }
+
+            WashingMachine.add(editorscope);
+        } );
+        applicanceSubmenu.add( option );
 
         //============================Horizontal
 
