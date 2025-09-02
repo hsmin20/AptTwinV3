@@ -103,15 +103,26 @@ export class DressingTable {
                     <p>Height : <input type="text" id="mirrorheight" name="height" value="0.6"></p>
                     <div class="clearfix"></div>
                         <h2>Table Type </h2>
-                        <p><input type="radio" id="wood1" name="texturetype" value="Wood" checked>Wood
-                           <input type="radio" id="wood2" name="texturetype" value="WhitePlastic">White</p>
+                            <div style="display:flex; gap:20px;">
+                            <div class="gallery">
+                                <img src="./images/DressingTable_Wood.JPG" alt="wood" style="width:160px; height:140px;">
+                                <br>
+                                <input type="radio" id="wood" name="texturetype" value="Wood">Wood
+                            </div>
+
+                            <div class="gallery">
+                                <img src="./images/DressingTable_White.JPG" alt="WhitePlastic" style="width:160px; height:140px;">
+                                <br>
+                                <input type="radio" id="wood2" name="texturetype" value="WhitePlastic">White
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+
                 </label>
                 </p>
                 <div>
-                <p>
                 <button value="cancel" formmethod="dialog">Cancel</button>
                 <button id="confirmBtn" value="default">Apply</button>
-                </p>
                 </div>
             </form>
             `

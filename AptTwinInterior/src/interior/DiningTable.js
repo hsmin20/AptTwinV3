@@ -67,15 +67,26 @@ export class DiningTable {
                            Depth : <input type="text" id="depth" name="depth" value="0.72"></p>
                     <div class="clearfix"></div>
                         <h2>Table Type </h2>
-                        <p><input type="radio" id="wood" name="texturetype" value="Wood" checked>Wood
-                           <input type="radio" id="marbel" name="texturetype" value="Marble">Marbel</p>
+                         <div style="display:flex; gap:20px;">
+                            <div class="gallery">
+                                <img src="./images/DiningTable_Wood.JPG" alt="wood" style="width:160px; height:140px;">
+                                <br>
+                                <input type="radio" id="wood" name="texturetype" value="Wood">Wood
+                            </div>
+
+                            <div class="gallery">
+                                <img src="./images/DiningTable_Marble.JPG" alt="marbel" style="width:160px; height:140px;">
+                                <br>
+                                <input type="radio" id="marbel" name="texturetype" value="Marble">Marble
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+
                 </label>
                 </p>
                 <div>
-                <p>
                 <button value="cancel" formmethod="dialog">Cancel</button>
                 <button id="confirmBtn" value="default">Apply</button>
-                </p>
                 </div>
             </form>
             `

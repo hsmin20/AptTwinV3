@@ -74,16 +74,26 @@ export class CoffeeTable {
                            Depth : <input type="text" id="depth" name="depth" value="0.264"></p>
                         <div class="clearfix"></div>
                         <h2>Coffee Table Option</h2>
-                        <p><input type="radio" id="wood" name="coffeeTabletype" value="Wood" checked>Wood
-                           <input type="radio" id="glass" name="coffeeTabletype" value="Glass">Glass
-                        </p>
+                         <div style="display:flex; gap:20px;">
+                            <div class="gallery">
+                                <img src="./images/CoffeTable_Wood.jpg" alt="wood" style="width:200px; height:120px;">
+                                <br>
+                                <input type="radio" id="wood" name="coffeeTabletype" value="Wood">Wood
+                            </div>
+
+                            <div class="gallery">
+                                <img src="./images/CoffeTable_Glass.jpg" alt="glass" style="width:200px; height:120px;">
+                                <br>
+                                <input type="radio" id="glass" name="coffeeTabletype" value="Glass">Glass
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+
                 </label>
                 </p>
                 <div>
-                <p>
                 <button value="cancel" formmethod="dialog">Cancel</button>
                 <button id="confirmBtn" value="default">Apply</button>
-                </p>
                 </div>
             </form>
     `
