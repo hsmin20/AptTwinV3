@@ -80,12 +80,20 @@ class MenubarTools {
         horizontalRule.className = 'HorizontalRule';
         options.appendChild( horizontalRule );
 
-        // Player
+        // Go to others
         option = document.createElement( 'div' );
         option.className = 'option';
         option.textContent = 'Go to Editor';
         option.addEventListener( 'click', () => {
             window.location.href = './editor.html';
+        } );
+        options.appendChild( option );
+
+        option = document.createElement( 'div' );
+        option.className = 'option';
+        option.textContent = 'Go to Interior';
+        option.addEventListener( 'click', () => {
+            window.location.href = './interior.html';
         } );
         options.appendChild( option );
     }
