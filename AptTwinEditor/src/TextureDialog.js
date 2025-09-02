@@ -224,19 +224,19 @@ export function showBackgroundImages( cbSetBackground ) {
                     <div class="responsive">
                     <div class="gallery">
                         <img src="./backgrounds/cityview.jpg" alt="cityview" width="60" height="40">
-                        <input type="radio" name="background" id="cityview" value="cityview" checked/>City View
+                        <input type="radio" name="background" id="cityview" value="CityView" checked/>City View
                     </div>
                     </div>
                     <div class="responsive">
                     <div class="gallery">
                         <img src="./backgrounds/downtown.jpg" alt="downtown" width="60" height="40">
-                        <input type="radio" name="background" id="downtown" value="downtown"/>Downtown
+                        <input type="radio" name="background" id="downtown" value="Downtown"/>Downtown
                     </div>
                     </div>
                     <div class="responsive">
                     <div class="gallery">
                         <img src="./backgrounds/romania.jpg" alt="romania" width="60" height="40">
-                        <input type="radio" name="background" id="romania" value="romania"/>Romania
+                        <input type="radio" name="background" id="romania" value="Romania"/>Romania
                     </div>
                     </div>
                 </label>
@@ -272,7 +272,7 @@ export function showBackgroundImages( cbSetBackground ) {
         var backgroundSelected = document.querySelector('input[name=background]:checked').value;
         document.body.removeChild(dialog)
         
-        const background = textureHelper.get(backgroundSelected, repeatX, repeatY);
+        const background = textureHelper.get(backgroundSelected, 1, 1);
 
         cbSetBackground(background)
     });

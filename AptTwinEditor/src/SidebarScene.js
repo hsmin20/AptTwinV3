@@ -59,7 +59,6 @@ export class SidebarScene {
         backgroundRow.add( this.backgroundColor );
 
         this.backgroundTexture = new UITexture2( showBackgroundImages ).onChange( backgroundChangedFunc );
-
         this.backgroundTexture.setDisplay( 'none' );
         backgroundRow.add( this.backgroundTexture );
 

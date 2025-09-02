@@ -80,6 +80,30 @@ class MenubarTools {
         horizontalRule.className = 'HorizontalRule';
         options.appendChild( horizontalRule );
 
+        // Fetch Database and update / Stop
+        option = document.createElement( 'div' );
+        option.className = 'option';
+        option.textContent = 'Start Timer';
+        option.addEventListener( 'click', () => {
+            window.location.href = './editor.html';
+        } );
+        options.appendChild( option );
+
+        option = document.createElement( 'div' );
+        option.className = 'option';
+        option.textContent = 'Go to Interior';
+        option.addEventListener( 'click', () => {
+            window.location.href = './interior.html';
+        } );
+        options.appendChild( option );
+
+
+
+
+        horizontalRule = document.createElement( 'hr' );
+        horizontalRule.className = 'HorizontalRule';
+        options.appendChild( horizontalRule );
+
         // Go to others
         option = document.createElement( 'div' );
         option.className = 'option';

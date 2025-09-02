@@ -72,3 +72,28 @@ export function saveState() {
 }
 
 player.storage.init(onSuccessStorage);
+
+let g_intervalId;
+
+async function fetchDataAndUpdateScene() {
+    try {
+        const response = await fetch('./process.php?tblname=LotteCastle_105_1505');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        player.updateScene(data);
+
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        // Handle the error appropriately, e.g., display an error message or retry the request
+    }
+}
+
+function startDataUpdates(intervalMs) {
+    g_intervalId = setInterval(fetchDataAndUpdateScene, intervalMs);
+}
+
+function stopDataUpdates() {
+    clearInterval(g_intervalId);
+}

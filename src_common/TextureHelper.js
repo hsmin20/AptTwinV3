@@ -25,7 +25,8 @@ class TextureHelper {
             ['WashingMachineLeft', './textures/drummachine_left.jpg'], ['WashingMachineRight', './textures/drummachine_right.jpg'], ['TopLoading', './textures/topLoading.jpg'], 
             ['Leather', './textures/leather.jpg'], ['Fabric', './textures/wool.jpg'], ['BlackFabric', './textures/blackfablic.jpg'],
             ['GreyPlastic', './textures/greyPlastic.jpg'], ['AC', './textures/AC.jpg'], ['ACside', './textures/ACside.jpg'], 
-            ['DrawerInside', './textures/drawerInside.jpg'],['WallAC', './textures/WallAC.jpg']
+            ['DrawerInside', './textures/drawerInside.jpg'],['WallAC', './textures/WallAC.jpg'],
+            ['CityView', './backgrounds/cityview.jpg'], ['Downtown', './backgrounds/downtown.jpg'], ['Romania', './backgrounds/romania.jpg']
         ]);
 	}
 
