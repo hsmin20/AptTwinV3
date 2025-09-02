@@ -97,17 +97,26 @@ export class AirConditioner {
 
                         <div class="clearfix"></div>
                         <h2>AC Type</h2>
-                        <p>
-                          <input type="radio" id="StandAC" name="actype" value="StandAC" checked>Stand AC
-                          <input type="radio" id="WallAC"  name="actype" value="WallAC">Wall AC
-                        </p>
+                        <div style="display:flex; gap:20px;">
+                            <div class="gallery">
+                                <img src="./images/AC.jpg" alt="StandAC" style="width:65px; height:160px;">
+                                <br>
+                                <input type="radio" id="StandAC" name="actype" value="StandAC">StandAC
+                            </div>
+
+                            <div class="gallery">
+                                <img src="./images/WallAC.jpg" alt="WallAC" style="width:120px; height:60px;">
+                                <br>
+                                <input type="radio" id="WallAC" name="actype" value="WallAC">WallAC
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+
                 </label>
                 </p>
                 <div>
-                  <p>
-                    <button value="cancel" formmethod="dialog">Cancel</button>
-                    <button id="confirmBtn" value="default">Apply</button>
-                  </p>
+                <button value="cancel" formmethod="dialog">Cancel</button>
+                <button id="confirmBtn" value="default">Apply</button>
                 </div>
             </form>`;
 

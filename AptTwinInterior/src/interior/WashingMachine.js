@@ -66,16 +66,24 @@ export class WashingMachine {
                            Depth : <input type="text" id="depth" name="depth" value="0.864"></p>
                         <div class="clearfix"></div>
                         <h2>Washing Machine Option</h2>
-                        <p><input type="radio" id="drum" name="washingMachinetype" value="drum" checked>Drum
-                           <input type="radio" id="topload" name="washingMachinetype" value="topload">Top Load
-                        </p>
+                        <div style="display:flex; gap:20px;">
+                            <div class="gallery">
+                                <img src="./images/drummachine_front.jpg" alt="drum" style="width:120px; height:160px;">
+                                <br>
+                                <input type="radio" id="drum" name="name="washingMachinetype" " value="drum">drum
+                            </div>
+
+                            <div class="gallery">
+                                <img src="./images/topLoading.jpg" alt="topload" style="width:120px; height:160px;">
+                                <br>
+                                <input type="radio" id="topload" name="name="washingMachinetype" " value="topload">topload
+                            </div>
+                        </div>
                 </label>
                 </p>
                 <div>
-                <p>
                 <button value="cancel" formmethod="dialog">Cancel</button>
                 <button id="confirmBtn" value="default">Apply</button>
-                </p>
                 </div>
             </form>
     `

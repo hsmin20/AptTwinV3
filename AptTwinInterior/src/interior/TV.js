@@ -87,15 +87,26 @@ export class TV {
                             <input type="radio" id="85inch" name="tvsize" value="85">85"</p>
                         <div class="clearfix"></div>
                         <h2>Stand Type </h2>
-                        <p><input type="radio" id="wall" name="tvtype" value="wall">wall
-                            <input type="radio" id="stand" name="tvtype" value="stand" checked>stand</p>
+                        <div style="display:flex; gap:20px;">
+                            <div class="gallery">
+                                <img src="./images/TV_Stand.JPG" alt="StandTV" style="width:150px; height:120px;">
+                                <br>
+                                <input type="radio" id="StandTV" name="tvtype" value="StandTV">Stand TV
+                            </div>
+
+                            <div class="gallery">
+                                <img src="./images/TV_Wall.JPG" alt="WallTV" style="width:150px; height:120px;">
+                                <br>
+                                <input type="radio" id="WallTV" name="tvtype" value="WallTV">Wall TV
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+
                 </label>
                 </p>
                 <div>
-                <p>
                 <button value="cancel" formmethod="dialog">Cancel</button>
                 <button id="confirmBtn" value="default">Apply</button>
-                </p>
                 </div>
             </form>
     `
