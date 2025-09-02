@@ -143,17 +143,26 @@ export class Chair {
                     <div class="clearfix"></div>
 
                     <h2>Seat Cushion Color</h2>
-                    <p>
-                        <input type="radio" id="whiteCushion" name="cushionColor" value="white" checked> White
-                        <input type="radio" id="blackCushion" name="cushionColor" value="black"> Black
-                    </p>
+                      <div style="display:flex; gap:20px;">
+                            <div class="gallery">
+                                <img src="./images/Chair_White.JPG" alt="white" style="width:120px; height:140px;">
+                                <br>
+                                <input type="radio" id="white" name="cushionColor" value="white">White
+                            </div>
+
+                            <div class="gallery">
+                                <img src="./images/Chair_Black.JPG" alt="black" style="width:120px; height:140px;">
+                                <br>
+                                <input type="radio" id="black" name="cushionColor" value="black">Black
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+
                 </label>
                 </p>
                 <div>
-                <p>
                 <button value="cancel" formmethod="dialog">Cancel</button>
                 <button id="confirmBtn" value="default">Apply</button>
-                </p>
                 </div>
             </form>
         `;

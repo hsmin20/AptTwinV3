@@ -57,25 +57,9 @@ export class MenubarEdit {
         funitureSubmenuTitle.add( funitureSubmenu );
 
         let option = new UIRow();
-        // option.setClass( 'option' );
-        // option.setTextContent( 'Add a TV' );
-        // option.onClick( function () {
-        //     if(editorscope.selected == null) {
-        //         alert('Select an item first');
-        //         return;
-        //     }
-
-        //     if(editorscope.selected.type != 'Group') {
-        //         alert('Select a Group');
-        //         return;
-        //     }
-        //     TV.add(editorscope);
-        // } );
-        // roomSubmenu.add( option );
-
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a Bed' );
+        option.setTextContent( 'Bed' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');
@@ -92,7 +76,7 @@ export class MenubarEdit {
 
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a Desk' );
+        option.setTextContent( 'Desk' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');
@@ -109,7 +93,7 @@ export class MenubarEdit {
 
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a Office Chair' );
+        option.setTextContent( 'Office Chair' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');
@@ -126,7 +110,7 @@ export class MenubarEdit {
 
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a Bookshelf' );
+        option.setTextContent( 'Bookshelf' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');
@@ -143,7 +127,7 @@ export class MenubarEdit {
 
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a Wardrobe' );
+        option.setTextContent( 'Wardrobe' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');
@@ -160,7 +144,7 @@ export class MenubarEdit {
 
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a Sofa' );
+        option.setTextContent( 'Sofa' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');
@@ -177,7 +161,7 @@ export class MenubarEdit {
 
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a Coffee Table' );
+        option.setTextContent( 'Coffee Table' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');
@@ -194,7 +178,7 @@ export class MenubarEdit {
 
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a TV table' );
+        option.setTextContent( 'TV table' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');
@@ -211,7 +195,7 @@ export class MenubarEdit {
 
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a Chair' );
+        option.setTextContent( 'Chair' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');
@@ -229,7 +213,7 @@ export class MenubarEdit {
 
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a Bench' );
+        option.setTextContent( 'Bench' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');
@@ -246,7 +230,7 @@ export class MenubarEdit {
 
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a Dining Table' );
+        option.setTextContent( 'Dining Table' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');
@@ -263,7 +247,7 @@ export class MenubarEdit {
 
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a Dressing Table' );
+        option.setTextContent( 'Dressing Table' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');
@@ -299,7 +283,7 @@ export class MenubarEdit {
 
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a Refrigerator' );
+        option.setTextContent( 'Refrigerator' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');
@@ -316,7 +300,7 @@ export class MenubarEdit {
 
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a TV' );
+        option.setTextContent( 'TV' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');
@@ -333,7 +317,7 @@ export class MenubarEdit {
 
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a Air-Conditioner' );
+        option.setTextContent( 'Air-Conditioner' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');
@@ -350,7 +334,7 @@ export class MenubarEdit {
 
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Add a Washing Machine' );
+        option.setTextContent( 'Washing Machine' );
         option.onClick( function () {
             if(editorscope.selected == null) {
                 alert('Select an item first');

@@ -119,15 +119,26 @@ export class Bed {
                            <input type="radio" id="largeking" name="bedsize" value="largeking">Large King</p>
                         <div class="clearfix"></div>
                         <h2>Frame Type </h2>
-                        <p><input type="radio" id="wood" name="frametype" value="wood" checked>wood
-                           <input type="radio" id="metal" name="frametype" value="metal">metal</p>
+                            <div style="display:flex; gap:20px;">
+                            <div class="gallery">
+                                <img src="./images/Bed_Wood.JPG" alt="wood" style="width:150px; height:120px;">
+                                <br>
+                                <input type="radio" id="wood" name="frametype" value="wood">Wood
+                            </div>
+
+                            <div class="gallery">
+                                <img src="./images/Bed_metal.JPG" alt="metal" style="width:150px; height:120px;">
+                                <br>
+                                <input type="radio" id="metal" name="frametype" value="metal">Metal
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+
                 </label>
                 </p>
                 <div>
-                <p>
                 <button value="cancel" formmethod="dialog">Cancel</button>
                 <button id="confirmBtn" value="default">Apply</button>
-                </p>
                 </div>
             </form>
     `

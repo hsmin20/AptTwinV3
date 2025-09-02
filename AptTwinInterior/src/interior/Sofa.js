@@ -122,15 +122,26 @@ export class Sofa {
                            Depth : <input type="text" id="depth" name="depth" value="0.72"></p>
                         <div class="clearfix"></div>
                         <h2>Sofa Type </h2>
-                        <p><input type="radio" id="leather" name="sofatype" value="Leather" checked>Leather
-                           <input type="radio" id="fabric" name="sofatype" value="Fabric">Fabric</p>
+                        <div style="display:flex; gap:20px;">
+                            <div class="gallery">
+                                <img src="./images/Sofa_Fabric.JPG" alt="fabric" style="width:200px; height:120px;">
+                                <br>
+                                <input type="radio" id="fabric" name="sofatype" value="fabric">Fabric
+                            </div>
+
+                            <div class="gallery">
+                                <img src="./images/Sofa_Leather.JPG" alt="leather" style="width:200px; height:120px;">
+                                <br>
+                                <input type="radio" id="leather" name="sofatype" value="leather">Leather
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+
                 </label>
                 </p>
                 <div>
-                <p>
                 <button value="cancel" formmethod="dialog">Cancel</button>
                 <button id="confirmBtn" value="default">Apply</button>
-                </p>
                 </div>
             </form>
     `
