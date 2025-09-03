@@ -126,7 +126,7 @@ export class Sofa {
                             <div class="gallery">
                                 <img src="./images/Sofa_Fabric.JPG" alt="fabric" style="width:200px; height:120px;">
                                 <br>
-                                <input type="radio" id="fabric" name="sofatype" value="fabric">Fabric
+                                <input type="radio" id="fabric" name="sofatype" value="fabric" checked>Fabric
                             </div>
 
                             <div class="gallery">

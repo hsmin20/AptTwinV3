@@ -70,7 +70,7 @@ export class WashingMachine {
                             <div class="gallery">
                                 <img src="./images/drummachine_front.jpg" alt="drum" style="width:120px; height:160px;">
                                 <br>
-                                <input type="radio" id="drum" name="name="washingMachinetype" " value="drum">drum
+                                <input type="radio" id="drum" name="name="washingMachinetype" " value="drum" checked>drum
                             </div>
 
                             <div class="gallery">

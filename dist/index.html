@@ -5,16 +5,75 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <title>Apt Twin</title>
   <LINK href="styles.css" rel="stylesheet" type="text/css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card Example</title>
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 
-<body>
+<body class="bg-gray-50 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <div class="text-center mb-16">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Select one</h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">가상 공간 속 집에 들어가 보세요. 설계, 배치, 탐험까지.</p>
+        </div>
 
-<h1>Select one</h1>
-<ol>
-  <li><a href="editor.html">Editor</a></li>
-  <li><a href="interior.html">Interior<a/></li>
-  <li><a href="player.html">Player</a></li>
-</ol>
+        <!-- Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
+            <!-- Card 1: Editor -->
+            <a href="editor.html" class="group">
+                 <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden max-w-xl mx-auto">
+                    <div class="relative overflow-hidden">
+                        <img 
+                            src="./images/Editor.JPG"
+                            alt="Editor" 
+                            class="w-full h-[28rem] object-cover group-hover:scale-105 transition-transform duration-300"
+                        >
+                    </div>
+                    <div class="p-8">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">EDITOR</h3>
+                        <p class="text-gray-600 text-sm">집 구조를 설계하세요.</p>
+                    </div>
+                </div>
+            </a>
 
+            <!-- Card 2: Interior -->
+            <a href="interior.html" class="group">
+                <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden max-w-lg mx-auto">
+                    <div class="relative overflow-hidden">
+                        <img 
+                            src="./images/Interior.JPG" 
+                            alt="Interior" 
+                            class="w-full h-[28rem] object-cover group-hover:scale-105 transition-transform duration-300"
+                        >
+                    </div>
+                    <div class="p-8">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">INTERIOR</h3>
+                        <p class="text-gray-600 text-sm">가구와 가전을 배치하세요.</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Card 3: Player -->
+            <a href="player.html" class="group">
+                <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden max-w-lg mx-auto">
+                    <div class="relative overflow-hidden">
+                        <img 
+                            src="./images/Player.JPG" 
+                            alt="Player" 
+                            class="w-full h-[28rem] object-cover group-hover:scale-105 transition-transform duration-300"
+                        >
+                    </div>
+                    <div class="p-8">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">PLAYER</h3>
+                        <p class="text-gray-600 text-sm">완성된 집을 둘러보세요.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
 </body>
 </html>

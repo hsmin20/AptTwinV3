@@ -90,7 +90,7 @@ export class Bench {
                             <div class="gallery">
                                 <img src="./images/Bench_White.JPG" alt="white" style="width:160px; height:140px;">
                                 <br>
-                                <input type="radio" id="white" name="cushionColor" value="white">White
+                                <input type="radio" id="white" name="cushionColor" value="white" checked>White
                             </div>
 
                             <div class="gallery">
