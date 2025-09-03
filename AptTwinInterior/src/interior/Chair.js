@@ -1,13 +1,11 @@
 import * as THREE from 'three';
-
 import { AddGroupCommand } from '../../../src_common/commands/AddGroupCommand.js';
 import { RemoveObjectCommand } from '../../../src_common/commands/RemoveObjectCommand.js';
-
 import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class Chair {
     // --- 의자 생성 함수 ---
-    static add_Internal(editor, parent, name, width, height, depth, chairType, oldPos, oldRot, cushionColor) {
+    static add_Internal(editor, parent, name, width, height, depth, chairType, oldPos, oldRot, chairColor) {
         const group = new THREE.Group();
         group.name = name;
         group.userData.isInterior = true;
@@ -18,14 +16,20 @@ export class Chair {
 
         editor.execute(new AddGroupCommand(editor, group, parent));
 
+        // 재질 결정
+        let material;
+        if (chairColor === 'black') {
+            material = new THREE.MeshStandardMaterial({ color: 0x000000 });
+        } else {
+            const whitePlasticTexture = textureHelper.get('WhitePlastic', 1, 1);
+            material = new THREE.MeshStandardMaterial({ map: whitePlasticTexture });
+        }
+
         // 좌석
         const seatHeight = 0.05;
-        let seatTexture = textureHelper.get(chairType, 1, 1);
-        const seatMaterial = new THREE.MeshStandardMaterial({ map: seatTexture });
-
         const seat = new THREE.Mesh(
             new THREE.BoxGeometry(width, seatHeight, depth),
-            seatMaterial
+            material
         );
         seat.name = name + "_Seat";
         seat.position.y = height + seatHeight / 2;
@@ -35,40 +39,34 @@ export class Chair {
         const backrestHeight = 0.44;
         const backrestDepth = 0.05;
 
-        // 상단 가로판
         const backrestTop = new THREE.Mesh(
             new THREE.BoxGeometry(width, 0.21, backrestDepth),
-            seatMaterial
+            material
         );
         backrestTop.name = name + "_BackrestTop";
         backrestTop.position.y = height + seatHeight + backrestHeight - 0.025;
         backrestTop.position.z = -depth / 2 + backrestDepth / 2;
         group.add(backrestTop);
 
-        // 중간 가로판
         const backrestMiddle = new THREE.Mesh(
             new THREE.BoxGeometry(width, 0.05, backrestDepth),
-            seatMaterial
+            material
         );
         backrestMiddle.name = name + "_BackrestMiddle";
-        // 상단과 중간 가로판 사이 간격: 0.2
         backrestMiddle.position.y = backrestTop.position.y - 0.2;
         backrestMiddle.position.z = -depth / 2 + backrestDepth / 2;
         group.add(backrestMiddle);
 
-        // 아래 가로판
         const backrestBottom = new THREE.Mesh(
             new THREE.BoxGeometry(width, 0.05, backrestDepth),
-            seatMaterial
+            material
         );
         backrestBottom.name = name + "_BackrestBottom";
-        // 중간과 아래 가로판 사이 간격: 0.25 (gap 다르게 지정 가능)
         backrestBottom.position.y = backrestMiddle.position.y - 0.1;
         backrestBottom.position.z = -depth / 2 + backrestDepth / 2;
         group.add(backrestBottom);
 
-
-        // 2. 좌우 세로 기둥
+        // 좌우 세로 기둥
         const barHeight = backrestHeight - 0.05;
         const barWidth = 0.05;
         const barOffsetX = width / 2 - barWidth / 2;
@@ -76,7 +74,7 @@ export class Chair {
         for (let i = 0; i < 2; i++) {
             const bar = new THREE.Mesh(
                 new THREE.BoxGeometry(barWidth, barHeight, backrestDepth),
-                seatMaterial
+                material
             );
             bar.name = name + "_BackrestBar" + (i + 1);
             bar.position.x = (i === 0) ? -barOffsetX : barOffsetX;
@@ -84,36 +82,16 @@ export class Chair {
             bar.position.z = -depth / 2 + backrestDepth / 2;
             group.add(bar);
         }
-        // 좌석 쿠션
-        const cushionHeight = 0.03; // 좌석 위로 올라온 높이
-
-        let cushionMaterial;
-        if (cushionColor === 'black') {
-            const blackFabricTexture = textureHelper.get('BlackFabric', 1, 1); 
-            cushionMaterial = new THREE.MeshStandardMaterial({ map: blackFabricTexture });
-        } else {
-            cushionMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-        }
-
-        const seatCushion = new THREE.Mesh(
-            new THREE.BoxGeometry(width, cushionHeight, depth),
-            cushionMaterial
-        );
-
-        seatCushion.position.y = height + seatHeight + cushionHeight / 2; // 좌석 위
-        seatCushion.position.z = 0;
-        group.add(seatCushion);
 
         // 다리
         const legWidth = 0.05;
         const offsetX = width / 2 - legWidth / 2;
         const offsetZ = depth / 2 - legWidth / 2;
-        const legTexture = textureHelper.get('Wood', 1, 4);
 
         for (let i = 0; i < 4; i++) {
             const leg = new THREE.Mesh(
                 new THREE.BoxGeometry(legWidth, height, legWidth),
-                new THREE.MeshStandardMaterial({ map: legTexture })
+                material
             );
             leg.name = name + "_Leg" + (i + 1);
             leg.position.x = (i % 2 === 0) ? -offsetX : offsetX;
@@ -124,7 +102,6 @@ export class Chair {
 
         editor.objectChanged(group);
     }
-
 
     // --- UI 함수 ---
     static add(editor, modify = false) {
@@ -142,18 +119,18 @@ export class Chair {
                     Depth : <input type="text" id="depth" name="depth" value="0.44"></p>
                     <div class="clearfix"></div>
 
-                    <h2>Seat Cushion Color</h2>
+                    <h2>Chair Color</h2>
                       <div style="display:flex; gap:20px;">
                             <div class="gallery">
                                 <img src="./images/Chair_White.JPG" alt="white" style="width:120px; height:140px;">
                                 <br>
-                                <input type="radio" id="white" name="cushionColor" value="white">White
+                                <input type="radio" id="white" name="chairColor" value="white" checked>White
                             </div>
 
                             <div class="gallery">
                                 <img src="./images/Chair_Black.JPG" alt="black" style="width:120px; height:140px;">
                                 <br>
-                                <input type="radio" id="black" name="cushionColor" value="black">Black
+                                <input type="radio" id="black" name="chairColor" value="black">Black
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -165,6 +142,7 @@ export class Chair {
                 <button id="confirmBtn" value="default">Apply</button>
                 </div>
             </form>
+            </dialog>
         `;
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
@@ -197,14 +175,14 @@ export class Chair {
 
             var name = inputNameBox.value;
             const width = parseFloat(widthBox.value);
-            const height = parseFloat(heightBox.value); // 다리 길이
+            const height = parseFloat(heightBox.value);
             const depth = parseFloat(depthBox.value);
             const chairType = 'Wood'; // 무조건 Wood
-            const cushionColor = document.querySelector('input[name=cushionColor]:checked').value;
+            const chairColor = document.querySelector('input[name=chairColor]:checked').value;
 
             document.body.removeChild(dialog);
 
-            this.add_Internal(editor, parent, name, width, height, depth, chairType, oldPos, oldRot, cushionColor);
+            this.add_Internal(editor, parent, name, width, height, depth, chairType, oldPos, oldRot, chairColor);
         });
 
         chairTypeDialog.showModal();
