@@ -71,7 +71,7 @@ export class DiningTable {
                             <div class="gallery">
                                 <img src="./images/DiningTable_Wood.JPG" alt="wood" style="width:160px; height:140px;">
                                 <br>
-                                <input type="radio" id="wood" name="texturetype" value="Wood">Wood
+                                <input type="radio" id="wood" name="texturetype" value="Wood" checked>Wood
                             </div>
 
                             <div class="gallery">

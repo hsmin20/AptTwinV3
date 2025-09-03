@@ -78,7 +78,7 @@ export class CoffeeTable {
                             <div class="gallery">
                                 <img src="./images/CoffeTable_Wood.jpg" alt="wood" style="width:200px; height:120px;">
                                 <br>
-                                <input type="radio" id="wood" name="coffeeTabletype" value="Wood">Wood
+                                <input type="radio" id="wood" name="coffeeTabletype" value="Wood" checked>Wood
                             </div>
 
                             <div class="gallery">

@@ -205,7 +205,7 @@ export class Wardrobe {
                             <div class="gallery">
                                 <img src="./images/Long.JPG" alt="long" style="width:120px; height:180px;">
                                 <br>
-                                <input type="radio" id="long" name="wardrobetype" value="long">Long
+                                <input type="radio" id="long" name="wardrobetype" value="long" checked>Long
                             </div>
 
                             <div class="gallery">

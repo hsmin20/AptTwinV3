@@ -91,7 +91,7 @@ export class TV {
                             <div class="gallery">
                                 <img src="./images/TV_Stand.JPG" alt="StandTV" style="width:150px; height:120px;">
                                 <br>
-                                <input type="radio" id="StandTV" name="tvtype" value="StandTV">Stand TV
+                                <input type="radio" id="StandTV" name="tvtype" value="StandTV" checked>Stand TV
                             </div>
 
                             <div class="gallery">
