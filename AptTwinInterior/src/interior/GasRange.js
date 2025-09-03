@@ -54,26 +54,26 @@ export class GasRange {
                         <p>Name : <input type="text" id="gasRangeName" name="gasRangeName" value="GasRange_1"> </p>
 
                         <h2>Desk size </h2>
-                        <p>Width : <input type="text" id="width" name="width" value="0.597">
-                           Height : <input type="text" id="height" name="height" value="0.12">
-                           Depth : <input type="text" id="depth" name="depth" value="0.510"></p>
+                        <p>Width : <input type="text" id="width" name="width" value="1.0">
+                           Height : <input type="text" id="height" name="height" value="0.10">
+                           Depth : <input type="text" id="depth" name="depth" value="0.40"></p>
                         <div class="clearfix"></div>
                         <h2>Gas Range Option</h2>
                         <div style="display:flex; gap:20px;">
                             <div class="gallery">
-                                <img src="./images/GasRange2Burner.jpg" alt="drum" style="width:120px; height:160px;">
+                                <img src="./images/GasRange2Burner.jpg" alt="GasRange2Burner" style="width:120px; height:160px;">
                                 <br>
-                                <input type="radio" id="drum" name="name="gasRangetype" " value="GasRange2Burner">2 Burners
+                                <input type="radio" id="GasRange2Burner" name="gasRangetype" " value="GasRange2Burner">2 Burners
                             </div>
                             <div class="gallery">
-                                <img src="./images/GasRange3Burner.jpg" alt="topload" style="width:120px; height:160px;">
+                                <img src="./images/GasRange3Burner.jpg" alt="GasRange3Burner" style="width:120px; height:160px;">
                                 <br>
-                                <input type="radio" id="topload" name="name="gasRangetype" " value="GasRange3Burner" checked>3 Burners
+                                <input type="radio" id="GasRange3Burner" name="gasRangetype" " value="GasRange3Burner" checked>3 Burners
                             </div>
                             <div class="gallery">
-                                <img src="./images/GasRange4Burner.jpg" alt="topload" style="width:120px; height:160px;">
+                                <img src="./images/GasRange4Burner.jpg" alt="GasRange4Burner" style="width:120px; height:160px;">
                                 <br>
-                                <input type="radio" id="topload" name="name="gasRangetype" " value="GasRange4Burner">4 Burners
+                                <input type="radio" id="GasRange4Burner" name="gasRangetype" " value="GasRange4Burner">4 Burners
                             </div>
                         </div>
                 </label>
