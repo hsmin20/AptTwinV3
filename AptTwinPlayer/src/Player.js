@@ -297,7 +297,6 @@ export class Player {
 	}
 
     updateScene(data) {       
-        // this.entityManager.updateLight(data); 
-        // this.entityManager.updateMovable(data);
+        this.entityManager.update(data); 
     }
 }

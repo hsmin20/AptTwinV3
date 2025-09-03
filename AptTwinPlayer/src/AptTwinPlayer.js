@@ -90,10 +90,10 @@ async function fetchDataAndUpdateScene() {
     }
 }
 
-function startDataUpdates(intervalMs) {
+export function startDataUpdates(intervalMs) {
     g_intervalId = setInterval(fetchDataAndUpdateScene, intervalMs);
 }
 
-function stopDataUpdates() {
+export function stopDataUpdates() {
     clearInterval(g_intervalId);
 }

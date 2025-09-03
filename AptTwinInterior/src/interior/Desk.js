@@ -58,6 +58,7 @@ export class Desk {
 
         editor.objectChanged(group);
     }
+
     static add(editor, modify=false) {
         const _html = `
             <dialog id="deskTypeDialog">
@@ -74,8 +75,8 @@ export class Desk {
                         <div class="clearfix"></div>
                         <h2>Desk Type </h2>
                         <p>
-                        <input type="radio" id="wood" name="chairtype" value="Wood" checked>Wood
-                        <input type="radio" id="glass" name="chairtype" value="Glass">Glass
+                        <input type="radio" id="wood" name="desktype" value="Wood" checked>Wood
+                        <input type="radio" id="glass" name="desktype" value="Glass">Glass
                         </p>
                 </label>
                 </p>

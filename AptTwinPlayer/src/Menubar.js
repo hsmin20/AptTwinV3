@@ -1,3 +1,5 @@
+import { startDataUpdates } from './AptTwinPlayer.js';
+import { stopDataUpdates } from './AptTwinPlayer.js';
 
 class MenubarTools {
     constructor(player) {
@@ -85,7 +87,7 @@ class MenubarTools {
         option.className = 'option';
         option.textContent = 'Start Timer';
         option.addEventListener( 'click', () => {
-            window.location.href = './editor.html';
+            startDataUpdates();
         } );
         options.appendChild( option );
 
@@ -93,12 +95,9 @@ class MenubarTools {
         option.className = 'option';
         option.textContent = 'Go to Interior';
         option.addEventListener( 'click', () => {
-            window.location.href = './interior.html';
+            stopDataUpdates();
         } );
         options.appendChild( option );
-
-
-
 
         horizontalRule = document.createElement( 'hr' );
         horizontalRule.className = 'HorizontalRule';
