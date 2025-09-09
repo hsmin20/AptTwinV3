@@ -78,7 +78,7 @@ class MenubarTools {
         } );
         options.appendChild( option );
 
-        const horizontalRule = document.createElement( 'hr' );
+        let horizontalRule = document.createElement( 'hr' );
         horizontalRule.className = 'HorizontalRule';
         options.appendChild( horizontalRule );
 
@@ -93,7 +93,7 @@ class MenubarTools {
 
         option = document.createElement( 'div' );
         option.className = 'option';
-        option.textContent = 'Go to Interior';
+        option.textContent = 'Stop Timer';
         option.addEventListener( 'click', () => {
             stopDataUpdates();
         } );

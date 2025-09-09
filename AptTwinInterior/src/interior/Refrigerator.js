@@ -12,6 +12,7 @@ export class Refrigerator {
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'Refrigerator';
+        group.userData.DBid = 'n/a';
 
         if(oldPos != null)
             group.position.copy(oldPos);

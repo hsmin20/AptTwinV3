@@ -159,8 +159,8 @@ export function showTextureImages( cbSetTexture ) {
                     </div>
                     <div class="responsive">
                     <div class="gallery">
-                        <img src="./textures/gasRange.jpg" alt="gasRange" width="60" height="40">
-                        <input type="radio" name="texture" id="gasRange" value="GasRange"/>Gas Range
+                        <img src="./textures/black.jpg" alt="black" width="60" height="40">
+                        <input type="radio" name="texture" id="black" value="Black"/>black
                     </div>
                     </div>
                     <div class="responsive">

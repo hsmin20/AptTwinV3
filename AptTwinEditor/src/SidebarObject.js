@@ -236,13 +236,16 @@ export class SidebarObject {
                     <p>
                     <label>
                         <h1>Add User Data for Door</h1>
-                        <p>Pivot Position </p>
+                        <p>* Pivot Position </p>
                         <p><input type="radio" id="left" name="pivotDir" value="left" checked>Left</p>
                         <p><input type="radio" id="right" name="pivotDir" value="right">Right</p>
 
-                        <p>Open Direction </p>
+                        <p>* Open Direction </p>
                         <p><input type="radio" id="inward" name="openDir" value="inward" checked>Inward</p>
                         <p><input type="radio" id="outward" name="openDir" value="outward">Outward</p>
+
+                        <p>* Update state from DB </p>
+                        <p>Use DBid<input type="checkbox" id="updateable" name="updateable"></p>
                     </label>
                     </p>
                     <div>
@@ -271,6 +274,7 @@ export class SidebarObject {
 
             var pivotDir = document.querySelector('input[name=pivotDir]:checked').value;
             var openDir = document.querySelector('input[name=openDir]:checked').value;
+            var updateable = document.getElementById("updateable").checked;
             document.body.removeChild(dialog)
 
             // temporary obj for userData
@@ -278,6 +282,8 @@ export class SidebarObject {
             obj.userData.type = 'door';
             obj.userData.pivotDir = pivotDir;
             obj.userData.openDir = openDir;
+            if(updateable)
+                obj.userData.DBid = 'n/a';
 
             const userData = obj.userData;
 
@@ -296,9 +302,12 @@ export class SidebarObject {
                     <p>
                     <label>
                         <h1>Add User Data for Window</h1>
-                        <p>Open Direction </p>
+                        <p>* Open Direction </p>
                         <p><input type="radio" id="toRight" name="openDir" value="=>" checked>=></p>
                         <p><input type="radio" id="toLeft" name="openDir" value="<="><=</p>
+
+                        <p>* Update state from DB </p>
+                        <p>Use DBid<input type="checkbox" id="updateable" name="updateable"></p>
                     </label>
                     </p>
                     <div>
@@ -326,12 +335,15 @@ export class SidebarObject {
             event.preventDefault(); // We don't want to submit this fake form
 
             var openDir = document.querySelector('input[name=openDir]:checked').value;
+            var updateable = document.getElementById("updateable").checked;
             document.body.removeChild(dialog)
             
             // temporary obj for userData
             var obj = new THREE.Object3D();
             obj.userData.type = 'window';
             obj.userData.openDir = openDir;
+            if(updateable)
+                obj.userData.DBid = 'n/a';
 
             const userData = obj.userData;
 

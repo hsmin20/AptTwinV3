@@ -21,6 +21,8 @@ import { OfficeChair } from './interior/OfficeChair.js';
 import { AirConditioner } from './interior/AirConditioner.js';
 import { GasRange } from './interior/GasRange.js';
 
+import { showDBidConnection } from './DBidDialog.js';
+
 export class MenubarEdit {
     constructor( editor ) {
         const self = this;
@@ -38,7 +40,7 @@ export class MenubarEdit {
         options.setClass( 'options' );
         this.container.add( options );
 
-        // Room
+        // Funiture
         const funitureSubmenuTitle = new UIRow().setTextContent( 'Funiture' ).addClass( 'option' ).addClass( 'submenu-title' );
         funitureSubmenuTitle.onMouseOver( function () {
             const { top, right } = funitureSubmenuTitle.dom.getBoundingClientRect();
@@ -388,9 +390,60 @@ export class MenubarEdit {
             }
         } );
         options.add( option );
-      
-    }
 
-    }
-    
+        options.add( new UIHorizontalRule() );
 
+         // DB id
+        const DBidSubmenuTitle = new UIRow().setTextContent( 'Connect DB id' ).addClass( 'option' ).addClass( 'submenu-title' );
+        DBidSubmenuTitle.onMouseOver( function () {
+            const { top, right } = DBidSubmenuTitle.dom.getBoundingClientRect();
+            const { paddingTop } = getComputedStyle( this.dom );
+            DBidSubmenu.setLeft( right + 'px' );
+            DBidSubmenu.setTop( top - parseFloat( paddingTop ) + 'px' );
+            DBidSubmenu.setStyle( 'max-height', [ `calc( 100vh - ${top}px )` ] );
+            DBidSubmenu.setDisplay( 'block' );
+        } );
+        DBidSubmenuTitle.onMouseOut( function () {
+            DBidSubmenu.setDisplay( 'none' );
+        } );
+        options.add( DBidSubmenuTitle );
+
+        const DBidSubmenu = new UIPanel().setPosition( 'fixed' ).addClass( 'options' ).setDisplay( 'none' );
+        DBidSubmenuTitle.add( DBidSubmenu );
+
+        // Door DB id
+        option = new UIRow();
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Lights' );
+        option.onClick( function () {
+            showDBidConnection(editorscope, 'lights');
+        } );
+        DBidSubmenu.add( option );
+
+        option = new UIRow();
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Doors' );
+        option.onClick( function () {
+            showDBidConnection(editorscope, 'doors');
+        } );
+        DBidSubmenu.add( option );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Windows' );
+        option.onClick( function () {
+            showDBidConnection(editorscope, 'windows');
+        } );
+        DBidSubmenu.add( option );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Utils' );
+        option.onClick( function () {
+            showDBidConnection(editorscope, 'utils');
+        } );
+        DBidSubmenu.add( option );
+    }
+}
