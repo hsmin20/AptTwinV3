@@ -19,7 +19,7 @@ import { Chair } from './interior/Chair.js';
 import { Bench } from './interior/Bench.js';
 import { OfficeChair } from './interior/OfficeChair.js';
 import { AirConditioner } from './interior/AirConditioner.js';
-
+import { GasRange } from './interior/GasRange.js';
 
 export class MenubarEdit {
     constructor( editor ) {
@@ -346,6 +346,23 @@ export class MenubarEdit {
             }
 
             WashingMachine.add(editorscope);
+        } );
+        applicanceSubmenu.add( option );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Gas Range' );
+        option.onClick( function () {
+            if(editorscope.selected == null) {
+                alert('Select an item first');
+                return;
+            }
+          if(editorscope.selected.type != 'Group') {
+                alert('Select a Group');
+                return;
+            }
+
+            GasRange.add(editorscope);
         } );
         applicanceSubmenu.add( option );
 

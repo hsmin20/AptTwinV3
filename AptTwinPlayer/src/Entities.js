@@ -66,7 +66,7 @@ class Door {
         }
     }
 
-    update(timeElapsed) {
+    run(timeElapsed) {
         let angle = 1;
         if(this.ccw == false)
             angle = -1;
@@ -113,7 +113,7 @@ class Window {
         }
     }
 
-    update(timeElapsed) {
+    run(timeElapsed) {
         if(this.state == 1) {
             if(this.openDir == "=>") {
                 this.object.position.x = Number(this.object.position.x) + 0.01;
@@ -158,7 +158,7 @@ class Drawer {
         }
     }
 
-    update(timeElapsed) {
+    run(timeElapsed) {
         if(this.state == 1) {
             this.object.position.z += 0.01;
 
@@ -233,8 +233,11 @@ export class EntityManager {
     run(delta) {
         for(let i=0; i<this.arAnimEntity.length; i++) {
             let object = this.arAnimEntity[i];
-            object.update(delta);
+            object.run(delta);
         }
     }
-    
+
+    update(data) {
+
+    }
 }

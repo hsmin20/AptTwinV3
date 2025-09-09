@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import { UIPanel, UIRow, UIInput, UICheckbox, UITextArea, UIText, UISelect, UIButton } from '../../src_common/libs/ui.js';
+import { UIPanel, UIRow, UIInput, UICheckbox, UITextArea, UIText, UIButton } from '../../src_common/libs/ui.js';
 import { UIBoolean } from '../../src_common/libs/ui.three.js';
 
 import { SetValueCommand } from '../../src_common/commands/SetValueCommand.js';

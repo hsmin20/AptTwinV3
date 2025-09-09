@@ -295,4 +295,8 @@ export class Player {
 		this.camera.updateProjectionMatrix();
         this.renderer.setSize(this.dom.offsetWidth, this.dom.offsetHeight);
 	}
+
+    updateScene(data) {       
+        this.entityManager.update(data); 
+    }
 }

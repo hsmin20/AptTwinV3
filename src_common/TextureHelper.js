@@ -15,7 +15,8 @@ class TextureHelper {
             ['Mattress', './textures/mattress.jpg'], ['Concrete', './textures/concrete.jpg'], ['GlassDoorLeft', './textures/glassDoorL.jpg'],
             ['GlassDoorRight', './textures/glassDoorR.jpg'], ['PinkPlastic', './textures/pinkPlastic.jpg'], ['PointWall2', './textures/pointwall2.jpg'],
             ['BalconyTile', './textures/balconytile.jpg'], ['KitchenSink', './textures/KitchenSink.jpg'], ['Marble', './textures/marble.jpg'],
-            ['DrawerDoorLeft', './textures/drawerDoorL.jpg'], ['DrawerDoorRight', './textures/drawerDoorR.jpg'], ['GasRange', './textures/gasRange.jpg'],
+            ['DrawerDoorLeft', './textures/drawerDoorL.jpg'], ['DrawerDoorRight', './textures/drawerDoorR.jpg'], ['GasRange2Burner', './textures/2burnerGasRange.jpg'],
+            ['GasRange3Burner', './textures/3burnerGasRange.jpg'], ['GasRange4Burner', './textures/4burnerGasRange.jpg'],
             ['Light1', './textures/light1.jpg'], ['Light2', './textures/light2.jpg'], ['Light3', './textures/light3.jpg'], 
             ['BlackMetal', './textures/blackmetal.jpg'], ['TV', './textures/tv.jpg'], ['FridgeInside', './textures/fridgeInternal.jpg'], 
             ['FridgeInside2', './textures/fridgeInternal2.jpg'], ['FreezerInside', './textures/freezerInternal.jpg'], 
@@ -25,7 +26,8 @@ class TextureHelper {
             ['WashingMachineLeft', './textures/drummachine_left.jpg'], ['WashingMachineRight', './textures/drummachine_right.jpg'], ['TopLoading', './textures/topLoading.jpg'], 
             ['Leather', './textures/leather.jpg'], ['Fabric', './textures/wool.jpg'], ['BlackFabric', './textures/blackfablic.jpg'],
             ['GreyPlastic', './textures/greyPlastic.jpg'], ['AC', './textures/AC.jpg'], ['ACside', './textures/ACside.jpg'], 
-            ['DrawerInside', './textures/drawerInside.jpg'],['WallAC', './textures/WallAC.jpg']
+            ['DrawerInside', './textures/drawerInside.jpg'],['WallAC', './textures/WallAC.jpg'],
+            ['CityView', './backgrounds/cityview.jpg'], ['Downtown', './backgrounds/downtown.jpg'], ['Romania', './backgrounds/romania.jpg']
         ]);
 	}
 

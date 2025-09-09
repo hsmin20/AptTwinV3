@@ -86,7 +86,11 @@ export class Desk {
                             </div>
                         </div>
                         <div class="clearfix"></div>
-
+                        <h2>Desk Type </h2>
+                        <p>
+                        <input type="radio" id="wood" name="desktype" value="Wood" checked>Wood
+                        <input type="radio" id="glass" name="desktype" value="Glass">Glass
+                        </p>
                 </label>
                 </p>
                 <div>
