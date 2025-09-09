@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { UIPanel, UIBreak, UIRow, UIColor, UISelect, UIText, UICheckbox } from '../../src_common/libs/ui.js';
 import { UIOutliner } from '../../src_common/libs/ui.three.js';
 import { UITexture2 } from '../../src_common/libs/ui.three2.js';
-import { showBackgroundImages } from './TextureDialog.js';
+import { showBackgroundImages } from '../../src_common/BackgroundDialog.js';
 
 import { saveState } from './AptTwinEditor.js';
 

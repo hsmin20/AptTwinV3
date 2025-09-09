@@ -12,6 +12,8 @@ export class TV {
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'TV';
+        group.userData.DBid = 'n/a';
+        
         group.position.y = 1.0;
 
         if(oldPos != null)
@@ -45,7 +47,7 @@ export class TV {
         group.children.push( tvFrame );
         tvFrame.parent = group;
 
-        if(tvtype == 'stand') {
+        if(tvtype == 'StandTV') {
             //  add 4 legs
             const radius = 0.01;
             const length = 0.1;

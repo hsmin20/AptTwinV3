@@ -12,6 +12,7 @@ export class GasRange {
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'GasRange';
+        group.userData.DBid = 'n/a';
 
         if(oldPos != null)
             group.position.copy(oldPos);
@@ -53,7 +54,7 @@ export class GasRange {
                     <h1>Add/Change a Gas Range</h1>
                         <p>Name : <input type="text" id="gasRangeName" name="gasRangeName" value="GasRange_1"> </p>
 
-                        <h2>Desk size </h2>
+                        <h2>Gas Range size </h2>
                         <p>Width : <input type="text" id="width" name="width" value="1.0">
                            Height : <input type="text" id="height" name="height" value="0.10">
                            Depth : <input type="text" id="depth" name="depth" value="0.40"></p>

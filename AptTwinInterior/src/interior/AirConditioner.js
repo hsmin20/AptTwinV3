@@ -12,6 +12,7 @@ export class AirConditioner {
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'AC';
+        group.userData.DBid = 'n/a';
 
         if (oldPos) group.position.copy(oldPos);
         if (oldRot) group.rotation.copy(oldRot);

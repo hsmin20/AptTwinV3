@@ -12,6 +12,7 @@ export class WashingMachine {
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'WashingMachine';
+        group.userData.DBid = 'n/a';
 
         if(oldPos != null)
             group.position.copy(oldPos);

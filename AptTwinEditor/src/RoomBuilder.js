@@ -133,6 +133,7 @@ export class RoomBuilder {
          // Add a group first
         const group = new THREE.Group();
 		group.name = parent.name + '_light';
+        group.userData.type = 'light';
 
         this.editor.execute( new AddGroupCommand( this.editor, group, parent ) );
 
@@ -174,7 +175,7 @@ export class RoomBuilder {
 
     addLight(name, xpos, ypos, zpos, width, height, color, parent) {
         const dlight = new THREE.DirectionalLight(color, 1);
-        dlight.name = name + 'directional';
+        dlight.name = name + '_directional';
 		dlight.position.set(xpos, ypos-0.1, zpos);
 		dlight.castShadow = false; // if true, makes it too slow
         
@@ -182,7 +183,7 @@ export class RoomBuilder {
 		dlight.parent = parent;
 
         const light = new THREE.RectAreaLight(color, 1, width, height);
-        light.name = name + 'rectarea';
+        light.name = name + '_rectarea';
         light.rotation.x = Math.PI * -1.5;
 		light.position.set(xpos, ypos-0.2, zpos);
 		light.castShadow = false; // if true, makes it too slow

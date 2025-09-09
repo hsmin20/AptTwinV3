@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+import { GasRangeFlame } from './GasRangeFlame.js';
+
 const Y_AXIS_VECTOR = new THREE.Vector3(0, 1, 0);
 
 function rotateAroundWorldAxis(obj, point, axis, angle) {
@@ -90,6 +92,10 @@ class Door {
 		var pt = pp;
 		rotateAroundWorldAxis(this.object, pt, Y_AXIS_VECTOR, angle * Math.PI / 180.0);
 	}
+
+    update(state) {
+        this.click();
+    }
 }
 
 class Window {
@@ -136,6 +142,10 @@ class Window {
             }
         }
 	}
+
+    update(state) {
+        this.click();
+    }
 }
 
 class Drawer {
@@ -177,6 +187,48 @@ class Drawer {
 	}
 }
 
+class TV extends THREE.Mesh {
+    constructor(width, height, depth) {
+        const videoElement = document.createElement("video");
+        videoElement.src = "./videos/big_buck_bunny.mp4";
+        videoElement.style="display: none;";
+        videoElement.loop = true;
+        videoElement.playsinline = true;
+
+        //Create your video texture:
+        const videoTexture = new THREE.VideoTexture(videoElement);
+        videoTexture.needsUpdate = true;
+        const videoMaterial = new THREE.MeshBasicMaterial({
+            map: videoTexture,
+            side: THREE.FrontSide,
+            toneMapped: false,
+        });
+        videoMaterial.needsUpdate = true;
+
+        //Create screen
+        const screen = new THREE.PlaneGeometry(width-0.02, height-0.02);
+        // const videoScreen = new THREE.Mesh(screen, videoMaterial);
+        super(screen, videoMaterial);
+
+        this.video = videoElement;
+
+        this.name = 'video';
+        this.depth = depth;
+    }
+
+    update(state) {
+        if(state) {
+            this.position.z = this.depth / 2.0 + 0.001;
+            this.video.play();
+            this.playing = true;
+        } else {
+            this.position.z = 0.0;
+            this.video.pause();
+            this.playing = false;
+        }
+    }
+}
+
 export class EntityManager {
     constructor(scene) {
         this.scene = scene;
@@ -184,7 +236,9 @@ export class EntityManager {
         this.arGroup = [];
         this.arAnimEntity = [];
         this.arAnimObj = [];
-        this.map = new Map();
+        this.mapClickable = new Map();
+
+        this.mapUpdateble = new Map();
 
         this.build();
     }
@@ -201,18 +255,56 @@ export class EntityManager {
                     let door = new Door(object);
                     scope.arAnimEntity.push(door);
                     scope.arAnimObj.push(object);
-                    scope.map.set(object, door);
+                    scope.mapClickable.set(object, door);
+
+                    const DBid = object.userData.DBid;
+                    if(DBid != undefined) {
+                        scope.mapUpdateble.set(DBid, door);
+                    }
                 } else if(type == 'window') {
                     let window = new Window(object);
                     scope.arAnimEntity.push(window);
                     scope.arAnimObj.push(object);
-                    scope.map.set(object, window);
+                    scope.mapClickable.set(object, window);
+
+                    const DBid = object.userData.DBid;
+                    if(DBid != undefined) {
+                        scope.mapUpdateble.set(DBid, window);
+                    }
                 } else if(type == 'drawer') {
                     let drawer = new Drawer(object);
                     scope.arAnimEntity.push(drawer);
                     scope.arAnimObj.push(object);
-                    scope.map.set(object, drawer);
+                    scope.mapClickable.set(object, drawer);
                 }
+            }
+
+            if(object.userData?.interiorType == 'GasRange') {
+                const height = object.children[0].geometry.parameters.height;
+                const flame = new GasRangeFlame(object.name+'flame', 0.25, height, -0.04, 0.05, object);
+                scope.arAnimEntity.push(flame);
+
+                const DBid = object.userData.DBid;
+                if(DBid != undefined) {
+                    scope.mapUpdateble.set(DBid, flame);
+                }
+            }
+
+            if(object.userData?.interiorType == 'TV') {
+                const width = object.children[0].geometry.parameters.width;
+                const height = object.children[0].geometry.parameters.height;
+                const depth = object.children[0].geometry.parameters.depth;
+
+                const tv = new TV(width, height, depth);
+                object.add(tv);
+
+                const DBid = object.userData.DBid;
+                if(DBid != undefined) {
+                    scope.mapUpdateble.set(DBid, tv);
+                }
+
+                // scope.arAnimObj.push(object);
+                // scope.mapClickable.set(object.children[0], tv); // Why? I don't get it....
             }
         });
     }
@@ -225,7 +317,7 @@ export class EntityManager {
         let intersects = raycaster.intersectObjects(this.arAnimObj);
         if (intersects.length > 0) {
             const obj = intersects[0].object;
-            const entity = this.map.get(obj);
+            const entity = this.mapClickable.get(obj);
             entity.click();
         }
 	}
@@ -238,6 +330,8 @@ export class EntityManager {
     }
 
     update(data) {
-
+       
+        const obj = this.mapUpdateble.get(id);
+        obj.update(state);
     }
 }

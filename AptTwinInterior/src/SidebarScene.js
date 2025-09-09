@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 
 import { UIPanel, UIBreak, UIRow, UIColor, UISelect, UIText, UICheckbox } from '../../src_common/libs/ui.js';
-import { UIOutliner, UITexture } from '../../src_common/libs/ui.three.js';
+import { UIOutliner } from '../../src_common/libs/ui.three.js';
+import { UITexture2 } from '../../src_common/libs/ui.three2.js';
+import { showBackgroundImages } from '../../src_common/BackgroundDialog.js';;
 
 import { saveState } from './AptTwinInterior.js';
 
@@ -56,11 +58,11 @@ export class SidebarScene {
         this.backgroundColor = new UIColor().setValue( '#000000' ).setMarginLeft( '8px' ).onInput( backgroundChangedFunc );
         backgroundRow.add( this.backgroundColor );
 
-        this.backgroundTexture = new UITexture( editor ).setMarginLeft( '8px' ).onChange( backgroundChangedFunc );
+        this.backgroundTexture = new UITexture2( showBackgroundImages ).onChange( backgroundChangedFunc );
         this.backgroundTexture.setDisplay( 'none' );
         backgroundRow.add( this.backgroundTexture );
 
-        this.backgroundEquirectangularTexture = new UITexture( editor ).setMarginLeft( '8px' ).onChange( backgroundChangedFunc );
+        this.backgroundEquirectangularTexture = new UITexture2( showBackgroundImages ).onChange( backgroundChangedFunc );
         this.backgroundEquirectangularTexture.setDisplay( 'none' );
         backgroundRow.add( this.backgroundEquirectangularTexture );
 

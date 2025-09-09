@@ -19,14 +19,14 @@ class TextureHelper {
             ['GasRange3Burner', './textures/3burnerGasRange.jpg'], ['GasRange4Burner', './textures/4burnerGasRange.jpg'],
             ['Light1', './textures/light1.jpg'], ['Light2', './textures/light2.jpg'], ['Light3', './textures/light3.jpg'], 
             ['BlackMetal', './textures/blackmetal.jpg'], ['TV', './textures/tv.jpg'], ['FridgeInside', './textures/fridgeInternal.jpg'], 
-            ['FridgeInside2', './textures/fridgeInternal2.jpg'], ['FreezerInside', './textures/freezerInternal.jpg'], 
+            ['FridgeInside2', './textures/fridgeInternal2.jpg'], ['FreezerInside', './textures/freezerInternal.jpg'], ['Black', './textures/black.jpg'],
             ['FridgeDoorL', './textures/fridgeDoorL.jpg'], ['FridgeDoorR', './textures/fridgeDoorR.jpg'], ['Shiny', './textures/shiny.jpg'],
             ['Glass', './textures/glass.jpg'], ['WhiteWood', './textures/whitewood.jpg'], ['WhitePlastic', './textures/whitePlastic.jpg'], 
             ['DrawerDoorFront', './textures/drawerFront.jpg'], ['DrumMachineFront', './textures/drummachine_front.jpg'], ['WashingMachineBack', './textures/drummachine_back.jpg'], 
             ['WashingMachineLeft', './textures/drummachine_left.jpg'], ['WashingMachineRight', './textures/drummachine_right.jpg'], ['TopLoading', './textures/topLoading.jpg'], 
             ['Leather', './textures/leather.jpg'], ['Fabric', './textures/wool.jpg'], ['BlackFabric', './textures/blackfablic.jpg'],
             ['GreyPlastic', './textures/greyPlastic.jpg'], ['AC', './textures/AC.jpg'], ['ACside', './textures/ACside.jpg'], 
-            ['DrawerInside', './textures/drawerInside.jpg'],['WallAC', './textures/WallAC.jpg'],
+            ['DrawerInside', './textures/drawerInside.jpg'],['WallAC', './textures/WallAC.jpg'], ['Fire', './textures/Fire.png'],
             ['CityView', './backgrounds/cityview.jpg'], ['Downtown', './backgrounds/downtown.jpg'], ['Romania', './backgrounds/romania.jpg']
         ]);
 	}

@@ -137,7 +137,6 @@ export class Player {
     }
 
     setScene(scene) {
-
 		this.scene.uuid = scene.uuid;
 		this.scene.name = scene.name;
 
