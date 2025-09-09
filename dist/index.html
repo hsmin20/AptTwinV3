@@ -1,31 +1,39 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="ko">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <title>Apt Twin</title>
-  <LINK href="styles.css" rel="stylesheet" type="text/css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Card Example</title>
   <!-- TailwindCSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-
+  <script src="index.js"></script>
 </head>
 
 <body class="bg-gray-50 py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
         <!-- Header Section -->
-        <div class="text-center mb-16">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">Select one</h1>
-            <p class="text-gray-600 text-lg max-w-2xl mx-auto">가상 공간 속 집에 들어가 보세요. 설계, 배치, 탐험까지.</p>
+        <div class="relative mb-16">
+            <!-- 제목 중앙 정렬 -->
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Select one</h1>
+                <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                    가상 공간 속 집에 들어가 보세요. 설계, 배치, 탐험까지.
+                </p>
+            </div>
+
+            <!-- 로그인 버튼 (오른쪽 상단 고정) -->
+            <div id="loginStatus" class="absolute top-0 right-0 px-6 py-2 text-sm font-semibold text-white bg-blue-600 rounded-xl shadow hover:bg-blue-700 transition">
+            <button id="loginBtn">로그인</button>
+            </div>
         </div>
 
         <!-- Cards Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
             <!-- Card 1: Editor -->
             <a href="editor.html" class="group">
-                 <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden max-w-xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden max-w-xl mx-auto">
                     <div class="relative overflow-hidden">
                         <img 
                             src="./images/Editor.JPG"
@@ -75,5 +83,29 @@
             </a>
         </div>
     </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const loginStatus = document.getElementById("loginStatus");
+        const loginBtn = document.getElementById("loginBtn");
+        const userId = localStorage.getItem("userid");
+
+        if (userId) {
+            // 로그인 상태 → "OOO님 로그아웃" 텍스트로 표시
+            loginStatus.innerHTML = `${userId}님 로그아웃`;
+
+            // 클릭 시 로그아웃 처리
+            loginStatus.addEventListener("click", () => {
+                localStorage.removeItem("userid");
+                window.location.reload(); // 새로고침 후 로그인 버튼으로 돌아감
+            });
+
+        } else {
+            // 로그인 안 됐으면 버튼 클릭 시 login.html 이동
+            loginBtn.addEventListener("click", () => {
+                window.location.href = "login.html";
+            });
+        }
+    });
+    </script>
 </body>
 </html>
