@@ -234,7 +234,7 @@ export class Wardrobe {
         const widthBox = document.getElementById("width");
         const heightBox = document.getElementById("height");
         const depthBox = document.getElementById("depth");
-        const noOfDrawersBox = document.getElementById("noOfDrawers");
+        // const noOfDrawersBox = document.getElementById("noOfDrawers");
 
         const confirmBtn = wardrobeTypeDialog.querySelector("#confirmBtn");
 
@@ -264,7 +264,7 @@ export class Wardrobe {
             const height = parseFloat(heightBox.value);
             const depth = parseFloat(depthBox.value);
             const wardrobetype = document.querySelector('input[name=wardrobetype]:checked').value;
-            const noOfDrawers = parseInt(noOfDrawersBox.value);
+            const noOfDrawers = 3; //parseInt(noOfDrawersBox.value);
 
             document.body.removeChild(dialog)
             

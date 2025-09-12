@@ -46,6 +46,9 @@ class Door {
     }
 
     click() {
+        if(this.state == 1 || this.state == 3)
+            return;
+
         this.rotated = 0;
         if(this.state == 0) {
             let xoffset = this.hingex * this.width/2;
@@ -69,9 +72,9 @@ class Door {
     }
 
     run(timeElapsed) {
-        let angle = 1;
+        let angle = 2;
         if(this.ccw == false)
-            angle = -1;
+            angle = -2;
 		if(this.state == 1) {
             this.rotateAroundAxis(this.pivotPos, angle);
             this.rotated += angle;
@@ -111,6 +114,9 @@ class Window {
     }
 
     click() {
+        if(this.state == 1 || this.state == 3)
+            return;
+
         this.moved = 0;
         if(this.state == 0) {
             this.state = 1; // 1 is opening
@@ -122,21 +128,21 @@ class Window {
     run(timeElapsed) {
         if(this.state == 1) {
             if(this.openDir == "=>") {
-                this.object.position.x = Number(this.object.position.x) + 0.01;
+                this.object.position.x = Number(this.object.position.x) + 0.02;
             } else if(this.openDir == "<=")
-                this.object.position.x -= 0.01;
+                this.object.position.x -= 0.02;
 
-            this.moved +=  0.01;
+            this.moved +=  0.02;
             if(this.moved >= this.width) {
                 this.state = 2; // 2 is opened
             }
         } else if(this.state == 3) {
             if(this.openDir == "=>")
-                this.object.position.x -= 0.01;
+                this.object.position.x -= 0.02;
             else if(this.openDir == "<=")
-                this.object.position.x += 0.01;
+                this.object.position.x += 0.02;
 
-            this.moved += 0.01;
+            this.moved += 0.02;
             if(this.moved >= this.width) {
                 this.state = 0;
             }
@@ -160,6 +166,9 @@ class Drawer {
     }
 
     click() {
+        if(this.state == 1 || this.state == 3)
+            return;
+
         this.moved = 0;
         if(this.state == 0) {
             this.state = 1; // 1 is opening
@@ -170,16 +179,16 @@ class Drawer {
 
     run(timeElapsed) {
         if(this.state == 1) {
-            this.object.position.z += 0.01;
+            this.object.position.z += 0.02;
 
-            this.moved +=  0.01;
+            this.moved +=  0.02;
             if(this.moved >= this.depth) {
                 this.state = 2; // 2 is opened
             }
         } else if(this.state == 3) {
-            this.object.position.z -= 0.01;
+            this.object.position.z -= 0.02;
 
-            this.moved += 0.01;
+            this.moved += 0.02;
             if(this.moved >= this.depth) {
                 this.state = 0;
             }
@@ -259,7 +268,7 @@ export class EntityManager {
 
                     const DBid = object.userData.DBid;
                     if(DBid != undefined) {
-                        scope.mapUpdateble.set(DBid, door);
+                        scope.mapUpdateble.set('door'+DBid, door);
                     }
                 } else if(type == 'window') {
                     let window = new Window(object);
@@ -269,7 +278,7 @@ export class EntityManager {
 
                     const DBid = object.userData.DBid;
                     if(DBid != undefined) {
-                        scope.mapUpdateble.set(DBid, window);
+                        scope.mapUpdateble.set('window'+DBid, window);
                     }
                 } else if(type == 'drawer') {
                     let drawer = new Drawer(object);
@@ -286,7 +295,7 @@ export class EntityManager {
 
                 const DBid = object.userData.DBid;
                 if(DBid != undefined) {
-                    scope.mapUpdateble.set(DBid, flame);
+                    scope.mapUpdateble.set('util'+DBid, flame);
                 }
             }
 
@@ -300,11 +309,8 @@ export class EntityManager {
 
                 const DBid = object.userData.DBid;
                 if(DBid != undefined) {
-                    scope.mapUpdateble.set(DBid, tv);
+                    scope.mapUpdateble.set('util'+DBid, tv);
                 }
-
-                // scope.arAnimObj.push(object);
-                // scope.mapClickable.set(object.children[0], tv); // Why? I don't get it....
             }
         });
     }
@@ -330,8 +336,38 @@ export class EntityManager {
     }
 
     update(data) {
-       
-        const obj = this.mapUpdateble.get(id);
-        obj.update(state);
+        const MAX_NUM = 32;
+        const lights = data['light'];
+        for(let i=0; i<MAX_NUM; i++) {
+            const id = 'light' + i
+            const val = (lights >> i) & 1;
+            const obj = this.mapUpdateble.get(id);
+            if(obj != undefined)
+                obj.update(val);
+        }
+        const doors = data['door'];
+        for(let i=0; i<MAX_NUM; i++) {
+            const id = 'door' + i
+            const val = (doors >> i) & 1;
+            const obj = this.mapUpdateble.get(id);
+            if(obj != undefined)
+                obj.update(val);
+        }
+        const windows = data['window'];
+        for(let i=0; i<MAX_NUM; i++) {
+            const id = 'window' + i
+            const val = (windows >> i) & 1;
+            const obj = this.mapUpdateble.get(id);
+            if(obj != undefined)
+                obj.update(val);
+        }
+        const utils = data['util'];
+        for(let i=0; i<MAX_NUM; i++) {
+            const id = 'util' + i
+            const val = (utils >> i) & 1;
+            const obj = this.mapUpdateble.get(id);
+            if(obj != undefined)
+                obj.update(val);
+        }
     }
 }

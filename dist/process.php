@@ -8,8 +8,8 @@
         // mssql
         $connectionInfo = array("UID"=>$user, "PWD"=>$pass, "Database"=>$dbname, "TrustServerCertificate" => "True");
         $conn = sqlsrv_connect($host, $connectionInfo);
-        // $query = "SELECT Top 1 entryDoor,room1Light,room2Light,room3Light,livingroomLight,kitchenLight,bathroomLight,livingroomTV,robotVacuum FROM $tblname order by id desc";
-        $query = "SELECT Top 1 entryDoor,room1Light,room2Light,room3Light,livingroomLight,kitchenLight,bathroomLight,livingroomTV,robotVacuum FROM $tblname order by newid()";
+       
+        $query = "SELECT Top 1 light, door, window, util FROM $tblname order by newid()";
 		
 		$result = sqlsrv_query($conn, $query);
 
@@ -17,7 +17,7 @@
             die( print_r( sqlsrv_errors(), true) );
         }
 		
-		$colNames = [ "entryDoor", "room1Light", "room2Light", "room3Light", "livingroomLight", "kitchenLight", "bathroomLight", "livingroomTV", "robotVacuum" ];
+		$colNames = [ "light", "door", "window", "util" ];
         $noOfCols = count($colNames);
         $data = "";
         while( $row = sqlsrv_fetch_array( $result, SQLSRV_FETCH_NUMERIC))  

@@ -1,5 +1,4 @@
-import { startDataUpdates } from './AptTwinPlayer.js';
-import { stopDataUpdates } from './AptTwinPlayer.js';
+import { startDataUpdates, stopDataUpdates, changeView } from './AptTwinPlayer.js';
 
 class MenubarTools {
     constructor(player) {
@@ -78,28 +77,7 @@ class MenubarTools {
         } );
         options.appendChild( option );
 
-        let horizontalRule = document.createElement( 'hr' );
-        horizontalRule.className = 'HorizontalRule';
-        options.appendChild( horizontalRule );
-
-        // Fetch Database and update / Stop
-        option = document.createElement( 'div' );
-        option.className = 'option';
-        option.textContent = 'Start Timer';
-        option.addEventListener( 'click', () => {
-            startDataUpdates();
-        } );
-        options.appendChild( option );
-
-        option = document.createElement( 'div' );
-        option.className = 'option';
-        option.textContent = 'Stop Timer';
-        option.addEventListener( 'click', () => {
-            stopDataUpdates();
-        } );
-        options.appendChild( option );
-
-        horizontalRule = document.createElement( 'hr' );
+        var horizontalRule = document.createElement( 'hr' );
         horizontalRule.className = 'HorizontalRule';
         options.appendChild( horizontalRule );
 
@@ -119,6 +97,41 @@ class MenubarTools {
             window.location.href = './interior.html';
         } );
         options.appendChild( option );
+    }
+}
+
+class MenubarUpdate {
+    constructor(player) {
+        this.dom = document.createElement( 'div' );
+        this.dom.className = 'menu';
+        this.updating = false;
+
+        const title = document.createElement( 'div' );
+        title.className = 'title';
+        title.textContent = 'Update';
+        title.addEventListener( 'click', function () {
+            if(this.updating == false)
+                startDataUpdates(10000);
+            else
+                stopDataUpdates();
+            this.updating = !this.updating;
+        } );
+        this.dom.appendChild( title );
+    }
+}
+
+class MenubarView {
+    constructor(player) {
+        this.dom = document.createElement( 'div' );
+        this.dom.className = 'menu';
+
+        const title = document.createElement( 'div' );
+        title.className = 'title';
+        title.textContent = 'View';
+        title.addEventListener( 'click', function () {
+            changeView();
+        } );
+        this.dom.appendChild( title );
     }
 }
 
@@ -144,6 +157,8 @@ export class Menubar {
         this.dom.id = 'menubar';
 
         this.dom.appendChild( new MenubarTools(player).dom );
+        this.dom.appendChild( new MenubarUpdate(player).dom );
+        this.dom.appendChild( new MenubarView(player).dom );
         this.dom.appendChild( new MenubarHelp(player).dom );
     }
 }
