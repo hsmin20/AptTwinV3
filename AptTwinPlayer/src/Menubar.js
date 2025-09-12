@@ -109,12 +109,17 @@ class MenubarUpdate {
         const title = document.createElement( 'div' );
         title.className = 'title';
         title.textContent = 'Update';
+
+        let scope = this;
         title.addEventListener( 'click', function () {
-            if(this.updating == false)
+            scope.updating = !scope.updating;
+            if(scope.updating) {
                 startDataUpdates(10000);
-            else
+                alert('House update started')
+            } else {
                 stopDataUpdates();
-            this.updating = !this.updating;
+                alert('House update stopped')
+            }
         } );
         this.dom.appendChild( title );
     }

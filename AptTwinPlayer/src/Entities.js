@@ -202,6 +202,7 @@ class TV extends THREE.Mesh {
         videoElement.src = "./videos/big_buck_bunny.mp4";
         videoElement.style="display: none;";
         videoElement.loop = true;
+        videoElement.muted = true;
         videoElement.playsinline = true;
 
         //Create your video texture:
