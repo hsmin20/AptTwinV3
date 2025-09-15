@@ -11,7 +11,11 @@ export class WashingMachine {
         const group = new THREE.Group();
         group.name = name;
         group.userData.isInterior = true;
-        group.userData.interiorType = 'WashingMachine';
+        if(washingMachinetype == 'drum') {
+            group.userData.interiorType = 'WashingMachine1';
+        } else {
+            group.userData.interiorType = 'WashingMachine2';
+        }
         group.userData.DBid = 'n/a';
 
         if(oldPos != null)
@@ -71,13 +75,13 @@ export class WashingMachine {
                             <div class="gallery">
                                 <img src="./images/drummachine_front.jpg" alt="drum" style="width:120px; height:160px;">
                                 <br>
-                                <input type="radio" id="drum" name="name="washingMachinetype" " value="drum" checked>drum
+                                <input type="radio" id="drum" name="washingMachinetype" " value="drum" checked>drum
                             </div>
 
                             <div class="gallery">
                                 <img src="./images/topLoading.jpg" alt="topload" style="width:120px; height:160px;">
                                 <br>
-                                <input type="radio" id="topload" name="name="washingMachinetype" " value="topload">topload
+                                <input type="radio" id="topload" name="washingMachinetype" " value="topload">topload
                             </div>
                         </div>
                 </label>
@@ -126,7 +130,7 @@ export class WashingMachine {
             const width = parseFloat(widthBox.value);
             const height = parseFloat(heightBox.value);
             const depth = parseFloat(depthBox.value);
-           const washingMachinetype = document.querySelector('input[name=washingMachinetype]:checked').value;
+            const washingMachinetype = document.querySelector('input[name=washingMachinetype]:checked').value;
 
             document.body.removeChild(dialog)
             

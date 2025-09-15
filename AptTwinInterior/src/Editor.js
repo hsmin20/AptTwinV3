@@ -214,19 +214,7 @@ export class Editor {
 		};
 	}
 
-	toJSON2 () {
-		let json =  {
-			metadata: {},
-			camera: this.camera.toJSON(),
-			scene: this.scene.toJSON()
-		};
-
-        let textures = json.scene.textures;
-        let images = json.scene.images;
-        if(textures == undefined || images == undefined)
-            return json;
-
-        // replace base64 encoded image to file path
+    replaceImageToFilepath(textures, images) {
         textures.forEach(function(texture) {
             const imageUUID = texture.image;
 
@@ -242,8 +230,9 @@ export class Editor {
                 }
             });
         });
+    }
 
-        // remove duplicate entries in images
+    removeDuplicate(textures, images) {
         let imageMap = new Map();
         let uuidArray = [];
         images.forEach(function(image) {
@@ -272,9 +261,68 @@ export class Editor {
                 images.splice(index, 1);
             }
         }
+    }
+
+	toJSON2 () {
+		let json =  {
+			metadata: {},
+			camera: this.camera.toJSON(),
+			scene: this.scene.toJSON()
+		};
+
+        let textures = json.scene.textures;
+        let images = json.scene.images;
+        if(textures == undefined || images == undefined)
+            return json;
+
+        // replace base64 encoded image to file path
+        this.replaceImageToFilepath(textures, images);
+
+        // remove duplicate entries in images
+        this.removeDuplicate(textures, images);
 
         return json;
 	}
+
+    interiorFromJSON(json) {
+        const loader = new THREE.ObjectLoader();
+        // let scope = this;
+        // loader.load(json, function (obj) {
+        //     scope.scene.add( obj );
+        // });
+
+        const object = loader.parse( json );
+        this.scene.add(object);
+    }
+    
+    interiorToJSON() {
+        var arr = [];
+        this.scene.traverse(function(object) {
+            if(object.type == 'Group' && object.userData?.isInterior == true) {
+                arr.push(object);
+            }
+        });
+
+        var interiorObjs = new THREE.Group();
+        for(let i=0; i<arr.length; i++) {
+            const obj = arr[i];
+            interiorObjs.add(obj);
+        }
+
+        var jsonObjects = interiorObjs.toJSON();
+        let textures = jsonObjects.textures;
+        let images = jsonObjects.images;
+        if(textures == undefined || images == undefined)
+            return jsonObjects;
+
+        // replace base64 encoded image to file path
+        this.replaceImageToFilepath(textures, images);
+
+        // remove duplicate entries in images
+        this.removeDuplicate(textures, images);
+
+        return jsonObjects;
+    }
 
     execute( cmd, optionalName ) {
 		this.history.execute( cmd, optionalName );

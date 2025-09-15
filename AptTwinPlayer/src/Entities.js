@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import { GasRangeFlame } from './GasRangeFlame.js';
+import { textureHelper } from '../../src_common/TextureHelper.js';
 
 const Y_AXIS_VECTOR = new THREE.Vector3(0, 1, 0);
 
@@ -230,11 +231,61 @@ class TV extends THREE.Mesh {
         if(state) {
             this.position.z = this.depth / 2.0 + 0.001;
             this.video.play();
-            this.playing = true;
         } else {
             this.position.z = 0.0;
             this.video.pause();
-            this.playing = false;
+        }
+    }
+}
+
+class WashingMachine extends THREE.Mesh {
+    constructor(type, width, height, depth) {
+        // Create Cylinder for animation
+        const radius = (width / 2.0) - 0.1;
+        const cyl_height = 0.01; // small number
+
+        const geometry = new THREE.CylinderGeometry(radius, radius, cyl_height);
+        let tubTexture = textureHelper.get('Laundry', 1, 1);
+        const material = new THREE.MeshStandardMaterial( { map: tubTexture} );
+
+        super(geometry, material);
+
+        this.type = type;
+        this.height = height;
+        this.depth = depth;
+
+        if(this.type == 0) {
+            this.position.y = this.height / 2.0;
+            this.rotation.x = Math.PI / 2.0;
+        }
+
+        this.running = false;
+        this.angle = Math.PI * 2 / 36;
+    }
+
+    update(state) {
+        this.running = !this.running;
+        if(this.running) {
+            if(this.type == 0) {
+                this.position.z = this.depth / 2.0;
+            } else {
+                this.position.y = this.height;
+            }
+        } else {
+            if(this.type == 0) {
+                this.position.z = 0.0;
+            } else {
+                this.position.y = this.height/2.0;
+            }
+        }
+    }
+
+    run(timeElapsed) {
+        if(this.running) {
+            this.rotation.y += this.angle;
+
+            if(this.angle > Math.PI)
+                this.angle = 0;
         }
     }
 }
@@ -311,6 +362,25 @@ export class EntityManager {
                 const DBid = object.userData.DBid;
                 if(DBid != undefined) {
                     scope.mapUpdateble.set('util'+DBid, tv);
+                }
+            }
+
+            if(object.userData?.interiorType == 'WashingMachine1' || object.userData?.interiorType == 'WashingMachine2') {
+                const width = object.children[0].geometry.parameters.width;
+                const height = object.children[0].geometry.parameters.height;
+                const depth = object.children[0].geometry.parameters.depth;
+                let type = 0; // Drum type
+                if(object.userData?.interiorType == 'WashingMachine2') {
+                    type = 1; // Top Loading
+                }
+
+                const washingMachine = new WashingMachine(type, width, height, depth);
+                object.add(washingMachine);
+                scope.arAnimEntity.push(washingMachine);
+
+                const DBid = object.userData.DBid;
+                if(DBid != undefined) {
+                    scope.mapUpdateble.set('util'+DBid, washingMachine);
                 }
             }
         });
