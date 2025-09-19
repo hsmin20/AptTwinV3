@@ -398,13 +398,16 @@ export class EntityManager {
                 }
             }
 
-            if(object.userData?.interiorType == 'RobotVacuum') {
-                const robotVacuum = new MovingObject(object.children[0]);
-                object.add(robotVacuum);
+            if(object.userData?.interiorType != undefined) {
+                const it = object.userData.interiorType;
+                if(it == 'RobotVacuum' || it == 'Cat' || it == 'Dog') {
+                    const movable = new MovingObject(object.children[0]);
+                    object.add(movable);
 
-                const DBid = object.userData.DBid;
-                if(DBid != undefined) {
-                    scope.mapUpdateble.set('moving'+DBid, robotVacuum);
+                    const DBid = object.userData.DBid;
+                    if(DBid != undefined) {
+                        scope.mapUpdateble.set('moving'+DBid, movable);
+                    }
                 }
             }
         });

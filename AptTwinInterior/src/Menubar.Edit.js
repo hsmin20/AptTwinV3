@@ -21,6 +21,8 @@ import { OfficeChair } from './interior/OfficeChair.js';
 import { AirConditioner } from './interior/AirConditioner.js';
 import { GasRange } from './interior/GasRange.js';
 import { RobotVacuum } from './interior/RobotVacuum.js';
+import { Dog } from './interior/Dog.js';
+import { Cat } from './interior/Cat.js';
 
 import { showDBidConnection } from './DBidDialog.js';
 
@@ -334,6 +336,14 @@ export class MenubarEdit {
         option.setTextContent( 'Utils' );
         option.onClick( function () {
             showDBidConnection(editorscope, 'utils');
+        } );
+        DBidSubmenu.add( option );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Pets' );
+        option.onClick( function () {
+            showDBidConnection(editorscope, 'pets');
         } );
         DBidSubmenu.add( option );
     }

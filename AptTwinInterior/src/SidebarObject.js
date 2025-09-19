@@ -26,6 +26,8 @@ import { OfficeChair } from './interior/OfficeChair.js';
 import { AirConditioner } from './interior/AirConditioner.js';
 import { GasRange } from './interior/GasRange.js';
 import { RobotVacuum } from './interior/RobotVacuum.js';
+import { Dog } from './interior/Dog.js';
+import { Cat } from './interior/Cat.js';
 
 export class SidebarObject {
     constructor(editor) {
@@ -161,6 +163,10 @@ export class SidebarObject {
                 GasRange.add(editor, true);
             } else if(type == 'RobotVacuum') {
                 RobotVacuum.add(editor, true);
+            } else if(type == 'Dog') {
+                Dog.add(editor, true);
+            }  else if(type == 'Cat') {
+                Cat.add(editor, true);
             } else {
                 alert('No Modification applicable');
             }
