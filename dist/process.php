@@ -9,11 +9,11 @@
         $connectionInfo = array("UID"=>$user, "PWD"=>$pass, "Database"=>$dbname, "TrustServerCertificate" => "True");
         $conn = sqlsrv_connect($host, $connectionInfo);
        
-        $query = "SELECT Top 1 lights0,lights1,lights2,lights3,lights4,lights5,lights6,lights7,lights8,lights9,doors0,doors1,doors2,
-                                doors3,doors4,doors5,doors6,doors7,doors8,doors9,windows0,windows1,windows2,windows3,windows4,
-                                windows5,windows6,windows7,windows8,windows9,utils0,utils1,utils2,utils3,utils4,utils5,utils6,utils7,
-                                utils8,utils9,movings0x,movings0z,movings1x,movings1z,movings2x,movings2z,movings3x,movings3z,
-                                movings4x,movings4z FROM $tblname order by newid()";
+        $query = "SELECT Top 1 light1,light2,light3,light4,light5,light6,light7,light8,light9,light10,door1,door2,
+                                door3,door4,door5,door6,door7,door8,door9,door10,window1,window2,window3,window4,
+                                window5,window6,window7,window8,window9,window10,util1,util2,util3,util4,util5,util6,util7,
+                                util8,util9,util10,moving1x,moving1z,moving2x,moving2z,moving3x,moving3z,
+                                moving4x,moving4z,moving5x,moving5z FROM $tblname order by newid()";
 		
 		$result = sqlsrv_query($conn, $query);
 
@@ -22,19 +22,19 @@
         }
 		
 		$colNames = [];
-        for($i=0; $i<10; $i++) {
+        for($i=1; $i<=10; $i++) {
             array_push($colNames, "light".$i."");
         }
-        for($i=0; $i<10; $i++) {
+        for($i=1; $i<=10; $i++) {
             array_push($colNames, "door".$i."");
         }
-        for($i=0; $i<10; $i++) {
+        for($i=1; $i<=10; $i++) {
             array_push($colNames, "window".$i."");
         }
-        for($i=0; $i<10; $i++) {
+        for($i=1; $i<=10; $i++) {
             array_push($colNames, "util".$i."");
         }
-        for($i=0; $i<5; $i++) {
+        for($i=1; $i<=5; $i++) {
             array_push($colNames, "moving".$i."x");
             array_push($colNames, "moving".$i."z");
         }

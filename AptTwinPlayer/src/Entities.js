@@ -290,7 +290,7 @@ class WashingMachine extends THREE.Mesh {
     }
 }
 
-class MovingObject extends THREE.Mesh {
+class MovingObject {
     constructor(object) {
         this.object = object;
 
@@ -401,7 +401,7 @@ export class EntityManager {
             if(object.userData?.interiorType != undefined) {
                 const it = object.userData.interiorType;
                 if(it == 'RobotVacuum' || it == 'Cat' || it == 'Dog') {
-                    const movable = new MovingObject(object.children[0]);
+                    const movable = new MovingObject(object);
                     object.add(movable);
 
                     const DBid = object.userData.DBid;
@@ -436,35 +436,35 @@ export class EntityManager {
     update(data) {
         const MAX_NUM = 10;
         const HALF_NUM = 5;
-        for(let i=0; i<MAX_NUM; i++) {
+        for(let i=1; i<=MAX_NUM; i++) {
             const id = 'light'+ i;
             const val = data[id];
             const obj = this.mapUpdateble.get(id);
             if(obj != undefined)
                 obj.update(val);
         }
-        for(let i=0; i<MAX_NUM; i++) {
+        for(let i=1; i<=MAX_NUM; i++) {
             const id = 'door' + i;
             const val = data[id];
             const obj = this.mapUpdateble.get(id);
             if(obj != undefined)
                 obj.update(val);
         }
-        for(let i=0; i<MAX_NUM; i++) {
+        for(let i=1; i<=MAX_NUM; i++) {
             const id = 'window' + i;
             const val = data[id];
             const obj = this.mapUpdateble.get(id);
             if(obj != undefined)
                 obj.update(val);
         }
-        for(let i=0; i<MAX_NUM; i++) {
+        for(let i=1; i<=MAX_NUM; i++) {
             const id = 'util' + i;
             const val = data[id];
             const obj = this.mapUpdateble.get(id);
             if(obj != undefined)
                 obj.update(val);
         }
-        for(let i=0; i<HALF_NUM; i++) {
+        for(let i=1; i<=HALF_NUM; i++) {
             const idx = 'moving' + i + 'x';
             const valx = data[idx];
             const idz = 'moving' + i + 'z';
