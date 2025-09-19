@@ -6,7 +6,7 @@ import { RemoveObjectCommand } from '../../../src_common/commands/RemoveObjectCo
 import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class Wardrobe {
-    static add_Internal(editor, parent, name, width, height, depth, wardrobetype, noOfDrawers, oldPos, oldRot) {
+    static add_Internal(editor, name, width, height, depth, wardrobetype, noOfDrawers, oldPos, oldRot) {
         // Add a group first
         const group = new THREE.Group();
         group.name = name;
@@ -18,6 +18,7 @@ export class Wardrobe {
         if(oldRot != null)
             group.rotation.copy(oldRot);
 
+        let parent = editor.getFurniture();
         editor.execute( new AddGroupCommand( editor, group, parent ) );
 
         // Add Top & Bottom
@@ -212,6 +213,9 @@ export class Wardrobe {
                                 <img src="./images/WithDraw.JPG" alt="drawer" style="width:120px; height:180px;">
                                 <br>
                                 <input type="radio" id="drawer" name="wardrobetype" value="drawer">With Drawer
+                                <h2>No of Drawers</h2>
+                                <p>Name : <input type="text" id="noOfDrawers" name="noOfDrawers" value="3">
+                                </p>
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -234,7 +238,7 @@ export class Wardrobe {
         const widthBox = document.getElementById("width");
         const heightBox = document.getElementById("height");
         const depthBox = document.getElementById("depth");
-        // const noOfDrawersBox = document.getElementById("noOfDrawers");
+        const noOfDrawersBox = document.getElementById("noOfDrawers");
 
         const confirmBtn = wardrobeTypeDialog.querySelector("#confirmBtn");
 
@@ -248,11 +252,9 @@ export class Wardrobe {
             event.preventDefault(); // We don't want to submit this fake form
             
             // wardrobeTypeDialog.close(); // Have to send the select box value here.
-            var parent = editor.selected;
             var oldPos = null;
             var oldRot = null;
             if(modify) {
-                parent = editor.selected.parent;
                 oldPos = editor.selected.position;
                 oldRot = editor.selected.rotation;
 
@@ -264,11 +266,11 @@ export class Wardrobe {
             const height = parseFloat(heightBox.value);
             const depth = parseFloat(depthBox.value);
             const wardrobetype = document.querySelector('input[name=wardrobetype]:checked').value;
-            const noOfDrawers = 3; //parseInt(noOfDrawersBox.value);
+            const noOfDrawers = parseInt(noOfDrawersBox.value);
 
             document.body.removeChild(dialog)
             
-            this.add_Internal(editor, parent, name, width, height, depth, wardrobetype, noOfDrawers, oldPos, oldRot);
+            this.add_Internal(editor, name, width, height, depth, wardrobetype, noOfDrawers, oldPos, oldRot);
         });
 
         wardrobeTypeDialog.showModal();

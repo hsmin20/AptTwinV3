@@ -25,6 +25,7 @@ import { Bench } from './interior/Bench.js';
 import { OfficeChair } from './interior/OfficeChair.js';
 import { AirConditioner } from './interior/AirConditioner.js';
 import { GasRange } from './interior/GasRange.js';
+import { RobotVacuum } from './interior/RobotVacuum.js';
 
 export class SidebarObject {
     constructor(editor) {
@@ -158,6 +159,8 @@ export class SidebarObject {
                 AirConditioner.add(editor, true);
             } else if(type == 'GasRange') {
                 GasRange.add(editor, true);
+            } else if(type == 'RobotVacuum') {
+                RobotVacuum.add(editor, true);
             } else {
                 alert('No Modification applicable');
             }

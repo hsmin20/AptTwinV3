@@ -7,7 +7,7 @@ import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class TVTable {
 
-    static add_Internal(editor, parent, name, width, height, depth, tvTabletype, noOfLayers, door, oldPos, oldRot) {
+    static add_Internal(editor, name, width, height, depth, tvTabletype, noOfLayers, door, oldPos, oldRot) {
         // Add a group first
         const group = new THREE.Group();
         group.name = name;
@@ -19,6 +19,7 @@ export class TVTable {
         if(oldRot != null)
             group.rotation.copy(oldRot);
 
+        let parent = editor.getFurniture();
         editor.execute( new AddGroupCommand( editor, group, parent ) );
 
         // Panel 두께
@@ -182,11 +183,9 @@ export class TVTable {
         confirmBtn.addEventListener("click", (event) => {
             event.preventDefault();
             
-            var parent = editor.selected;
             var oldPos = null;
             var oldRot = null;
             if(modify) {
-                parent = editor.selected.parent;
                 oldPos = editor.selected.position;
                 oldRot = editor.selected.rotation;
 
@@ -203,7 +202,7 @@ export class TVTable {
 
             document.body.removeChild(dialog)
             
-            this.add_Internal(editor, parent, name, width, height, depth, tvTabletype, noOfLayers, door, oldPos, oldRot);
+            this.add_Internal(editor, name, width, height, depth, tvTabletype, noOfLayers, door, oldPos, oldRot);
         });
 
         tvTableTypeDialog.showModal();

@@ -6,7 +6,7 @@ import { RemoveObjectCommand } from '../../../src_common/commands/RemoveObjectCo
 import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class Bed {
-    static add_Internal(editor, parent, name, bedsize, bedtype, oldPos, oldRot) {
+    static add_Internal(editor, name, bedsize, bedtype, oldPos, oldRot) {
         // Add a group first
         const group = new THREE.Group();
         group.name = name;
@@ -18,6 +18,7 @@ export class Bed {
         if(oldRot != null)
             group.rotation.copy(oldRot);
 
+        let parent = editor.getFurniture();
         editor.execute( new AddGroupCommand( editor, group, parent ) );
 
         const depth = 2.0; // 2m
@@ -162,11 +163,9 @@ export class Bed {
             event.preventDefault(); // We don't want to submit this fake form
             
             // bedTypeDialog.close(); // Have to send the select box value here.
-            var parent = editor.selected;
             var oldPos = null;
             var oldRot = null;
             if(modify) {
-                parent = editor.selected.parent;
                 oldPos = editor.selected.position;
                 oldRot = editor.selected.rotation;
 
@@ -179,7 +178,7 @@ export class Bed {
 
             document.body.removeChild(dialog)
             
-            this.add_Internal(editor, parent, name, bedsize, frametype, oldPos, oldRot);
+            this.add_Internal(editor, name, bedsize, frametype, oldPos, oldRot);
         });
 
         bedTypeDialog.showModal();

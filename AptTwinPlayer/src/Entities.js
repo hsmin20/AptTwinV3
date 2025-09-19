@@ -290,6 +290,20 @@ class WashingMachine extends THREE.Mesh {
     }
 }
 
+class MovingObject extends THREE.Mesh {
+    constructor(object) {
+        this.object = object;
+
+        this.state = 0; // 0 is stopped
+        this.moved = 0;
+    }
+
+    update(posx, posz) {
+        this.object.position.x = posx;
+        this.object.position.z = posz;
+	}
+}
+
 export class EntityManager {
     constructor(scene) {
         this.scene = scene;
@@ -383,6 +397,16 @@ export class EntityManager {
                     scope.mapUpdateble.set('util'+DBid, washingMachine);
                 }
             }
+
+            if(object.userData?.interiorType == 'RobotVacuum') {
+                const robotVacuum = new MovingObject(object.children[0]);
+                object.add(robotVacuum);
+
+                const DBid = object.userData.DBid;
+                if(DBid != undefined) {
+                    scope.mapUpdateble.set('moving'+DBid, robotVacuum);
+                }
+            }
         });
     }
 
@@ -407,38 +431,45 @@ export class EntityManager {
     }
 
     update(data) {
-        const MAX_NUM = 32;
-        const lights = data['light'];
+        const MAX_NUM = 10;
+        const HALF_NUM = 5;
         for(let i=0; i<MAX_NUM; i++) {
-            const id = 'light' + i
-            const val = (lights >> i) & 1;
+            const id = 'light'+ i;
+            const val = data[id];
             const obj = this.mapUpdateble.get(id);
             if(obj != undefined)
                 obj.update(val);
         }
-        const doors = data['door'];
         for(let i=0; i<MAX_NUM; i++) {
-            const id = 'door' + i
-            const val = (doors >> i) & 1;
+            const id = 'door' + i;
+            const val = data[id];
             const obj = this.mapUpdateble.get(id);
             if(obj != undefined)
                 obj.update(val);
         }
-        const windows = data['window'];
         for(let i=0; i<MAX_NUM; i++) {
-            const id = 'window' + i
-            const val = (windows >> i) & 1;
+            const id = 'window' + i;
+            const val = data[id];
             const obj = this.mapUpdateble.get(id);
             if(obj != undefined)
                 obj.update(val);
         }
-        const utils = data['util'];
         for(let i=0; i<MAX_NUM; i++) {
-            const id = 'util' + i
-            const val = (utils >> i) & 1;
+            const id = 'util' + i;
+            const val = data[id];
             const obj = this.mapUpdateble.get(id);
             if(obj != undefined)
                 obj.update(val);
+        }
+        for(let i=0; i<HALF_NUM; i++) {
+            const idx = 'moving' + i + 'x';
+            const valx = data[idx];
+            const idz = 'moving' + i + 'z';
+            const valz = data[idz];
+            const objid = 'moving' + i;
+            const obj = this.mapUpdateble.get(objid);
+            if(obj != undefined)
+                obj.update(valx, valz);
         }
     }
 }

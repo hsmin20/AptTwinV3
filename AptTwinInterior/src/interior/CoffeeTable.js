@@ -6,7 +6,7 @@ import { RemoveObjectCommand } from '../../../src_common/commands/RemoveObjectCo
 import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class CoffeeTable {
-    static add_Internal(editor, parent, name, width, height, depth, coffeeTabletype, oldPos, oldRot) {
+    static add_Internal(editor, name, width, height, depth, coffeeTabletype, oldPos, oldRot) {
         // Add a group first
         const group = new THREE.Group();
         group.name = name;
@@ -18,6 +18,7 @@ export class CoffeeTable {
         if(oldRot != null)
             group.rotation.copy(oldRot);
 
+        let parent = editor.getFurniture();
         editor.execute( new AddGroupCommand( editor, group, parent ) );
 
         // Add a Panel
@@ -120,11 +121,9 @@ export class CoffeeTable {
             event.preventDefault(); // We don't want to submit this fake form
             
             // coffeeTableTypeDialog.close(); // Have to send the select box value here.
-            var parent = editor.selected;
             var oldPos = null;
             var oldRot = null;
             if(modify) {
-                parent = editor.selected.parent;
                 oldPos = editor.selected.position;
                 oldRot = editor.selected.rotation;
 
@@ -139,7 +138,7 @@ export class CoffeeTable {
 
             document.body.removeChild(dialog)
             
-            this.add_Internal(editor, parent, name, width, height, depth, coffeeTabletype, oldPos, oldRot);
+            this.add_Internal(editor, name, width, height, depth, coffeeTabletype, oldPos, oldRot);
         });
 
         coffeeTableTypeDialog.showModal();

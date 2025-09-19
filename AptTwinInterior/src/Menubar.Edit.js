@@ -20,6 +20,7 @@ import { Bench } from './interior/Bench.js';
 import { OfficeChair } from './interior/OfficeChair.js';
 import { AirConditioner } from './interior/AirConditioner.js';
 import { GasRange } from './interior/GasRange.js';
+import { RobotVacuum } from './interior/RobotVacuum.js';
 
 import { showDBidConnection } from './DBidDialog.js';
 
@@ -63,15 +64,6 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'Bed' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
             Bed.add(editorscope);
         } );
         funitureSubmenu.add( option );
@@ -80,15 +72,6 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'Desk' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
             Desk.add(editorscope);
         } );
         funitureSubmenu.add( option );
@@ -97,15 +80,6 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'Office Chair' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
             OfficeChair.add(editorscope);
         } );
         funitureSubmenu.add( option );
@@ -114,15 +88,6 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'Bookshelf' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
             Bookshelf.add(editorscope);
         } );
         funitureSubmenu.add( option );
@@ -131,15 +96,6 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'Wardrobe' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
             Wardrobe.add(editorscope);
         } );
         funitureSubmenu.add( option );
@@ -148,15 +104,6 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'Sofa' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
             Sofa.add(editorscope);
         } );
         funitureSubmenu.add( option );
@@ -165,15 +112,6 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'Coffee Table' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
             CoffeeTable.add(editorscope);
         } );
         funitureSubmenu.add( option );
@@ -182,15 +120,6 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'TV table' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
             TVTable.add(editorscope);
         } );
         funitureSubmenu.add( option );
@@ -199,15 +128,6 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'Chair' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-          if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
-
             Chair.add(editorscope);
         } );
 
@@ -217,15 +137,6 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'Bench' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-          if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
-
             Bench.add(editorscope);
         } );
         funitureSubmenu.add( option );
@@ -234,15 +145,6 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'Dining Table' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-          if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
-
             DiningTable.add(editorscope);
         } );
         funitureSubmenu.add( option );
@@ -251,122 +153,111 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'Dressing Table' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
             DressingTable.add(editorscope);
         } );
         funitureSubmenu.add( option );
 
-        // Kitchen
-        const applicanceSubmenuTitle = new UIRow().setTextContent( 'Home applicances' ).addClass( 'option' ).addClass( 'submenu-title' );
-        applicanceSubmenuTitle.onMouseOver( function () {
-            const { top, right } = applicanceSubmenuTitle.dom.getBoundingClientRect();
+        // Home appliances
+        const applianceSubmenuTitle = new UIRow().setTextContent( 'Home appliances' ).addClass( 'option' ).addClass( 'submenu-title' );
+        applianceSubmenuTitle.onMouseOver( function () {
+            const { top, right } = applianceSubmenuTitle.dom.getBoundingClientRect();
             const { paddingTop } = getComputedStyle( this.dom );
-            applicanceSubmenu.setLeft( right + 'px' );
-            applicanceSubmenu.setTop( top - parseFloat( paddingTop ) + 'px' );
-            applicanceSubmenu.setStyle( 'max-height', [ `calc( 100vh - ${top}px )` ] );
-            applicanceSubmenu.setDisplay( 'block' );
+            applianceSubmenu.setLeft( right + 'px' );
+            applianceSubmenu.setTop( top - parseFloat( paddingTop ) + 'px' );
+            applianceSubmenu.setStyle( 'max-height', [ `calc( 100vh - ${top}px )` ] );
+            applianceSubmenu.setDisplay( 'block' );
 
         } );
-        applicanceSubmenuTitle.onMouseOut( function () {
-            applicanceSubmenu.setDisplay( 'none' );
+        applianceSubmenuTitle.onMouseOut( function () {
+            applianceSubmenu.setDisplay( 'none' );
         } );
-        options.add( applicanceSubmenuTitle );
+        options.add( applianceSubmenuTitle );
 
-        const applicanceSubmenu = new UIPanel().setPosition( 'fixed' ).addClass( 'options' ).setDisplay( 'none' );
-        applicanceSubmenuTitle.add( applicanceSubmenu );
+        const applianceSubmenu = new UIPanel().setPosition( 'fixed' ).addClass( 'options' ).setDisplay( 'none' );
+        applianceSubmenuTitle.add( applianceSubmenu );
 
         option = new UIRow();
         option.setClass( 'option' );
         option.setTextContent( 'Refrigerator' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-             if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
-
             Refrigerator.add(editorscope);
         } );
-        applicanceSubmenu.add( option );
+        applianceSubmenu.add( option );
 
         option = new UIRow();
         option.setClass( 'option' );
         option.setTextContent( 'TV' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
             TV.add(editorscope);
         } );
-        applicanceSubmenu.add( option );
+        applianceSubmenu.add( option );
 
         option = new UIRow();
         option.setClass( 'option' );
         option.setTextContent( 'Air-Conditioner' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
             AirConditioner.add(editorscope);
         } );
-        applicanceSubmenu.add( option );
+        applianceSubmenu.add( option );
 
         option = new UIRow();
         option.setClass( 'option' );
         option.setTextContent( 'Washing Machine' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-          if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
-
             WashingMachine.add(editorscope);
         } );
-        applicanceSubmenu.add( option );
+        applianceSubmenu.add( option );
 
         option = new UIRow();
         option.setClass( 'option' );
         option.setTextContent( 'Gas Range' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-          if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
-
             GasRange.add(editorscope);
         } );
-        applicanceSubmenu.add( option );
+        applianceSubmenu.add( option );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Robot Vacuum' );
+        option.onClick( function () {
+            RobotVacuum.add(editorscope);
+        } );
+        applianceSubmenu.add( option );
+
+         // Pets
+        const petSubmenuTitle = new UIRow().setTextContent( 'Pets' ).addClass( 'option' ).addClass( 'submenu-title' );
+        petSubmenuTitle.onMouseOver( function () {
+            const { top, right } = petSubmenuTitle.dom.getBoundingClientRect();
+            const { paddingTop } = getComputedStyle( this.dom );
+            petSubmenu.setLeft( right + 'px' );
+            petSubmenu.setTop( top - parseFloat( paddingTop ) + 'px' );
+            petSubmenu.setStyle( 'max-height', [ `calc( 100vh - ${top}px )` ] );
+            petSubmenu.setDisplay( 'block' );
+
+        } );
+        petSubmenuTitle.onMouseOut( function () {
+            petSubmenu.setDisplay( 'none' );
+        } );
+        options.add( petSubmenuTitle );
+
+        const petSubmenu = new UIPanel().setPosition( 'fixed' ).addClass( 'options' ).setDisplay( 'none' );
+        petSubmenuTitle.add( petSubmenu );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Dog' );
+        option.onClick( function () {
+            Dog.add(editorscope);
+        } );
+        petSubmenu.add( option );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Cat' );
+        option.onClick( function () {
+            Cat.add(editorscope);
+        } );
+        petSubmenu.add( option );
 
         //============================Horizontal
 
