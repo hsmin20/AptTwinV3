@@ -246,7 +246,6 @@ export class Player {
 
 	initControl() {
     	this.control = new FreeLookControl(this, this.camera, this.scene);
-
 	}
 	
     processKeyboard(keycode) {
@@ -287,6 +286,18 @@ export class Player {
         }
 
         return false
+    }
+
+    changeView() {
+        this.control.gravity = !this.control.gravity;
+
+        const curPos = this.camera.position;
+        const BIRDEYEVIEW_HEIGHT = 15;
+
+        if(!this.control.gravity) {
+            this.camera.position.set(curPos.x, BIRDEYEVIEW_HEIGHT, curPos.z);
+            this.camera.lookAt(this.scene.position);
+        }
     }
 
 	onWindowResize() {

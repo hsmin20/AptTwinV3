@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import { GasRangeFlame } from './GasRangeFlame.js';
+import { textureHelper } from '../../src_common/TextureHelper.js';
 
 const Y_AXIS_VECTOR = new THREE.Vector3(0, 1, 0);
 
@@ -46,6 +47,9 @@ class Door {
     }
 
     click() {
+        if(this.state == 1 || this.state == 3)
+            return;
+
         this.rotated = 0;
         if(this.state == 0) {
             let xoffset = this.hingex * this.width/2;
@@ -69,9 +73,9 @@ class Door {
     }
 
     run(timeElapsed) {
-        let angle = 1;
+        let angle = 2;
         if(this.ccw == false)
-            angle = -1;
+            angle = -2;
 		if(this.state == 1) {
             this.rotateAroundAxis(this.pivotPos, angle);
             this.rotated += angle;
@@ -111,6 +115,9 @@ class Window {
     }
 
     click() {
+        if(this.state == 1 || this.state == 3)
+            return;
+
         this.moved = 0;
         if(this.state == 0) {
             this.state = 1; // 1 is opening
@@ -122,21 +129,21 @@ class Window {
     run(timeElapsed) {
         if(this.state == 1) {
             if(this.openDir == "=>") {
-                this.object.position.x = Number(this.object.position.x) + 0.01;
+                this.object.position.x = Number(this.object.position.x) + 0.02;
             } else if(this.openDir == "<=")
-                this.object.position.x -= 0.01;
+                this.object.position.x -= 0.02;
 
-            this.moved +=  0.01;
+            this.moved +=  0.02;
             if(this.moved >= this.width) {
                 this.state = 2; // 2 is opened
             }
         } else if(this.state == 3) {
             if(this.openDir == "=>")
-                this.object.position.x -= 0.01;
+                this.object.position.x -= 0.02;
             else if(this.openDir == "<=")
-                this.object.position.x += 0.01;
+                this.object.position.x += 0.02;
 
-            this.moved += 0.01;
+            this.moved += 0.02;
             if(this.moved >= this.width) {
                 this.state = 0;
             }
@@ -160,6 +167,9 @@ class Drawer {
     }
 
     click() {
+        if(this.state == 1 || this.state == 3)
+            return;
+
         this.moved = 0;
         if(this.state == 0) {
             this.state = 1; // 1 is opening
@@ -170,16 +180,16 @@ class Drawer {
 
     run(timeElapsed) {
         if(this.state == 1) {
-            this.object.position.z += 0.01;
+            this.object.position.z += 0.02;
 
-            this.moved +=  0.01;
+            this.moved +=  0.02;
             if(this.moved >= this.depth) {
                 this.state = 2; // 2 is opened
             }
         } else if(this.state == 3) {
-            this.object.position.z -= 0.01;
+            this.object.position.z -= 0.02;
 
-            this.moved += 0.01;
+            this.moved += 0.02;
             if(this.moved >= this.depth) {
                 this.state = 0;
             }
@@ -193,6 +203,7 @@ class TV extends THREE.Mesh {
         videoElement.src = "./videos/big_buck_bunny.mp4";
         videoElement.style="display: none;";
         videoElement.loop = true;
+        videoElement.muted = true;
         videoElement.playsinline = true;
 
         //Create your video texture:
@@ -220,13 +231,77 @@ class TV extends THREE.Mesh {
         if(state) {
             this.position.z = this.depth / 2.0 + 0.001;
             this.video.play();
-            this.playing = true;
         } else {
             this.position.z = 0.0;
             this.video.pause();
-            this.playing = false;
         }
     }
+}
+
+class WashingMachine extends THREE.Mesh {
+    constructor(type, width, height, depth) {
+        // Create Cylinder for animation
+        const radius = (width / 2.0) - 0.1;
+        const cyl_height = 0.01; // small number
+
+        const geometry = new THREE.CylinderGeometry(radius, radius, cyl_height);
+        let tubTexture = textureHelper.get('Laundry', 1, 1);
+        const material = new THREE.MeshStandardMaterial( { map: tubTexture} );
+
+        super(geometry, material);
+
+        this.type = type;
+        this.height = height;
+        this.depth = depth;
+
+        if(this.type == 0) {
+            this.position.y = this.height / 2.0;
+            this.rotation.x = Math.PI / 2.0;
+        }
+
+        this.running = false;
+        this.angle = Math.PI * 2 / 36;
+    }
+
+    update(state) {
+        this.running = !this.running;
+        if(this.running) {
+            if(this.type == 0) {
+                this.position.z = this.depth / 2.0;
+            } else {
+                this.position.y = this.height;
+            }
+        } else {
+            if(this.type == 0) {
+                this.position.z = 0.0;
+            } else {
+                this.position.y = this.height/2.0;
+            }
+        }
+    }
+
+    run(timeElapsed) {
+        if(this.running) {
+            this.rotation.y += this.angle;
+
+            if(this.angle > Math.PI)
+                this.angle = 0;
+        }
+    }
+}
+
+class MovingObject {
+    constructor(object) {
+        this.object = object;
+
+        this.state = 0; // 0 is stopped
+        this.moved = 0;
+    }
+
+    update(posx, posz) {
+        this.object.position.x = posx;
+        this.object.position.z = posz;
+	}
 }
 
 export class EntityManager {
@@ -259,7 +334,7 @@ export class EntityManager {
 
                     const DBid = object.userData.DBid;
                     if(DBid != undefined) {
-                        scope.mapUpdateble.set(DBid, door);
+                        scope.mapUpdateble.set('door'+DBid, door);
                     }
                 } else if(type == 'window') {
                     let window = new Window(object);
@@ -269,7 +344,7 @@ export class EntityManager {
 
                     const DBid = object.userData.DBid;
                     if(DBid != undefined) {
-                        scope.mapUpdateble.set(DBid, window);
+                        scope.mapUpdateble.set('window'+DBid, window);
                     }
                 } else if(type == 'drawer') {
                     let drawer = new Drawer(object);
@@ -286,7 +361,7 @@ export class EntityManager {
 
                 const DBid = object.userData.DBid;
                 if(DBid != undefined) {
-                    scope.mapUpdateble.set(DBid, flame);
+                    scope.mapUpdateble.set('util'+DBid, flame);
                 }
             }
 
@@ -300,11 +375,40 @@ export class EntityManager {
 
                 const DBid = object.userData.DBid;
                 if(DBid != undefined) {
-                    scope.mapUpdateble.set(DBid, tv);
+                    scope.mapUpdateble.set('util'+DBid, tv);
+                }
+            }
+
+            if(object.userData?.interiorType == 'WashingMachine1' || object.userData?.interiorType == 'WashingMachine2') {
+                const width = object.children[0].geometry.parameters.width;
+                const height = object.children[0].geometry.parameters.height;
+                const depth = object.children[0].geometry.parameters.depth;
+                let type = 0; // Drum type
+                if(object.userData?.interiorType == 'WashingMachine2') {
+                    type = 1; // Top Loading
                 }
 
-                // scope.arAnimObj.push(object);
-                // scope.mapClickable.set(object.children[0], tv); // Why? I don't get it....
+                const washingMachine = new WashingMachine(type, width, height, depth);
+                object.add(washingMachine);
+                scope.arAnimEntity.push(washingMachine);
+
+                const DBid = object.userData.DBid;
+                if(DBid != undefined) {
+                    scope.mapUpdateble.set('util'+DBid, washingMachine);
+                }
+            }
+
+            if(object.userData?.interiorType != undefined) {
+                const it = object.userData.interiorType;
+                if(it == 'RobotVacuum' || it == 'Cat' || it == 'Dog') {
+                    const movable = new MovingObject(object);
+                    object.add(movable);
+
+                    const DBid = object.userData.DBid;
+                    if(DBid != undefined) {
+                        scope.mapUpdateble.set('moving'+DBid, movable);
+                    }
+                }
             }
         });
     }
@@ -330,8 +434,45 @@ export class EntityManager {
     }
 
     update(data) {
-       
-        const obj = this.mapUpdateble.get(id);
-        obj.update(state);
+        const MAX_NUM = 10;
+        const HALF_NUM = 5;
+        for(let i=1; i<=MAX_NUM; i++) {
+            const id = 'light'+ i;
+            const val = data[id];
+            const obj = this.mapUpdateble.get(id);
+            if(obj != undefined)
+                obj.update(val);
+        }
+        for(let i=1; i<=MAX_NUM; i++) {
+            const id = 'door' + i;
+            const val = data[id];
+            const obj = this.mapUpdateble.get(id);
+            if(obj != undefined)
+                obj.update(val);
+        }
+        for(let i=1; i<=MAX_NUM; i++) {
+            const id = 'window' + i;
+            const val = data[id];
+            const obj = this.mapUpdateble.get(id);
+            if(obj != undefined)
+                obj.update(val);
+        }
+        for(let i=1; i<=MAX_NUM; i++) {
+            const id = 'util' + i;
+            const val = data[id];
+            const obj = this.mapUpdateble.get(id);
+            if(obj != undefined)
+                obj.update(val);
+        }
+        for(let i=1; i<=HALF_NUM; i++) {
+            const idx = 'moving' + i + 'x';
+            const valx = data[idx];
+            const idz = 'moving' + i + 'z';
+            const valz = data[idz];
+            const objid = 'moving' + i;
+            const obj = this.mapUpdateble.get(objid);
+            if(obj != undefined)
+                obj.update(valx, valz);
+        }
     }
 }

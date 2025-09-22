@@ -6,7 +6,7 @@ import { RemoveObjectCommand } from '../../../src_common/commands/RemoveObjectCo
 import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class Sofa {
-    static add_Internal(editor, parent, name, width, height, depth, sofatype, oldPos, oldRot) {
+    static add_Internal(editor, name, width, height, depth, sofatype, oldPos, oldRot) {
         // Add a group first
         const group = new THREE.Group();
         group.name = name;
@@ -18,6 +18,7 @@ export class Sofa {
         if(oldRot != null)
             group.rotation.copy(oldRot);
 
+        let parent = editor.getFurniture();
         editor.execute( new AddGroupCommand( editor, group, parent ) );
 
         const frameTexture = textureHelper.get('Wood', 4, 4);
@@ -168,11 +169,9 @@ export class Sofa {
             event.preventDefault(); // We don't want to submit this fake form
             
             // sofaTypeDialog.close(); // Have to send the select box value here.
-            var parent = editor.selected;
             var oldPos = null;
             var oldRot = null;
             if(modify) {
-                parent = editor.selected.parent;
                 oldPos = editor.selected.position;
                 oldRot = editor.selected.rotation;
 
@@ -187,7 +186,7 @@ export class Sofa {
 
             document.body.removeChild(dialog)
             
-            this.add_Internal(editor, parent, name, width, height, depth, sofatype, oldPos, oldRot);
+            this.add_Internal(editor, name, width, height, depth, sofatype, oldPos, oldRot);
         });
 
         sofaTypeDialog.showModal();

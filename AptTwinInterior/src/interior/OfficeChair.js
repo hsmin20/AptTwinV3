@@ -15,7 +15,7 @@ function rotateAroundWorldAxis(obj, point, axis, angle) {
 
 export class OfficeChair {
     // --- 오피스체어 내부 생성 ---
-    static add_Internal(editor, parent, name, width, height, depth, oldPos, oldRot, chairColor) {
+    static add_Internal(editor, name, width, height, depth, oldPos, oldRot, chairColor) {
         const group = new THREE.Group();
         group.name = name;
         group.userData.isInterior = true;
@@ -24,6 +24,7 @@ export class OfficeChair {
         if (oldPos) group.position.copy(oldPos);
         if (oldRot) group.rotation.copy(oldRot);
 
+        let parent = editor.getFurniture();
         editor.execute(new AddGroupCommand(editor, group, parent));
 
         // 전체 색상 결정
@@ -173,12 +174,10 @@ export class OfficeChair {
         confirmBtn.addEventListener("click", (event) => {
             event.preventDefault();
 
-            let parent = editor.selected || editor.scene;
             let oldPos = null;
             let oldRot = null;
 
             if (modify && editor.selected) {
-                parent = editor.selected.parent;
                 oldPos = editor.selected.position;
                 oldRot = editor.selected.rotation;
                 editor.execute(new RemoveObjectCommand(editor, editor.selected));
@@ -192,7 +191,7 @@ export class OfficeChair {
 
             officeChairDialog.close();
 
-            this.add_Internal(editor, parent, name, width, height, depth, oldPos, oldRot, chairColor);
+            this.add_Internal(editor, name, width, height, depth, oldPos, oldRot, chairColor);
         });
 
         officeChairDialog.showModal();

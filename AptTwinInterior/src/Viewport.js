@@ -263,13 +263,14 @@ export class Viewport {
     onObjectSelected( object ) {
 		this.selectionBox.visible = false;
         this.transformControls.detach();
-		if ( object !== null && object !== this.scene && object !== this.camera ) {
+
+        if(object !== null && object.userData.isInterior == true) {
 			this.box.setFromObject( object, true );
 			if ( this.box.isEmpty() === false ) {
 				this.selectionBox.visible = true;
 			}
-
-            if(object.userData.isInterior == true && object.userData.interiorType != 'Wall')
+    
+            if(object.userData.interiorType != 'Wall')
                 this.transformControls.attach( object );
 		}
 

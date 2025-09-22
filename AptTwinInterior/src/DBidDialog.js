@@ -105,7 +105,9 @@ function createUtils(editor) {
     scene.traverse(function(object) {
         if (object.userData.DBid != undefined) {
             if(object.userData.interiorType != undefined) {
-                utilArray.push(object);
+                const it = object.userData.interiorType;
+                if(it != 'RobotVacuum' && it != 'Dog' && it != 'Cat')
+                    utilArray.push(object);
             }
         }
     });
@@ -132,6 +134,40 @@ function createUtils(editor) {
     return _html;
 }
 
+function createPets(editor) {
+    let petArray = [];
+    const scene = editor.scene;
+    scene.traverse(function(object) {
+        if (object.userData.DBid != undefined) {
+            if(object.userData.interiorType != undefined) {
+                const it = object.userData.interiorType;
+                if(it == 'RobotVacuum' || it == 'Dog' || it == 'Cat')
+                    petArray.push(object);
+            }
+        }
+    });
+
+    let _html = `<p><label>
+                <h2>Add a DB id for Pets</h2>
+                `;
+
+    for(let i=0; i<petArray.length; i++) {
+        const pet = petArray[i];
+        const name = pet.name;
+        const uuid = pet.uuid;
+        const dbid = pet.userData.DBid;
+
+        const __html = `<p>` + name + `
+        <input type="text" id="` + uuid + `" name="` + name + `" value="` + dbid + `" size="3"></p> 
+        `;
+
+        _html += __html;
+    }
+
+    _html += `</label></p>`;
+
+    return _html;
+}
 
 function createDialog(editor, type) {
     let _html = `
@@ -160,9 +196,12 @@ function createDialog(editor, type) {
     } else if(type == 'windows') {
         let windowsHtml = createWindows(editor);
         return _html + windowsHtml + _html2;
-    } else {
+    } else if(type == 'utils') {
         let utilsHtml = createUtils(editor);
         return _html + utilsHtml + _html2;
+    } else if(type == 'pets') {
+        let petsHtml = createPets(editor);
+        return _html + petsHtml + _html2;
     }
 }
 

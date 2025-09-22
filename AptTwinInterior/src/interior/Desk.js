@@ -4,7 +4,7 @@ import { RemoveObjectCommand } from '../../../src_common/commands/RemoveObjectCo
 import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class Desk {
-    static add_Internal(editor, parent, name, width, height, depth, deskMaterial, oldPos, oldRot) {
+    static add_Internal(editor, name, width, height, depth, deskMaterial, oldPos, oldRot) {
         const group = new THREE.Group();
         group.name = name;
         group.userData.isInterior = true;
@@ -13,6 +13,7 @@ export class Desk {
         if(oldPos) group.position.copy(oldPos);
         if(oldRot) group.rotation.copy(oldRot);
 
+        let parent = editor.getFurniture();
         editor.execute(new AddGroupCommand(editor, group, parent));
 
         // 재질 결정
@@ -119,12 +120,10 @@ export class Desk {
         confirmBtn.addEventListener("click", (event) => {
             event.preventDefault();
 
-            let parent = editor.selected;
             let oldPos = null;
             let oldRot = null;
 
             if(modify && editor.selected) {
-                parent = editor.selected.parent;
                 oldPos = editor.selected.position;
                 oldRot = editor.selected.rotation;
                 editor.execute(new RemoveObjectCommand(editor, editor.selected));
@@ -138,7 +137,7 @@ export class Desk {
 
             document.body.removeChild(dialog);
 
-            this.add_Internal(editor, parent, name, width, height, depth, deskMaterial, oldPos, oldRot);
+            this.add_Internal(editor, name, width, height, depth, deskMaterial, oldPos, oldRot);
         });
 
         DeskTypeDialog.showModal();

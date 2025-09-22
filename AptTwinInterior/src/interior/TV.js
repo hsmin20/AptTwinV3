@@ -6,7 +6,7 @@ import { RemoveObjectCommand } from '../../../src_common/commands/RemoveObjectCo
 import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class TV {
-    static add_Internal(editor, parent, name, tvsize, tvtype, oldPos, oldRot) {
+    static add_Internal(editor, name, tvsize, tvtype, oldPos, oldRot) {
              // Add a group first
         const group = new THREE.Group();
         group.name = name;
@@ -21,6 +21,7 @@ export class TV {
         if(oldRot != null)
             group.rotation.copy(oldRot);
 
+        let parent = editor.getHomeAppliance();
         editor.execute( new AddGroupCommand( editor, group, parent ) );
 
         const depth = 0.02;
@@ -30,7 +31,7 @@ export class TV {
         const width = tvsize * inchToMeter * Math.cos(theta);
         const height = tvsize * inchToMeter * Math.sin(theta);
 
-        const tvTexture = textureHelper.get('TV', 1, 1);
+        const tvTexture = textureHelper.get('Black', 1, 1);
         const backTexture = textureHelper.get('BlackMetal', 5, 4);
         const sideTexture = textureHelper.get('BlackMetal', 1, 4);
 
@@ -132,11 +133,9 @@ export class TV {
             event.preventDefault(); // We don't want to submit this fake form
             
             // tvTypeDialog.close(); // Have to send the select box value here.
-            var parent = editor.selected;
             var oldPos = null;
             var oldRot = null;
             if(modify) {
-                parent = editor.selected.parent;
                 oldPos = editor.selected.position;
                 oldRot = editor.selected.rotation;
 
@@ -149,7 +148,7 @@ export class TV {
 
             document.body.removeChild(dialog)
             
-            this.add_Internal(editor, parent, name, tvsize, tvtype, oldPos, oldRot);
+            this.add_Internal(editor, name, tvsize, tvtype, oldPos, oldRot);
         });
 
         tvTypeDialog.showModal();

@@ -214,19 +214,7 @@ export class Editor {
 		};
 	}
 
-	toJSON2 () {
-		let json =  {
-			metadata: {},
-			camera: this.camera.toJSON(),
-			scene: this.scene.toJSON()
-		};
-
-        let textures = json.scene.textures;
-        let images = json.scene.images;
-        if(textures == undefined || images == undefined)
-            return json;
-
-        // replace base64 encoded image to file path
+    replaceImageToFilepath(textures, images) {
         textures.forEach(function(texture) {
             const imageUUID = texture.image;
 
@@ -242,8 +230,9 @@ export class Editor {
                 }
             });
         });
+    }
 
-        // remove duplicate entries in images
+    removeDuplicate(textures, images) {
         let imageMap = new Map();
         let uuidArray = [];
         images.forEach(function(image) {
@@ -272,9 +261,89 @@ export class Editor {
                 images.splice(index, 1);
             }
         }
+    }
+
+	toJSON2 () {
+		let json =  {
+			metadata: {},
+			camera: this.camera.toJSON(),
+			scene: this.scene.toJSON()
+		};
+
+        let textures = json.scene.textures;
+        let images = json.scene.images;
+        if(textures == undefined || images == undefined)
+            return json;
+
+        // replace base64 encoded image to file path
+        this.replaceImageToFilepath(textures, images);
+
+        // remove duplicate entries in images
+        this.removeDuplicate(textures, images);
 
         return json;
 	}
+
+    interiorFromJSON(json) {
+        const loader = new THREE.ObjectLoader();
+
+        const object = loader.parse( json );
+        let furniture;
+        let homeAppliance;
+
+        for (let i=0; i <object.children.length; i++) {
+            const child = object.children[i];
+            if(child.name == 'Furniture')
+                furniture = child;
+            if(child.name == 'HomeAppliance')
+                homeAppliance = child;
+        }
+
+        const furnitureNode = this.getFurniture();
+        for (let i=0; i <furniture.children.length; i++) {
+            const fur = furniture.children[i];
+            furnitureNode.add(fur);
+        }
+
+        const homeApplianceNode = this.getHomeAppliance();
+        for (let i=0; i <homeAppliance.children.length; i++) {
+            const ha = homeAppliance.children[i];
+            homeApplianceNode.add(ha);
+        }
+        
+        saveState();
+        this.sidebar.refreshUI();
+        this.viewport.render();
+    }
+    
+    interiorToJSON() {
+        var arr = [];
+        this.scene.traverse(function(object) {
+            if(object.type == 'Group' && (object.name == 'Furniture' || object.name == 'HomeAppliance')) {
+                arr.push(object);
+            }
+        });
+
+        var interiorObjs = new THREE.Group();
+        for(let i=0; i<arr.length; i++) {
+            const obj = arr[i];
+            interiorObjs.add(obj);
+        }
+
+        var jsonObjects = interiorObjs.toJSON();
+        let textures = jsonObjects.textures;
+        let images = jsonObjects.images;
+        if(textures == undefined || images == undefined)
+            return jsonObjects;
+
+        // replace base64 encoded image to file path
+        this.replaceImageToFilepath(textures, images);
+
+        // remove duplicate entries in images
+        this.removeDuplicate(textures, images);
+
+        return jsonObjects;
+    }
 
     execute( cmd, optionalName ) {
 		this.history.execute( cmd, optionalName );
@@ -321,7 +390,7 @@ export class Editor {
     select( object ) {
 		this.selector.select( object );
 
-        this.onSelected( object );
+        // this.onSelected( object );
 	}
 
     onSelected( object ) {
@@ -351,5 +420,38 @@ export class Editor {
         this.sidebar.refreshUI( object );
         // this.viewport.onObjectChanged( object );
         this.viewport.onObjectSelected( object );
+    }
+
+    getFurniture() {
+        let furniture = this.scene.getObjectByName('Furniture');
+        if(furniture == undefined) {
+            furniture = new THREE.Group();
+            furniture.name = 'Furniture';
+            this.scene.add(furniture);
+        }
+        
+        return furniture;
+    }
+
+    getHomeAppliance() {
+        let homeAppliance = this.scene.getObjectByName('HomeAppliance');
+        if(homeAppliance == undefined) {
+            homeAppliance = new THREE.Group();
+            homeAppliance.name = 'HomeAppliance';
+            this.scene.add(homeAppliance);
+        }
+
+        return homeAppliance;
+    }
+
+    getPet() {
+        let pet = this.scene.getObjectByName('Pet');
+        if(pet == undefined) {
+            pet = new THREE.Group();
+            pet.name = 'Pet';
+            this.scene.add(pet);
+        }
+        
+        return pet;
     }
 }

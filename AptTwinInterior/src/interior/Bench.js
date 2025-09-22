@@ -7,7 +7,7 @@ import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class Bench {
         // --- 벤치 생성 함수 ---
-    static add_Internal(editor, parent, name, width, height, depth, benchType, oldPos, oldRot, cushionColor) {
+    static add_Internal(editor, name, width, height, depth, benchType, oldPos, oldRot, cushionColor) {
         const group = new THREE.Group();
         group.name = name;
         group.userData.isInterior = true;
@@ -16,6 +16,7 @@ export class Bench {
         if (oldPos != null) group.position.copy(oldPos);
         if (oldRot != null) group.rotation.copy(oldRot);
 
+        let parent = editor.getFurniture();
         editor.execute(new AddGroupCommand(editor, group, parent));
 
         // 좌석
@@ -128,11 +129,9 @@ export class Bench {
         confirmBtn.addEventListener("click", (event) => {
             event.preventDefault();
 
-            var parent = editor.selected;
             var oldPos = null;
             var oldRot = null;
             if (modify) {
-                parent = editor.selected.parent;
                 oldPos = editor.selected.position;
                 oldRot = editor.selected.rotation;
                 editor.execute(new RemoveObjectCommand(editor, editor.selected));
@@ -147,7 +146,7 @@ export class Bench {
 
             document.body.removeChild(dialog);
 
-            this.add_Internal(editor, parent, name, width, height, depth, benchType, oldPos, oldRot, cushionColor);
+            this.add_Internal(editor, name, width, height, depth, benchType, oldPos, oldRot, cushionColor);
         });
 
         benchTypeDialog.showModal();

@@ -213,7 +213,7 @@ export class SidebarScene {
 
 		// options.push( this.buildOption( camera, false ) );
         let sceneOpt = this.buildOption( scene, false );
-		options.push( sceneOpt );
+		options.push( sceneOpt );        
 
 		this.addObjects( scene.children, 0, options );
 

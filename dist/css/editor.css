@@ -355,6 +355,14 @@ select {
 	content: '📜'
 }
 
+#outliner .HomeAppliance:after {
+	content: '📺'
+}
+
+#outliner .Furniture:after {
+	content: '💺'
+}
+
 /* */
 
 #outliner .Scene {

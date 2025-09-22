@@ -77,7 +77,7 @@ let g_intervalId;
 
 async function fetchDataAndUpdateScene() {
     try {
-        const response = await fetch('./process.php?tblname=LotteCastle_105_1505');
+        const response = await fetch('./process.php?tblname=HouseState');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -96,4 +96,8 @@ export function startDataUpdates(intervalMs) {
 
 export function stopDataUpdates() {
     clearInterval(g_intervalId);
+}
+
+export function changeView() {
+    player.changeView();
 }

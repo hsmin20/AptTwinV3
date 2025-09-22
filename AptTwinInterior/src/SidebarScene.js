@@ -141,7 +141,12 @@ export class SidebarScene {
 		if ( object.isScene ) return 'Scene';
 		if ( object.isCamera ) return 'Camera';
 		if ( object.isLight ) return 'Light';
-        if ( object.isGroup ) return 'Group';
+        if ( object.isGroup ) { 
+            const name = object.name;
+            if(name == 'Furniture' || name == 'HomeAppliance')
+                return name;
+            return 'Group';
+        }
 		if ( object.isMesh ) {
             const name = object.name.toLowerCase();
             if(name.includes('window'))
@@ -214,14 +219,13 @@ export class SidebarScene {
 	refreshUI() {
 		// const camera = this.editor.camera;
 		const scene = this.editor.scene;
-
 		const options = [];
 
 		// options.push( this.buildOption( camera, false ) );
         let sceneOpt = this.buildOption( scene, false );
 		options.push( sceneOpt );
 
-		this.addObjects( scene.children, 0, options );
+		this.addObjects( scene.children, 0, options );        
 
 		this.outliner.setOptions( options );
 

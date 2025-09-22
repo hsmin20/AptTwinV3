@@ -7,7 +7,7 @@ import { RemoveObjectCommand } from '../../../src_common/commands/RemoveObjectCo
 import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class DressingTable {
-    static add_Internal(editor, parent, name, width, height, depth, mirrorheight, texturetype, oldPos, oldRot) {
+    static add_Internal(editor, name, width, height, depth, mirrorheight, texturetype, oldPos, oldRot) {
         // Add a group first
         const group = new THREE.Group();
         group.name = name;
@@ -19,6 +19,7 @@ export class DressingTable {
         if(oldRot != null)
             group.rotation.copy(oldRot);
 
+        let parent = editor.getFurniture();
         editor.execute( new AddGroupCommand( editor, group, parent ) );
 
         // Add a Mirror Frame
@@ -148,12 +149,11 @@ export class DressingTable {
         // Prevent the "confirm" button from the default behavior of submitting the form, and close the dialog with the `close()` method, which triggers the "close" event.
         confirmBtn.addEventListener("click", (event) => {
             event.preventDefault(); // We don't want to submit this fake form
+            
             // DressingTableTypeDialog.close(); // Have to send the select box value here.
-            var parent = editor.selected;
             var oldPos = null;
             var oldRot = null;
             if(modify) {
-                parent = editor.selected.parent;
                 oldPos = editor.selected.position;
                 oldRot = editor.selected.rotation;
 
@@ -169,7 +169,7 @@ export class DressingTable {
 
             document.body.removeChild(dialog)
             
-            this.add_Internal(editor, parent, name, width, height, depth, mirrorheight, texturetype, oldPos, oldRot)
+            this.add_Internal(editor, name, width, height, depth, mirrorheight, texturetype, oldPos, oldRot)
         });
 
         DressingTableTypeDialog.showModal();

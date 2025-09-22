@@ -6,7 +6,7 @@ import { RemoveObjectCommand } from '../../../src_common/commands/RemoveObjectCo
 import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class Bookshelf {
-    static add_Internal(editor, parent, name, width, height, depth, noOfLayers, materialType, oldPos, oldRot) {
+    static add_Internal(editor, name, width, height, depth, noOfLayers, frametype, oldPos, oldRot) {
         // Add a group first
         const group = new THREE.Group();
         group.name = name;
@@ -18,13 +18,14 @@ export class Bookshelf {
         if(oldRot != null)
             group.rotation.copy(oldRot);
 
+        let parent = editor.getFurniture();
         editor.execute(new AddGroupCommand(editor, group, parent));
 
         // ===== 패널 재질 선택 =====
         let panelTexture;
-        if (materialType === "Wood") {
+        if (frametype === "Wood") {
             panelTexture = textureHelper.get('Wood', 4, 6);
-        } else if (materialType === "WhitePlastic") {
+        } else if (frametype === "WhitePlastic") {
             panelTexture = textureHelper.get('WhitePlastic', 1, 1);
         } else {
             panelTexture = textureHelper.get('Wood', 4, 6); // 기본 Wood
@@ -159,11 +160,9 @@ export class Bookshelf {
         confirmBtn.addEventListener("click", (event) => {
             event.preventDefault();
 
-            var parent = editor.selected;
             var oldPos = null;
             var oldRot = null;
             if(modify) {
-                parent = editor.selected.parent;
                 oldPos = editor.selected.position;
                 oldRot = editor.selected.rotation;
 
@@ -175,11 +174,11 @@ export class Bookshelf {
             const height = parseFloat(heightBox.value);
             const depth = parseFloat(depthBox.value);
             const noOfLayers = parseInt(layersBox.value);
-            const materialType = document.querySelector('input[name=material]:checked').value;
+            const frametype = document.querySelector('input[name=frametype]:checked').value;
 
             document.body.removeChild(dialog);
 
-            this.add_Internal(editor, parent, name, width, height, depth, noOfLayers, materialType, oldPos, oldRot);
+            this.add_Internal(editor, name, width, height, depth, noOfLayers, frametype, oldPos, oldRot);
         });
 
         bookshelfTypeDialog.showModal();
