@@ -4,7 +4,7 @@ session_start();
 header("Access-Control-Allow-Origin: *");
 
 $valid_user = "test";
-$valid_pass = "1234";
+$valid_pass = "tech2845";
 
 $username = $_POST['username'] ?? '';
 $password = $_POST['password'] ?? '';
