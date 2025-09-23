@@ -101,7 +101,7 @@ export class Refrigerator {
             leftDoor.name = name + "_LeftDoor";
             leftDoor.position.x = -halfWidth / 2.0;
             leftDoor.position.y = height / 2.0;
-            leftDoor.position.z = (bodyDepth + doorDepth) / 2.0;
+            leftDoor.position.z = 0;
             leftDoor.userData.pivotDir = 'left';
             leftDoor.userData.openDir = 'inward';
 
@@ -116,8 +116,7 @@ export class Refrigerator {
             rightDoor.name = name + "_RightDoor";
             rightDoor.position.x = halfWidth / 2.0;
             rightDoor.position.y = height / 2.0;
-            rightDoor.position.z = (bodyDepth + doorDepth) / 2.0;
-            rightDoor.userData.type = 'door';
+            rightDoor.position.z = 0;
             rightDoor.userData.pivotDir = 'right';
             rightDoor.userData.openDir = 'inward';
 
@@ -135,7 +134,7 @@ export class Refrigerator {
             leftTopDoor.name = name + "_LeftTopDoor";
             leftTopDoor.position.x = -halfWidth / 2.0;
             leftTopDoor.position.y = height - (topHeight / 2.0);
-            leftTopDoor.position.z = (bodyDepth + doorDepth) / 2.0;
+            leftTopDoor.position.z = 0;
             leftTopDoor.userData.type = 'door';
             leftTopDoor.userData.pivotDir = 'left';
             leftTopDoor.userData.openDir = 'inward';
@@ -152,7 +151,7 @@ export class Refrigerator {
             leftBottomDoor.name = name + "_LeftBottomDoor";
             leftBottomDoor.position.x = -halfWidth / 2.0;
             leftBottomDoor.position.y = bottomHeight / 2.0;
-            leftBottomDoor.position.z = (bodyDepth + doorDepth) / 2.0;
+            leftBottomDoor.position.z = 0;
             leftBottomDoor.userData.type = 'door';
             leftBottomDoor.userData.pivotDir = 'left';
             leftBottomDoor.userData.openDir = 'inward';
@@ -168,7 +167,7 @@ export class Refrigerator {
             rightTopDoor.name = name + "_RightTopDoor";
             rightTopDoor.position.x = halfWidth / 2.0;
             rightTopDoor.position.y = height - (topHeight / 2.0);
-            rightTopDoor.position.z = (bodyDepth + doorDepth) / 2.0;
+            rightTopDoor.position.z = 0;
             rightTopDoor.userData.type = 'door';
             rightTopDoor.userData.pivotDir = 'right';
             rightTopDoor.userData.openDir = 'inward';
@@ -184,7 +183,7 @@ export class Refrigerator {
             rightBottomDoor.name = name + "_RightBottomDoor";
             rightBottomDoor.position.x = halfWidth / 2.0;
             rightBottomDoor.position.y = bottomHeight / 2.0;
-            rightBottomDoor.position.z = (bodyDepth + doorDepth) / 2.0;
+            rightBottomDoor.position.z = 0;
             rightBottomDoor.userData.type = 'door';
             rightBottomDoor.userData.pivotDir = 'right';
             rightBottomDoor.userData.openDir = 'inward';
