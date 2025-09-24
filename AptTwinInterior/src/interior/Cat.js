@@ -19,7 +19,7 @@ export class Cat {
         if(oldRot != null)
             group.rotation.copy(oldRot);
 
-        let parent = editor.getFurniture();
+        let parent = editor.getPet();
         editor.execute( new AddGroupCommand( editor, group, parent ) );
 
         // Add a Body

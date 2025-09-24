@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { UIPanel, UIRow, UIHorizontalRule } from './libs/ui.js';
+import { UIPanel, UIRow, UIHorizontalRule } from '../../src_common/libs/ui.js';
 
 export class MenubarTools {
     constructor( editor ) {
@@ -24,7 +24,7 @@ export class MenubarTools {
            let data = editor.toJSON2();
 
             try {
-                const response = await fetch('./upload_model.php?tblname=ModelHouse&userid=hsmin', {
+                const response = await fetch('./upload_model.php?tblname=ModelHouse&userid=hs', {
                     method: 'POST',
                     headers: {
                     'Accept': 'application/json',
@@ -50,7 +50,7 @@ export class MenubarTools {
         option.setTextContent( 'Download from DB' );
         option.onClick( async () => {
             try {
-                const response = await fetch('./download_model.php?tblname=ModelHouse&userid=hsmin');
+                const response = await fetch('./download_model.php?tblname=ModelHouse&userid=hsm');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

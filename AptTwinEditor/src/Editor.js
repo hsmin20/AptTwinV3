@@ -289,10 +289,13 @@ export class Editor {
 	}
 
     keyDown( event ) {
+        if(event.key.toLowerCase() == undefined)
+            return;
+        
 		switch ( event.key.toLowerCase() ) {
 			case 'delete':
 				const object = this.selected;
-				if ( object === null ) return;
+				if ( object === null || object.type == 'Scene' ) return;
 
                 if (confirm('Are you sure you want to remove this item?')) {
                     const parent = object.parent;

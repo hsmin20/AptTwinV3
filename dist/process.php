@@ -6,7 +6,7 @@
 		$dbname = 'APT_TWIN';
 	
         // mssql
-        $connectionInfo = array("UID"=>$user, "PWD"=>$pass, "Database"=>$dbname, "TrustServerCertificate" => "True");
+        $connectionInfo = array("UID"=>$user, "PWD"=>$pass, "Database"=>$dbname, "TrustServerCertificate" => "True", "CharacterSet" => "UTF-8");
         $conn = sqlsrv_connect($host, $connectionInfo);
        
         $query = "SELECT Top 1 light1,light2,light3,light4,light5,light6,light7,light8,light9,light10,door1,door2,

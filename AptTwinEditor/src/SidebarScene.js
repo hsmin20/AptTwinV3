@@ -141,7 +141,12 @@ export class SidebarScene {
 		if ( object.isScene ) return 'Scene';
 		if ( object.isCamera ) return 'Camera';
 		if ( object.isLight ) return 'Light';
-        if ( object.isGroup ) return 'Group';
+        if ( object.isGroup ) { 
+            const name = object.name;
+            if(name == 'Furniture' || name == 'HomeAppliance' || name == 'Pet')
+                return name;
+            return 'Group';
+        }
 		if ( object.isMesh ) {
             const name = object.name.toLowerCase();
             if(name.includes('window'))
@@ -264,7 +269,8 @@ export class SidebarScene {
                 this.refreshUI();
             this.outliner.setValue( object.id );
 		} else {
-			this.outliner.setValue( null );
+            if(object != this.editor.scene)
+			    this.outliner.setValue( null );
 		}
 	}
 }

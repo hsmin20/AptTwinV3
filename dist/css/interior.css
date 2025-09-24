@@ -363,6 +363,10 @@ select {
 	content: '💺'
 }
 
+#outliner .Pet:after {
+	content: '🐶'
+}
+
 /* */
 
 #outliner .Scene {

@@ -143,7 +143,7 @@ export class SidebarScene {
 		if ( object.isLight ) return 'Light';
         if ( object.isGroup ) { 
             const name = object.name;
-            if(name == 'Furniture' || name == 'HomeAppliance')
+            if(name == 'Furniture' || name == 'HomeAppliance' || name == 'Pet')
                 return name;
             return 'Group';
         }

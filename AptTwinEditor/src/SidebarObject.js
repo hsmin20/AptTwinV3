@@ -125,11 +125,15 @@ export class SidebarObject {
         addUserDataButton.setMarginLeft( '10px' );
         addUserDataButton.setMarginRight( '10px' );
         addUserDataButton.onClick( () => {
+            if(editor.selected == editor.scene) {
+                this.addModelHouseInfo();
+                return;
+            }
             const name = this.editor.selected.name.toLowerCase();
             if(name.includes('door')) {
-                this.addDoorUserData(editor, editor.selected);
+                this.addDoorUserData();
             } else if(name.includes('window')) {
-                this.addWindowUserData(editor, editor.selected);
+                this.addWindowUserData();
             } else {
                 alert('No User Data applicable');
             }
@@ -229,7 +233,7 @@ export class SidebarObject {
         }
 	}
 
-    addDoorUserData(editor, object) {
+    addDoorUserData() {
         const _html = `
             <dialog id="addDoorUserDataDialog">
                 <form>
@@ -286,6 +290,7 @@ export class SidebarObject {
                 obj.userData.DBid = 'n/a';
 
             const userData = obj.userData;
+            const object = this.editor.selected;
 
             if ( JSON.stringify( object.userData ) != JSON.stringify( userData ) ) {
                 this.editor.execute( new SetValueCommand( this.editor, object, 'userData', userData ) );
@@ -295,7 +300,7 @@ export class SidebarObject {
         addDoorUserDataDialog.showModal();
     }
 
-    addWindowUserData(editor, object) {
+    addWindowUserData() {
         const _html = `
             <dialog id="addWindowUserDataDialog">
                 <form>
@@ -346,6 +351,7 @@ export class SidebarObject {
                 obj.userData.DBid = 'n/a';
 
             const userData = obj.userData;
+            const object = this.editor.selected;
 
             if ( JSON.stringify( object.userData ) != JSON.stringify( userData ) ) {
                 this.editor.execute( new SetValueCommand( this.editor, object, 'userData', userData ) );
@@ -353,5 +359,106 @@ export class SidebarObject {
         });
 
         addWindowUserDataDialog.showModal();
+    }
+
+    addModelHouseInfo() {
+        var _html = `
+            <dialog id="addModelHouseInfoDialog">
+                <form>
+                    <p>
+                    <label>
+                        <h1>Add/Modify Model House Information</h1>
+                        <p>* 아파트 정보</p>
+                        <p>단지이름 : <input type="text" id="complexName" name="complexName" value="COMPLEX_NAME"> </p>
+                        <p>평형(m2) : <input type="text" id="size" name="size" value="SIZE"> </p>
+                        <p>타입 : <input type="text" id="type" name="type" value="TYPE"> </p>
+                        <p>건설사 : <input type="text" id="companyName" name="companyName" value="COMPANY_NAME"> </p>
+                        <p>주소 : <input type="text" id="address" name="address" value="ADDRESS"> </p>
+                        <p>비고 : <input type="text" id="comment" name="comment" value="COMMENT"> </p>
+                        
+                    </label>
+                    </p>
+                    <div>
+                    <button value="cancel" formmethod="dialog">Cancel</button>
+                    <button id="confirmBtn" value="default">Add</button>
+                    </div>
+                </form>
+            </dialog>
+    `
+        const complexName = this.editor.scene.userData.complexName;
+        if(complexName == undefined)
+            _html = _html.replace('COMPLEX_NAME', '');
+        else
+            _html = _html.replace('COMPLEX_NAME', complexName);
+        const size = this.editor.scene.userData.size;
+        if(size == undefined)
+            _html = _html.replace('SIZE', '');
+        else
+            _html = _html.replace('SIZE', size);
+         const type = this.editor.scene.userData.type;
+        if(type == undefined)
+            _html = _html.replace('TYPE', '');
+        else
+            _html = _html.replace('TYPE', type);
+        const companyName = this.editor.scene.userData.companyName;
+        if(companyName == undefined)
+            _html = _html.replace('COMPANY_NAME', '');
+        else
+            _html = _html.replace('COMPANY_NAME', companyName);
+        const address = this.editor.scene.userData.address;
+        if(address == undefined)
+            _html = _html.replace('ADDRESS', '');
+        else
+            _html = _html.replace('ADDRESS', address);
+        const comment = this.editor.scene.userData.comment;
+        if(comment == undefined)
+             _html = _html.replace('COMMENT', '');
+        else
+            _html = _html.replace('COMMENT', comment);
+
+        const dom = new DOMParser().parseFromString(_html, 'text/html');
+        const dialog = dom.querySelector("dialog");
+        document.body.appendChild(dialog)
+
+        const addModelHouseInfoDialog = document.getElementById("addModelHouseInfoDialog");
+        const confirmBtn = addModelHouseInfoDialog.querySelector("#confirmBtn");
+
+        // "Cancel" button closes the dialog without submitting because of [formmethod="dialog"], triggering a close event.
+        addModelHouseInfoDialog.addEventListener("close", (e) => {
+            document.body.removeChild(dialog)
+        });
+
+        // Prevent the "confirm" button from the default behavior of submitting the form, and close the dialog with the `close()` method, which triggers the "close" event.
+        confirmBtn.addEventListener("click", (event) => {
+            event.preventDefault(); // We don't want to submit this fake form
+            
+            const complexName = document.getElementById("complexName").value;
+            const size = document.getElementById("size").value;
+            const type = document.getElementById("type").value;
+            const companyName = document.getElementById("companyName").value;
+            const address = document.getElementById("address").value;
+            
+            const comment = document.getElementById("comment").value;
+
+            document.body.removeChild(dialog)
+            
+            // temporary obj for userData
+            var obj = new THREE.Object3D();
+            obj.userData.complexName = complexName;
+            obj.userData.size = size;
+            obj.userData.type = type;
+            obj.userData.companyName = companyName;
+            obj.userData.address = address;
+            obj.userData.comment = comment;
+
+            const userData = obj.userData;
+            const object = this.editor.selected;
+
+            if ( JSON.stringify( object.userData ) != JSON.stringify( userData ) ) {
+                this.editor.execute( new SetValueCommand( this.editor, object, 'userData', userData ) );
+            }
+        });
+
+        addModelHouseInfoDialog.showModal();
     }
 }

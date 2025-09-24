@@ -1,17 +1,10 @@
 <?php
-    function downloadData($tblname, $userid) {
-		$host = '1.220.107.66';
-		$user = 'db_user';
-		$pass = 'dahan_2845@tech';
-		$dbname = 'APT_TWIN';
+    function downloadData($tblname) {
+		include("mssql_connect.php");
+    
 
-        $colname = 'model';
-	
-        // mssql
-        $connectionInfo = array("UID"=>$user, "PWD"=>$pass, "Database"=>$dbname, "TrustServerCertificate" => "True");
         $conn = sqlsrv_connect($host, $connectionInfo);
-        $query = "select top 1 CAST(model as NVARCHAR(MAX)) from $tblname where userid='$userid' order by id desc";
-
+        $query = "select top 1 CAST(model as NVARCHAR(MAX)) from $tblname order by id desc";
 
 		$result = sqlsrv_query($conn, $query);
 
@@ -30,7 +23,6 @@
     }
 
     $tblname = $_GET['tblname'];
-    $userid = $_GET['userid'];
 
-    downloadData($tblname, $userid);
+    downloadData($tblname);
 ?>

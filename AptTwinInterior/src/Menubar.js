@@ -2,7 +2,7 @@ import { UIPanel } from '../../src_common/libs/ui.js';
 
 import { MenubarFile } from './Menubar.File.js';
 import { MenubarEdit } from './Menubar.Edit.js';
-import { MenubarTools } from '../../src_common/Menubar.Tools.js';
+import { MenubarTools } from './Menubar.Tools.js';
 import { MenubarHelp } from '../../src_common/Menubar.Help.js';
 
 export class Menubar {

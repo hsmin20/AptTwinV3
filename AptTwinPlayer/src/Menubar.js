@@ -20,7 +20,7 @@ class MenubarTools {
         option.textContent = 'Update from DB';
         option.addEventListener( 'click', async () => {
             try {
-                const response = await fetch('./download_model.php?tblname=ModelHouse&userid=hsmin');
+                const response = await fetch('./download_model.php?tblname=ModelHouse&userid=hsmi');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

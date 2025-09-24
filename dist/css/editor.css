@@ -363,6 +363,11 @@ select {
 	content: '💺'
 }
 
+#outliner .Pet:after {
+	content: '🐶'
+}
+
+
 /* */
 
 #outliner .Scene {
@@ -429,7 +434,7 @@ select {
 	}
 
 	.Outliner .option:hover {
-		background-color: rgba(0,0,0,0.02);
+		background-color: rgba(0, 0, 0, 0.02);
 	}
 
 	.Outliner .option.active {
