@@ -17,16 +17,19 @@
 
 </head>
 <body>
-<article id="wrap">
+    <div class="login_fixed" id="loginStatus">
+    <a href="#" class="login_btn" id="loginBtn">로그인</a>
+    </div>
 
+<article id="wrap">
     <a href="" class="scr_top" onclick="$('html, body').stop().animate( { scrollTop : '0' }, 700 ); return false;"><img src="/images/da_image/scr_top.svg" alt="스크롤탑"></a>
     <div class="visualSwiper">
         <ul class="swiper-wrapper">
             <li class="swiper-slide">
                 <a href="" class="link" ></a>
                 <div class="txt_wrap w_custom">
-                    <h4 class="txtAni">내 집처럼, 나만의 공간</h4>
-                    <h2 class="txtAni">3D 공간에서 직접 디자인하며<br>꿈꾸던 인테리어를 체험하세요.</h2>
+                    <h4 class="txtAni">내 집을 그대로 담은 디지털 트윈</h4>
+                    <h2 class="txtAni">3D 공간에서 자유롭게 경험하고<br>현실처럼 생생하게 경험합니다.</h2>
                 </div>
                 <div class="thumb"><img src="./main_images/main_visual01_darkened.png" alt="메인 비주얼 01"></div>
             </li>
@@ -34,7 +37,7 @@
                 <a href="" class="link" ></a>
                 <div class="txt_wrap w_custom">
                     <h4 class="txtAni">꿈꾸던 나의 집 </h4>
-                    <h2 class="txtAni">나만의 집을 3D로 구경하고<br>직접 배치하며 나만의 스타일을 완성합니다.</h2>
+                    <h2 class="txtAni">APT TWIN으로 완성하고<br>새로운 방식으로 공간을 체험합니다.</h2>
                 </div>
                 <div class="thumb"><img src="./main_images/main_visual02_darkened.jpg" alt="메인 비주얼 02"></div>
             </li>
@@ -54,7 +57,7 @@
         </div>
         <!-- ✅ 고정 버튼 추가 -->
         <div class="btn_wrap">
-            <a href="#" class="main_view"><span>프로젝트 시작하기</span></a>
+            <a href="#" class="main_view"><span>나만의 집 만들기</span></a>
         </div>
 
         <dl class="scr_dwn" onclick="$('html, body').stop().animate( { scrollTop : ($('.main_content').offset().top-$('#header').outerHeight())}, 700); return false;">
@@ -66,21 +69,11 @@
         <div class="main_project">
             <div class="w_custom">
                 <div class="main_title" data-aos="fade-up">
-                    <h6><em>INTERIOR / PLAYER</em></h6>
-                    <h2>당신의 집을 <br>직접 디자인하고 <br>체험하세요.</h2>
+                    <h6><em>PLAYER / INTERIOR</em></h6>
+                    <h2>당신의 집을 <br>APT TWIN에서 <br>경험해 보세요.</h2>
                 </div>
                 <!-- (s) 25.01.08 수정 -->
                 <ul class="info_list" data-aos="fade-up">
-                    <li>
-                        <a href="interior.html" class="link" ></a>
-                        <span class="thumb">
-                            <img src="./main_images/main_project01.jpg" alt="INTERIOR">
-                        </span>
-                        <dl class="desc">
-                            <dt>INTERIOR</dt>
-                            <dd>실제 공간을 그대로 확인하고,<br>3D 공간에서 자유롭게 배치하며,<br>공간을 내 스타일로 완성할 수 있습니다.</dd>
-                        </dl>
-                    </li>
                     <li>
                         <a href="player.html" class="link" ></a>
                         <span class="thumb">
@@ -91,6 +84,17 @@
                             <dd>완성된 3D 공간을 탐험하며,<br>자유롭게 이동하며 구경하고,<br>직접 체험하는 즐거움을 느껴보세요.</dd>
                         </dl>
                     </li>
+                    <li>
+                        <a href="interior.html" class="link" ></a>
+                        <span class="thumb">
+                            <img src="./main_images/main_project01.jpg" alt="INTERIOR">
+                        </span>
+                        <dl class="desc">
+                            <dt>INTERIOR</dt>
+                            <dd>실제 공간을 그대로 확인하고,<br>3D 공간에서 자유롭게 배치하며,<br>공간을 내 스타일로 완성할 수 있습니다.</dd>
+                        </dl>
+                    </li>
+                    
                 </ul>
             </div>
         </div>
@@ -127,5 +131,25 @@
         </div>
 	</footer>
 </article><!-- #wrap 전체영역 -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const loginStatus = document.getElementById("loginStatus");
+        const loginBtn = document.getElementById("loginBtn");
+        const userId = localStorage.getItem("userid");
+
+        if (userId) {
+            loginStatus.innerHTML = `<a href="#" class="login_btn" id="logoutBtn">${userId}님 로그아웃</a>`;
+            document.getElementById("logoutBtn").addEventListener("click", () => {
+                localStorage.removeItem("userid");
+                window.location.reload();
+            });
+        } else {
+            loginBtn.addEventListener("click", () => {
+                window.location.href = "./member/login.html";
+            });
+        }
+    });
+</script>
+
 </body>
 </html>
