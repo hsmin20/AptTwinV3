@@ -15,16 +15,13 @@ export class MenubarTools {
         options.setClass( 'options' );
         this.container.add( options );
 
-        //Recent Model
-        
-
         // Upload
         let option = new UIRow().setTextContent( 'Upload to DB' ).setClass( 'option' );
         option.onClick( async () => {
            let data = editor.toJSON2();
 
             try {
-                const response = await fetch('./upload_model.php?tblname=ModelHouse&userid=hs', {
+                const response = await fetch('./upload_model.php?tblname=Houses', {
                     method: 'POST',
                     headers: {
                     'Accept': 'application/json',
@@ -50,7 +47,7 @@ export class MenubarTools {
         option.setTextContent( 'Download from DB' );
         option.onClick( async () => {
             try {
-                const response = await fetch('./download_model.php?tblname=ModelHouse&userid=hsm');
+                const response = await fetch('./download_model.php?tblname=Houses');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

@@ -4,7 +4,7 @@
     
 
         $conn = sqlsrv_connect($host, $connectionInfo);
-        $query = "select top 1 CAST(model as NVARCHAR(MAX)) from $tblname order by id desc";
+        $query = "select top 1 CAST(model_json as NVARCHAR(MAX)) from $tblname order by model_id desc";
 
 		$result = sqlsrv_query($conn, $query);
 
