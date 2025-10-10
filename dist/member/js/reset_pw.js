@@ -25,7 +25,7 @@ form.addEventListener("submit", async function (e) {
     formData.append("confirm_password", confirmPassword);
 
     try {
-        const res = await fetch("http://localhost:8000/member/php/reset_pw_process.php", {
+        const res = await fetch("./php/reset_pw_process.php", {
             method: "POST",
             body: formData,
         });

@@ -4,7 +4,7 @@ document.getElementById("joinForm").addEventListener("submit", async function(e)
   const formData = new FormData(this);
 
   try {
-    const response = await fetch("http://localhost:8000/member/php/join_process.php", {
+    const response = await fetch("./php/join_process.php", {
       method: "POST",
       body: formData
     });

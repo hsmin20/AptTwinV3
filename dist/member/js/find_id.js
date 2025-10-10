@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
         formData.append("email", email);
 
         try {
-            const res = await fetch("../php/find_id_process.php", {
+            const res = await fetch("./php/find_id_process.php", {
                 method: "POST",
                 body: formData
             });
