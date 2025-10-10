@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>APT TWIN</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" type="text/css" href="../css/reset.css">
+<link rel="stylesheet" type="text/css" href="../css/custom.css">
+<link rel="stylesheet" type="text/css" href="../css/swiper-bundle.min.css">
+<link rel="stylesheet" type="text/css" href="../css/aos.css">
+<script src="../main_js/jquery-3.6.0.min.js"></script>
+<script src="../main_js/swiper-bundle.min.js"></script>
+<script src="../main_js/aos.js"></script>
+<script src="../main_js/footer.js"></script>
+<script src="../main_js/experiment.js"></script>
+<script src="../join.js"></script>
+<script>
+	$(function(){
+		$("#wrap").addClass("member");
+	});					
+</script>
+
+	<div class="member_wrap">
+		<div class="inr">
+			<div class="sub_title hd cen">
+				<h3>회원가입</h3>
+			</div>
+			<div class="sub_member sub_join">
+				<div class="sub_agree_box">
+					<form name="joinfrm" id="joinForm" action="http://localhost:8000/member/php/join_process.php" method="POST">
+						<fieldset>
+							<legend>회원가입 정보 기입</legend>
+							<div class="bbs_tit">
+								<h2 class="bbs_write_title">기본 정보 입력</h2>
+								<span><strong>*</strong> 는 필수 입력 사항 입니다</span>
+							</div>
+							<table class="bbs_write" summary="회원가입 정보 입력,아이디,이름,비밀번호,비밀번호확인,이메일 등등..">
+								<caption>회원가입 정보 입력</caption>
+								<colgroup>
+									<col width="18%">
+									<col >
+								</colgroup>
+								<tbody>
+									<tr>
+										<th class="join_tit" scope="row">아이디<span class="require_dot"></span></th>
+										<td>
+											<input type="text" name="userid" id="userid" />
+											
+										</td>
+									</tr>
+									<tr>
+										<th class="join_tit" scope="row">비밀번호<span class="require_dot"></span></th>
+										<td><input type="password" name="password" id="password" /></td>
+										<!-- <td><input type="password" name="password" id="password" /><span class="td_txt">영문 대·소문자/숫자/특수문자 중 2가지 이상을 혼용하여 10~16자 이내로 작성해주세요.</span></td> -->
+									</tr>
+									<tr>
+										<th class="join_tit" scope="row">비밀번호 확인<span class="require_dot"></span></th>
+										<td><input type="password" name="password2" id="password2" /></td>
+									</tr>
+									<tr>
+										<th class="join_tit" scope="row">성명(한글)<span class="require_dot"></span></th>
+										<td><input type="text" name="name" id="name" /></td>
+									</tr>
+									<tr>
+										<th class="join_tit" scope="row">주소<span class="require_dot"></span></th>
+										<td><input type="text" name="address" id="address" /></td>
+									</tr>
+									<tr>
+										<th class="join_tit" scope="row">이메일<span class="require_dot"></span></th>
+										<td class="td_mail">
+											<input type="text" name="email_id" id="emailId" style="width:16%;"/>
+											<span class="td_txt">@</span>
+											<input type="text" name="email_domain" id="emailDomain" style="width:22%;" />
+
+											<select name="email_domain_select" id="domainSelect" title="직접입력" class="mail_select">
+												<option value="직접입력">직접입력</option>
+												<option value="naver.com">naver.com</option>
+												<option value="gmail.com">gmail.com</option>
+												<option value="daum.net">daum.net</option>
+											</select>
+										</td>
+									</tr>
+									<script>
+										// 이메일 도메인 선택 시 자동으로 'email_domain' 필드에 값 채우기
+										document.getElementById("domainSelect").addEventListener("change", function() {
+											var selectedDomain = this.value; // 선택된 이메일 도메인
+											var emailDomainField = document.getElementById("emailDomain");
+
+											// '직접입력'이 아닌 다른 값이 선택되면 'email_domain' 필드에 값 자동 입력
+											if (selectedDomain !== "직접입력") {
+												emailDomainField.value = selectedDomain; // '직접입력'이 아니면 선택한 값 입력
+											} else {
+												// '직접입력'을 선택하면 'email_domain' 필드를 비워두거나 사용자가 입력하도록 할 수 있음
+												emailDomainField.value = ''; // 사용자가 직접 입력할 수 있도록 빈 칸으로 설정
+											}
+										});
+									</script>
+									<tr>
+										<th class="join_tit" scope="row">휴대폰<span class="require_dot"></span></th>
+										<td><input type="text" name="phone" id="phone" /></td>
+									</tr>
+									
+								</tbody>
+							</table><!--board_write-->
+							<div class="btn_wrap ta_center">
+								<button type="button" class="btn btn_basic" onclick="location.href='index.html'">취소</button>
+								<button type="submit" class="btn_point btn">회원가입</button>
+							</div>
+						</fieldset>
+					</form>
+				 </div>
+			</div>
+		</div>
+	</div>	
+
+	<footer id="footer">
+			<div class="w_custom">
+				<div class="cont">
+					<ul class="link_list">
+						<li><a href="/outline/policy.php"><em>SECURITY NOTICE</em></a></li>
+					</ul>
+					<ul class="info_list">
+						<li class="logo_item">
+							<img src="./main_images/logo.png" alt="Company Logo" class="footer_logo">
+						</li>
+						<li>
+							<dl class="desc">
+								<dt>Address</dt>
+								<dd>강남구 논현로 120길 7, 501(원일빌딩)</dd>
+							</dl>
+						</li>
+						<li>
+							<dl class="desc">
+								<dt>E-mail</dt>
+								<dd><a href="mailto:dahan_info@dahan.co.kr">dahan_info@dahan.co.kr</a></dd>
+							</dl>
+							<dl class="desc">
+								<dt>Tel</dt>
+								<dd><a href="tel:+82-2-515-2845">+82-2-515-2845</a></dd>
+							</dl>
+						</li>
+					</ul>
+				</div>
+			</div>
+	</footer>
+</body>
+</html>

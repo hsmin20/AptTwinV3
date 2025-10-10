@@ -253,15 +253,15 @@
 		/*checkbox*/
 			input[type="checkbox"] {display:none;}
 				input[type="checkbox"] + label {cursor:pointer;font-size:14px;}
-				input[type="checkbox"] + label:before, input[type="checkbox"] + label::before {display:inline-block;content:"";width:24px;height:24px;margin:-2px 10px 0 0;vertical-align:middle;background:url("../images/da_image/chk-off.png") left top no-repeat;cursor:pointer; background-size:100% !important;}
-				input[type="checkbox"]:checked + label:before, input[type="checkbox"]:checked + label::before {background:url("../images/da_image/chk-on.png") left top no-repeat;}
+				input[type="checkbox"] + label:before, input[type="checkbox"] + label::before {display:inline-block;content:"";width:24px;height:24px;margin:-2px 10px 0 0;vertical-align:middle;background:url("../main_images/chk-off.png") left top no-repeat;cursor:pointer; background-size:100% !important;}
+				input[type="checkbox"]:checked + label:before, input[type="checkbox"]:checked + label::before {background:url("../main_images/chk-on.png") left top no-repeat;}
 			
 		/*radio*/
 			.radio_box{display:inline-block;}
 			input[type="radio"] {display:none;}
 				input[type="radio"] + label {cursor:pointer; margin-right:26px;}
 				input[type="radio"] + label:before, input[type="radio"] + label::before {display:inline-block;content:"";width: 24px;height: 24px;margin: -2px 10px 0 20px;vertical-align:middle;background:url('../images/da_image/radio-off.png') left top no-repeat;cursor:pointer; background-size:100% !important;}
-				input[type="radio"]:checked + label:before, input[type="radio"]:checked + label::before {background:url('../images/da_image/radio-on.png') left top no-repeat;}
+				input[type="radio"]:checked + label:before, input[type="radio"]:checked + label::before {background:url('../main_images/radio-on.png') left top no-repeat;}
 				input[type="radio"] + label:first-of-type:before, input[type="radio"] + label:first-of-type::before {margin-left:0;}
 
 		/*textarea*/
@@ -278,7 +278,7 @@
 			.btn_sm{height:50px;line-height:48px;font-size:18px;color:#333;font-weight:400;letter-spacing:-0.54px;padding:0 19px;margin-left:10px;}
 				.btn, .btn:hover {width:200px;height:60px;line-height:58px;font-size:20px;color:#fff;font-weight:500;letter-spacing:-0.8px;box-sizing:border-box;}
 				.btn_basic, .btn_basic:hover {border-color:#333 !important;background-color:#fff !important;color:#333 !important;}
-				.btn_point, .btn_point:hover {border-color:var(--point-color01) !important;background-color:var(--point-color01) !important;}
+				.btn_point, .btn_point:hover {border-color:#555 !important;background-color:#555 !important;}
 				.btn_outline, .btn_outline:hover {border-color:var(--point-color01) !important;background-color:#fff !important; color:var(--point-color01) !important;}
 				.btn_sm, .btn_sm:hover {border-color:#333 !important;background-color:#fff !important;color:#333 !important;}
 				.btn_reset {background:none;line-height:48px;}
@@ -361,10 +361,11 @@
 			table.bbs_write.captcha td button {vertical-align:middle !important;}
 			table.bbs_write tr td input[name="captcha"]{margin-left:10px;}
 
-		.member_wrap {width: 100%; background: var(--blue-bg01); box-sizing: border-box; padding: 128px 0 142px;}
+		/* .member_wrap {width: 100%; background: var(--blue-bg01); box-sizing: border-box; padding: 128px 0 142px;} */
+    .member_wrap {width: 100%; background: #FFF8F0;; box-sizing: border-box; padding: 128px 0 142px;}
 		.member_wrap .inr {max-width: 1300px;}
 		.member_wrap .sub_title.hd {padding-bottom: 34px;}
-		.member_wrap .sub_title h3 {font-size: 40px; letter-spacing: inherit;}
+		.member_wrap .sub_title h3 {font-size: 40px; letter-spacing: inherit; text-align: center;}
 		.member_wrap .bbs_write_title {display: inline-block; font-size: 30px; color: #333; font-weight: 500; letter-spacing: -0.9px; padding-bottom: 24px;}
 		.member_wrap .sub_pw_txt{margin-bottom: 24px; font-size:18px;color:#666;font-weight:400;letter-spacing:-0.54px;line-height:30px;word-break:keep-all;}
 		.member_wrap .pw_info_txt{font-size:16px;color:#777;font-weight:400;letter-spacing:-0.48px;margin:20px 0 30px;word-break:keep-all;}
@@ -408,7 +409,38 @@
 		.member_wrap .sub_join .bbs_write_title {padding-bottom: 0;}
 		.sub_join .bbs_tit span{display: inline-block;float: right;font-size:16px;color:#777;font-weight:400;letter-spacing:-0.48px;position: absolute;right:0;bottom:3px;}
 		.sub_join .bbs_tit span strong{font-size:inherit;color:#0076bd;font-weight:inherit;letter-spacing:inherit;}
-		
+	/* 로그인 상단 버튼  */
+	.login_fixed {
+		position: fixed;
+		top: 20px;
+		right: 20px;
+		z-index: 9999;
+	}
+
+	.login_fixed .login_btn {
+		display: inline-flex;          /* flex로 가운데 정렬 */
+		align-items: center;
+		justify-content: center;
+		height: 40px;
+		padding: 0 15px;               /* 텍스트 길이에 따라 폭 유동 */
+		min-width: 100px;               /* 최소 폭 */
+		border: 2px solid #fff;
+		background: transparent;
+		color: #fff;
+		font-size: 16px;
+		font-weight: 500;
+		text-decoration: none;
+		border-radius: 0;
+		white-space: nowrap;            /* 줄바꿈 방지 */
+		overflow: hidden;
+		text-overflow: ellipsis;        /* 너무 길면 ... 처리 */
+		transition: background 0.3s ease;
+	}
+
+	.login_fixed .login_btn:hover {
+		background: rgba(255, 255, 255, 0.1);
+	}
+
 	/*** 로그인 | member/login.html ***/
 		.sub_login .login_box {width:520px; margin:0 auto; padding:0; padding-top: 20px;}
 		.sub_login .login_box input[type="text"],
@@ -446,4 +478,117 @@
 		.sub_ok .ok_box h4 {font-size:20px;color:#666;line-height:30px;font-weight:400;word-break:keep-all;margin:16px 0 54px;}
 		.sub_ok .ok_box h4 span{font-size:inherit;color:#0076bd;font-weight:400;font-weight:inherit;}
 
-    
+    /* ===========================
+   Login page specific fixes
+   =========================== */
+
+/* 1) body에 login-page 클래스 추가: <body class="login-page"> */
+body.login-page {
+  /* 필요하면 글로벌 최소너비 무시 (모바일 테스트용) */
+  /* 주의: 사이트 전체에 영향 주지 않도록 body.login-page 만 타겟 */
+}
+
+/* 2) header의 음수 margin이 로그인 레이아웃을 망가뜨리면 page에서만 해제 */
+body.login-page #header {
+  margin-bottom: 0; /* 기존 -100px을 덮음 — 로그인 전용 처리 */
+  /* 필요하면 top 고정 높이 그대로 유지 */
+}
+
+/* 3) 로그인 페이지의 패딩을 줄여서 로그인 박스를 화면 중앙에 가깝게 배치 */
+body.login-page .member_wrap {
+  padding: 60px 0;    /* 원래 128px 0 142px -> 로그인 전용으로 줄임 */
+  box-sizing: border-box;
+}
+
+/* 4) 수직 중앙 정렬: 화면 높이에 맞춰 로그인 박스를 가운데로 */
+body.login-page .member_wrap .inr {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 100px); /* header 높이(100px) 뺀 값 */
+}
+/* 5) 로그인 박스 크기/여백 재정의 (반응형 포함) */
+body.login-page .sub_login .login_box {
+  width: 520px;       /* 기존과 동일 */
+  max-width: calc(100% - 40px);
+  margin: 0;          /* inr에서 가운데 정렬하므로 여기선 0 */
+  padding-top: 0;     /* 불필요한 여백 제거 */
+  box-sizing: border-box;
+}
+
+/* 6) 모바일에서 좁아질 때 안전하게 보이도록 */
+@media screen and (max-width: 860px) {
+  body.login-page .member_wrap { padding: 30px 0; }
+  body.login-page .member_wrap .inr { min-height: calc(100vh - 80px); }
+  body.login-page .sub_login .login_box { width: 100%; max-width: 420px; padding: 20px; }
+}
+
+/* 7) 디버깅용 (원하면 잠깐 켜서 레이아웃 영역 확인) */
+/* body.login-page * { outline: 1px dashed rgba(0,0,0,0.04); } */
+/* 로그인 폼 input, 버튼 width 통일 */
+.sub_login .form_list input,
+.sub_login .form_list button {
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+}
+
+/* h3 로그인 - 가운데 정렬 */
+.sub_login .login_box h2,
+.sub_login .login_box h3 {
+  font-size: 40px;   /* 보기 좋은 크기 (필요하면 26px, 28px도 ok) */
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 40px;
+  color: #333;       /* 좀 더 진하게 */
+}
+
+/* input 스타일 개선 (테두리 연하게) */
+.sub_login .form_list input {
+  border: 1px solid #ccc;  /* 연한 회색 */
+  border-radius: 4px;      /* 살짝 둥글게 */
+  padding: 10px;
+  font-size: 14px;
+}
+
+/* focus 시 깔끔하게 (선택했을 때) */
+.sub_login .form_list input:focus {
+  border-color: #999;
+  outline: none;
+}
+
+/* 버튼 디자인 input이랑 맞추기 */
+.sub_login .form_list button {
+  border: none;
+  border-radius: 4px;
+  padding: 12px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* h3 회원가입 가운데 정렬 */
+.sub_join .sub_title h3 {
+  font-size: 32px;     /* 지금보다 크고 보기 좋게 */
+  font-weight: bold;
+  text-align: center;  /* 가운데 정렬 */
+  margin-bottom: 30px;
+  color: #333;         /* 선명한 글씨색 */
+}
+
+/* input 박스 테두리 연하게 */
+.sub_join input[type="text"],
+.sub_join input[type="password"],
+.sub_join input[type="email"],
+.sub_join input[type="tel"] {
+  border: 1px solid #ccc;   /* 진한 선 → 연한 회색 */
+  border-radius: 4px;       /* 살짝 둥글게 */
+  padding: 10px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* input focus 시 */
+.sub_join input:focus {
+  border-color: #999; /* 포커스시만 조금 진하게 */
+  outline: none;
+}
