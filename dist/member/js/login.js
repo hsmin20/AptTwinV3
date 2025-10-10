@@ -6,7 +6,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
   const resultElem = document.getElementById("loginResult");
 
   try {
-    const response = await fetch("http://localhost:8000/member/php/login.php", {
+    const response = await fetch("./php/login.php", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
