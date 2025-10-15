@@ -55,7 +55,7 @@ export class Player {
         this.scene.clear();
 
         var loader = new THREE.ObjectLoader(); // A loader for loading a JSON resource
-		this.camera = loader.parse( data.camera );
+		// this.camera = loader.parse( data.camera );
         this.setScene( loader.parse( data.scene ) );
 
         if(!this.mobile) {
@@ -77,7 +77,7 @@ export class Player {
     toJSON2 () {
         let json =  {
             metadata: {},
-            camera: this.camera.toJSON(),
+            // camera: this.camera.toJSON(),
             scene: this.scene.toJSON()
         };
 

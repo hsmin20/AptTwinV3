@@ -283,33 +283,5 @@ export class MenubarSample {
             }
         } );
         options.add( option );
-
-        options.add( new UIHorizontalRule() );
-
-        // Download
-        option = new UIRow();
-        option.setClass( 'option' );
-        option.setTextContent( 'Download from DB' );
-        option.onClick( async () => {
-            const urlParams = new URL(location.href).searchParams;
-            const model_id = urlParams.get('model_id');
-            
-            try {
-                const response = await fetch('./download_model.php?tblname=ModelHouses&model_id='+model_id);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                editor.clear();
-                editor.fromJSON( data );
-
-                alert('Done downloading');
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        } );
-        options.add( option );
     }
 }

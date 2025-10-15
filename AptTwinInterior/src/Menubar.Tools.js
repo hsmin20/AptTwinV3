@@ -72,24 +72,32 @@ export class MenubarTools {
         // Download
         option = new UIRow();
         option.setClass( 'option' );
-        option.setTextContent( 'Download from DB' );
+        option.setTextContent( 'Download(&override) from DB' );
         option.onClick( async () => {
-            // try {
-            //     const response = await fetch('./download_model.php?tblname=Houses');
-            //     if (!response.ok) {
-            //         throw new Error(`HTTP error! status: ${response.status}`);
-            //     }
+            const urlParams = new URL(location.href).searchParams;
+            let house_id = urlParams.get('house_id');
+            if(house_id == null) {
+                house_id = localStorage.getItem("house_id");
+            }
+            if(house_id == null) {
+                alert('No House ID exists');
+                return;
+            }
+            try {
+                const response = await fetch('./download_model.php?tblname=Houses&house_id=' + house_id);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-            //     const data = await response.json();
+                const data = await response.json();
 
-            //     editor.clear();
-            //     editor.fromJSON( data );
+                editor.clear();
+                editor.fromJSON( data );
 
-            //     alert('Done downloading');
-            // } catch (error) {
-            //     console.error('Error fetching data:', error);
-            // }
-            alert("Choose one of the User's Apt?");
+                alert('Done downloading');
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
         } );
         options.add( option );
 

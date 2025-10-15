@@ -3,6 +3,14 @@ import * as THREE from 'three';
 import { Player } from './Player.js';
 import { Menubar } from './Menubar.js';
 
+const urlParams = new URL(location.href).searchParams;
+let isSample = urlParams.get('sample');
+if(isSample == undefined)
+    isSample = false;
+let house_id = urlParams.get('house_id');
+if(house_id == undefined)
+    house_id = -1;
+
 const player = new Player();
 
 const menubar = new Menubar(player);
@@ -21,24 +29,6 @@ function loadDataFromFile(filename) {
         player.initControl();
         player.animate();
     } );
-}
-
-async function loadDataFromDB(tblname, userid) {
-    const url = './download_model.php?tblname=' + tblname + '&userid=' + userid;
-    const response = await fetch(url);
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    player.loadScene(data);
-
-    if(!player.isMobile())
-        player.addCrosshair();
-    
-    player.initControl();
-    player.animate();
 }
 
 function onSuccessStorage() {
@@ -71,7 +61,35 @@ export function saveState() {
 
 }
 
-player.storage.init(onSuccessStorage);
+if(isSample|| house_id != -1) {
+    player.storage.init(function() {});
+    try {
+        if(isSample) {
+            house_id = 47;
+        }
+        const url = './download_model.php?tblname=Houses&house_id=' + house_id;
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        player.loadScene(data);
+
+        if(!player.isMobile())
+            player.addCrosshair();
+        
+        player.initControl();
+        player.animate();
+
+        startDataUpdates(10000);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+} else {
+    player.storage.init(onSuccessStorage);
+}
 
 let g_intervalId;
 

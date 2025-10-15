@@ -7,6 +7,12 @@ const urlParams = new URL(location.href).searchParams;
 let isSample = urlParams.get('sample');
 if(isSample == undefined)
     isSample = false;
+let model_id = urlParams.get('model_id');
+if(model_id == undefined)
+    model_id = -1;
+let house_id = urlParams.get('house_id');
+if(house_id == undefined)
+    house_id = -1;
 
 const editor = new Editor('Apartment');
 
@@ -57,4 +63,33 @@ function onWindowResize() {
     viewport.windowResize();
 }
 
-editor.storage.init(onSuccessStorage);
+if(isSample || model_id != -1 || house_id != -1) {
+    editor.storage.init(function() {});
+    try {
+        let targetURL = "";
+        if(house_id != -1) {
+            targetURL = './download_model.php?tblname=Houses&house_id=' + house_id;
+        } else {
+            if(isSample) {
+                model_id = 3;
+            }
+            targetURL = './download_model.php?tblname=ModelHouses&model_id=' + model_id;
+        }
+
+        const response = await fetch(targetURL);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        editor.clear();
+        editor.fromJSON( data );
+
+        alert('Done downloading');
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+} else {
+    editor.storage.init(onSuccessStorage);
+}

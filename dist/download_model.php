@@ -1,9 +1,14 @@
 <?php
-    function downloadData($tblname, $model_id) {
+    function downloadData($tblname, $unique_id) {
 		include("mssql_connect.php");
     
         $conn = sqlsrv_connect($host, $connectionInfo);
-        $query = "select CAST(model_json as NVARCHAR(MAX)) from $tblname where model_id=$model_id";
+        $query = "";
+        if($tblname == 'ModelHouses') {
+            $query = "select CAST(model_json as NVARCHAR(MAX)) from $tblname where model_id=$unique_id";
+        } else {
+            $query = "select CAST(model_json as NVARCHAR(MAX)) from $tblname where house_id=$unique_id";
+        }
 
 		$result = sqlsrv_query($conn, $query);
 
@@ -22,7 +27,12 @@
     }
 
     $tblname = $_GET['tblname'];
-    $model_id = $_GET['model_id'];
+    $unique_id = -1;
+    if($tblname == 'ModelHouses') {
+        $unique_id = $_GET['model_id'];
+    } else {
+        $unique_id = $_GET['house_id'];
+    }
 
-    downloadData($tblname, $model_id);
+    downloadData($tblname, $unique_id);
 ?>
