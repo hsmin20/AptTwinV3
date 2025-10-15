@@ -36,11 +36,16 @@
         sqlsrv_close( $conn);  
     }
 
-    function uploadHouseData($complexName, $companyName, $address, $type, $data, $comment) {
+    function uploadHouseData($house_id, $nickName, $data, $comment2, $model_id, $userId) {
 		include("mssql_connect.php");
 
         $conn = sqlsrv_connect($host, $connectionInfo);
-        $query = "INSERT INTO Houses (complexName, companyName, address, type, model, comment) VALUES ('$complexName', '$companyName', '$address', '$type', '$data', '$comment')";
+        $query = "";
+        if($house_id == null || $house_id == "null")
+            $query = "INSERT INTO Houses (house_name, model_json, comment, model_id, userid) VALUES ('$nickName', '$data', '$comment2', '$model_id', '$userId'); 
+            SELECT SCOPE_IDENTITY() as house_id;";
+        else
+            $query = "UPDATE Houses SET model_json='$data', updated_at=GetDate() WHERE house_id = $house_id; select scope_identity() as house_id;";
 
 		$result = sqlsrv_query($conn, $query);
 
@@ -48,6 +53,18 @@
             $error_msg = sqlsrv_errors();
             die( print_r( $error_msg(), true) );
         }
+
+        // next_result is NEEDED!
+        $next_result = sqlsrv_next_result($result); 
+        if( $next_result === false) {
+            $error_msg = sqlsrv_errors();
+            die( print_r( $error_msg(), true) );
+        }
+
+        $row = sqlsrv_fetch_array( $result, SQLSRV_FETCH_NUMERIC);
+        $newID = $row[0];
+
+        echo $newID;
 
         sqlsrv_free_stmt( $result);
         sqlsrv_close( $conn);  
@@ -68,6 +85,12 @@
 
         uploadModelHouseData($complexName, $size, $type, $companyName, $address, $json, $comment);
     } else if($tblname == 'Houses') {
+        $userId = $_GET['userId'];
+        $model_id = $_GET['model_id'];
+        $house_id = $_GET['house_id'];
+        $nickName = $jsonObj["scene"]["object"]["userData"]["nickName"];
+        $comment2 = $jsonObj["scene"]["object"]["userData"]["comment2"];
         
+        uploadHouseData($house_id, $nickName, $json, $comment2, $model_id, $userId);
     }
 ?>

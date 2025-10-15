@@ -3,6 +3,11 @@ import { Viewport } from './Viewport.js';
 import { Sidebar } from './Sidebar.js';
 import { Menubar } from './Menubar.js';
 
+const urlParams = new URL(location.href).searchParams;
+let isSample = urlParams.get('sample');
+if(isSample == undefined)
+    isSample = false;
+
 const editor = new Editor('Apartment');
 
 const viewport = new Viewport(editor);
@@ -16,7 +21,7 @@ viewport.render();
 const sidebar = new Sidebar( editor, viewport );
 document.body.appendChild(sidebar.container.dom);
 
-const menubar = new Menubar( editor );
+const menubar = new Menubar( editor, isSample );
 document.body.appendChild( menubar.container.dom );
 
 function onSuccessStorage() {
@@ -46,13 +51,10 @@ export function saveState() {
         }, 100 );
 
     }, 1000 );
-
 }
-
-editor.storage.init(onSuccessStorage);
 
 function onWindowResize() {
     viewport.windowResize();
 }
 
-window.addEventListener( 'resize', onWindowResize );
+editor.storage.init(onSuccessStorage);
