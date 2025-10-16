@@ -1,7 +1,7 @@
 // Init npm (installs webpack and everything) 
 npm init
 
-// Install Three
+// Install Threed
 npm install three --save-dev
 
 
