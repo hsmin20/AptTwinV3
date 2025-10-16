@@ -85,8 +85,6 @@ if(isSample || model_id != -1 || house_id != -1) {
 
         editor.clear();
         editor.fromJSON( data );
-
-        alert('Done downloading');
     } catch (error) {
         console.error('Error fetching data:', error);
     }

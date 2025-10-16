@@ -95,8 +95,15 @@ if(isSample|| house_id != -1) {
 let g_intervalId;
 
 async function fetchDataAndUpdateScene() {
+    const urlParams = new URL(location.href).searchParams;
+    let house_id = urlParams.get('house_id');
+    if(house_id == undefined) {
+        console.log('No House ID exists');
+        return;
+    }
+
     try {
-        const response = await fetch('./process.php?tblname=HouseState');
+        const response = await fetch('./process.php?tblname=HouseState&house_id=' + house_id);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

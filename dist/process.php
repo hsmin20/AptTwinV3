@@ -1,5 +1,5 @@
 <?php
-    function getData($tblname) {
+    function getData($tblname, $house_id) {
 		$host = '1.220.107.66';
 		$user = 'db_user';
 		$pass = 'dahan_2845@tech';
@@ -13,7 +13,8 @@
                                 door3,door4,door5,door6,door7,door8,door9,door10,window1,window2,window3,window4,
                                 window5,window6,window7,window8,window9,window10,util1,util2,util3,util4,util5,util6,util7,
                                 util8,util9,util10,moving1x,moving1z,moving1ry,moving2x,moving2z,moving2ry,moving3x,moving3z,
-                                moving3ry,moving4x,moving4z,moving4ry,moving5x,moving5z,moving5ry FROM $tblname order by newid()";
+                                moving3ry,moving4x,moving4z,moving4ry,moving5x,moving5z,moving5ry FROM $tblname WHERE house_id=$house_id 
+                                order by newid()";
 		
 		$result = sqlsrv_query($conn, $query);
 
@@ -61,6 +62,7 @@
     }
 
     $tblname = $_GET['tblname'];
+    $house_id = $_GET['house_id'];
 
-    getData($tblname);
+    getData($tblname, $house_id);
 ?>
