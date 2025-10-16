@@ -17,24 +17,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     const res = await fetch(`./house_project.php?userid=${userid}`);
     const projects = await res.json();
 
-    // 카드 HTML 누적
     let cardsHTML = "";
 
     if (projects.length) {
       cardsHTML = projects
         .map(
           (p) => `
-        <div class="project-card">
+        <div class="project-card" data-houseid="${p.house_id}">
           ${p.image ? `<img class="project-image" src="${p.image}" alt="평면도" />` : ""}
           <h2 class="project-name">${p.house_name || "(이름 없음)"}</h2>
           <p class="project-date">Updated: ${p.updated_at}</p>
+          <button class="interior-btn" data-houseid="${p.house_id}">
+            ✏️ Interior 수정하기
+          </button>
         </div>
       `
         )
         .join("");
     }
 
-    // 마지막에 "새 프로젝트 추가" 카드 추가
+    // 새 프로젝트 카드
     cardsHTML += `
       <div class="project-card new-project-card" id="newProjectCard">
         <div class="plus-sign">+</div>
@@ -44,11 +46,30 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     projectContainer.innerHTML = cardsHTML;
 
-    // 클릭 시 새 프로젝트 페이지로 이동
-    const newCard = document.getElementById("newProjectCard");
-    newCard.addEventListener("click", () => {
+    // 전체 카드 클릭 → player.html 이동
+    document.querySelectorAll(".project-card").forEach((card) => {
+      const houseId = card.getAttribute("data-houseid");
+      if (!houseId) return; // 새 프로젝트 카드 제외
+
+      card.addEventListener("click", () => {
+        window.location.href = `player.html?house_id=${houseId}`;
+      });
+    });
+
+    // Interior 버튼 클릭 → interior.html 이동
+    document.querySelectorAll(".interior-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation(); // 카드 클릭 이벤트 방지
+        const houseId = btn.getAttribute("data-houseid");
+        window.location.href = `interior.html?house_id=${houseId}`;
+      });
+    });
+
+    // 새 프로젝트 추가 카드
+    document.getElementById("newProjectCard").addEventListener("click", () => {
       window.location.href = "./new_project.html";
     });
+
   } catch (err) {
     console.error(err);
     projectContainer.innerHTML = `<p class="error">데이터를 불러오지 못했습니다.</p>`;
