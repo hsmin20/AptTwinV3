@@ -39,6 +39,8 @@ export class Player {
 
 		// this.renderer.autoClear = false; // For HUD, uncomment this. This could be located in render loop to toggle
         // this.renderer.localClippingEnabled = true;
+
+        this.updating = false;
         
 		this.dom.appendChild(this.renderer.domElement);    
 

@@ -9,6 +9,7 @@ export class RobotVacuum {
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'RobotVacuum';
+        group.userData.DBid = 'n/a';
 
         if(oldPos) group.position.copy(oldPos);
         if(oldRot) group.rotation.copy(oldRot);
@@ -20,7 +21,7 @@ export class RobotVacuum {
         const cleanerTexture = textureHelper.get('Vacuum', 1, 1);
         const cleaner_height = 0.1;
         const cleaner = new THREE.Mesh( new THREE.CylinderGeometry(radius, radius, cleaner_height), new THREE.MeshStandardMaterial({ map: cleanerTexture }));
-        cleaner.name = name + '_cleaner';
+        cleaner.name = '_cleaner';
         cleaner.position.y = cleaner_height / 2.0 + 0.02;
         cleaner.rotation.y = Math.PI / -2.0;
 

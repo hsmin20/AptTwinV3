@@ -290,6 +290,22 @@ class WashingMachine extends THREE.Mesh {
     }
 }
 
+class MovingVaccuum {
+    constructor(object) {
+        this.object = object.getObjectByName('_cleaner');
+
+        this.state = 0; // 0 is stopped
+        this.moved = 0;
+    }
+
+    update(posx, posz, roty) {
+        this.object.position.x = posx;
+        this.object.position.z = posz;
+        this.object.rotation.y = roty;
+        console.log("x,z,ry = " + posx + "," + posz + "," + roty);
+	}
+}
+
 class MovingObject {
     constructor(object) {
         this.object = object;
@@ -298,9 +314,10 @@ class MovingObject {
         this.moved = 0;
     }
 
-    update(posx, posz) {
+    update(posx, posz, roty) {
         this.object.position.x = posx;
         this.object.position.z = posz;
+        this.object.rotation.y = roty;
 	}
 }
 
@@ -400,7 +417,7 @@ export class EntityManager {
 
             if(object.userData?.interiorType != undefined) {
                 const it = object.userData.interiorType;
-                if(it == 'RobotVacuum' || it == 'Cat' || it == 'Dog') {
+                if(it == 'Cat' || it == 'Dog') {
                     const movable = new MovingObject(object);
                     object.add(movable);
 
@@ -408,6 +425,16 @@ export class EntityManager {
                     if(DBid != undefined) {
                         scope.mapUpdateble.set('moving'+DBid, movable);
                     }
+                }
+            }
+
+            if(object.userData?.interiorType == 'RobotVacuum') {
+                const movable = new MovingVaccuum(object);
+                object.add(movable);
+
+                const DBid = object.userData.DBid;
+                if(DBid != undefined) {
+                    scope.mapUpdateble.set('moving'+DBid, movable);
                 }
             }
         });
@@ -469,10 +496,12 @@ export class EntityManager {
             const valx = data[idx];
             const idz = 'moving' + i + 'z';
             const valz = data[idz];
+            const idry = 'moving' + i + 'ry';
+            const valry = data[idry];
             const objid = 'moving' + i;
             const obj = this.mapUpdateble.get(objid);
             if(obj != undefined)
-                obj.update(valx, valz);
+                obj.update(valx, valz, valry);
         }
     }
 }
