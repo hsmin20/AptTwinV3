@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { EntityManager } from './Entities';
 import { FreeLookControl } from './Controls';
-import { SerializableReflector } from '../../src_common/SerializableReflector.js';
 import { Storage as _Storage } from '../../src_common/Storage.js';
 import { textureHelper } from '../../src_common/TextureHelper.js';
 
@@ -150,20 +149,6 @@ export class Player {
 	}
 
     addObject( object, parent, refresh=true ) {
-        var scope = this;
-		object.traverse( function ( child ) {
-            if (child.userData?.isReflector) {
-                const restored = SerializableReflector.fromJSON(child);
-                restored.position.copy(child.position);
-                restored.rotation.copy(child.rotation);
-                restored.scale.copy(child.scale);
-                if (child.parent) {
-                    child.parent.add(restored);
-                    child.parent.remove(child);
-                }
-            }
-		} );
-
 		if ( parent == null || parent === undefined ) {
 			this.scene.add( object );
 		} else {

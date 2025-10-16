@@ -1,9 +1,6 @@
 import * as THREE from 'three';
-import { SerializableReflector } from '../../../src_common/SerializableReflector.js';
-
 import { AddGroupCommand } from '../../../src_common/commands/AddGroupCommand.js';
 import { RemoveObjectCommand } from '../../../src_common/commands/RemoveObjectCommand.js';
-
 import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class DressingTable {
@@ -36,15 +33,27 @@ export class DressingTable {
         mirrorFrame.parent = group;
 
         // Add a Mirror
-        const mirror = new SerializableReflector(new THREE.PlaneGeometry(width-thickness, mirrorheight-thickness), {
-            color: new THREE.Color(0x7f7f7f),
-            textureWidth: window.innerWidth * window.devicePixelRatio,
-            textureHeight: window.innerHeight * window.devicePixelRatio,
-        })
+        // Reflector is way too slow...
+        // const mirror = new SerializableReflector(new THREE.PlaneGeometry(width-thickness, mirrorheight-thickness), {
+        //     color: new THREE.Color(0x7f7f7f),
+        //     textureWidth: window.innerWidth * window.devicePixelRatio / 100,
+        //     textureHeight: window.innerHeight * window.devicePixelRatio / 100,
+        // })
+
+        // Not sure how to use a CubeCamera
+        // const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(128, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter, });
+        // const cubeCamera = new THREE.CubeCamera(0.1, 1000, cubeRenderTarget);
+        // const material = new THREE.MeshPhongMaterial({ envMap: cubeRenderTarget.texture, });
+
+        let mirrorTexture = textureHelper.get('Mirror', 1, 1);
+        const material = new THREE.MeshStandardMaterial( { map: mirrorTexture } );
+        const mirror = new THREE.Mesh(new THREE.PlaneGeometry(width-thickness, mirrorheight-thickness), material);
 
         mirror.name = name + "_Mirror";
         mirror.position.y = height + (mirrorheight / 2.0);
         mirror.position.z = -( depth / 2.0) + thickness + 0.001;
+
+        // mirror.add(cubeCamera);
         
         group.children.push( mirror );
         mirror.parent = group;
@@ -101,7 +110,7 @@ export class DressingTable {
                            Depth : <input type="text" id="depth" name="depth" value="0.468"></p>
                     <div class="clearfix"></div>
                     <h2>Mirror Size (m)</h2>
-                    <p>Height : <input type="text" id="mirrorheight" name="height" value="0.6"></p>
+                    <p>Height : <input type="text" id="mirrorheight" name="height" value="1.2"></p>
                     <div class="clearfix"></div>
                         <h2>Table Type </h2>
                             <div style="display:flex; gap:20px;">

@@ -9,7 +9,6 @@ import { RemoveObjectCommand } from '../../src_common/commands/RemoveObjectComma
 import { saveState } from './AptTwinInterior.js';
 
 import { textureHelper } from '../../src_common/TextureHelper.js';
-import { SerializableReflector } from '../../src_common/SerializableReflector.js';
 
 var _DEFAULT_CAMERA = new THREE.PerspectiveCamera( 50, 1, 0.1, 1000 );
 _DEFAULT_CAMERA.name = 'Camera';
@@ -75,17 +74,6 @@ export class Editor {
 			
             if ( child.material !== undefined ) 
                 scope.addMaterial( child.material );
-
-            if (child.userData?.isReflector) {
-                const restored = SerializableReflector.fromJSON(child);
-                restored.position.copy(child.position);
-                restored.rotation.copy(child.rotation);
-                restored.scale.copy(child.scale);
-                if (child.parent) {
-                    child.parent.add(restored);
-                    child.parent.remove(child);
-                }
-            }
 		} );
 
 		if ( parent == null || parent === undefined ) {
