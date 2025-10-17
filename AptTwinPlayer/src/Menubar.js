@@ -104,16 +104,14 @@ class MenubarUpdate {
     constructor(player) {
         this.dom = document.createElement( 'div' );
         this.dom.className = 'menu';
-        this.updating = false;
 
         const title = document.createElement( 'div' );
         title.className = 'title';
         title.textContent = 'Update';
 
-        let scope = this;
         title.addEventListener( 'click', function () {
-            scope.updating = !scope.updating;
-            if(scope.updating) {
+            player.updating = !player.updating;
+            if(player.updating) {
                 startDataUpdates(10000);
                 alert('House update started')
             } else {
