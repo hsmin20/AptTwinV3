@@ -3,8 +3,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     // 로그인 체크
-    const loginRes = await fetch("./member/php/check_login.php");
-    const loginData = await loginRes.json();
+      const loginRes = await fetch("./member/php/check_login.php", {
+        credentials: "include",
+        cache: "no-store"
+      });
+      const loginData = await loginRes.json();
 
     if (!loginData.logged_in) {
       projectContainer.innerHTML = `<p class="no-login">로그인이 필요합니다.</p>`;

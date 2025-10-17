@@ -143,3 +143,21 @@ body.project-page {
   background-color: #e9ddc9;
   color: #3e352a;
 }
+
+.project-header {
+  position: relative;
+}
+
+.project-header .home-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  text-decoration: none;
+  font-size: 22px;
+  color: #5a4b3b; /* 베이지톤 */
+}
+
+.project-header .home-icon:hover {
+  opacity: 0.8;
+}

@@ -132,23 +132,26 @@
 	</footer>
 </article><!-- #wrap 전체영역 -->
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const loginStatus = document.getElementById("loginStatus");
-        const loginBtn = document.getElementById("loginBtn");
-        const userId = localStorage.getItem("userid");
-
-        if (userId) {
-            loginStatus.innerHTML = `<a href="#" class="login_btn" id="logoutBtn">${userId}님 로그아웃</a>`;
-            document.getElementById("logoutBtn").addEventListener("click", () => {
-                localStorage.removeItem("userid");
-                window.location.reload();
-            });
-        } else {
-            loginBtn.addEventListener("click", () => {
-                window.location.href = "./member/login.html";
-            });
-        }
+    document.addEventListener("DOMContentLoaded", async () => {
+    const loginStatus = document.getElementById("loginStatus");
+    
+    const res = await fetch("./member/php/check_login.php", {
+        credentials: "include",
+        cache: "no-store"
     });
+    const data = await res.json();
+
+    if (data.logged_in) {
+        loginStatus.innerHTML = `<a href="#" class="login_btn" id="logoutBtn">${data.userid}님 로그아웃</a>`;
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+        await fetch("./member/php/logout.php", { method: "POST", credentials: "include" });
+        window.location.reload();
+        });
+    } else {
+        loginStatus.innerHTML = `<a href="./member/login.html" class="login_btn" id="loginBtn">로그인</a>`;
+    }
+    });
+
 </script>
 
 </body>

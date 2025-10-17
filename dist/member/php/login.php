@@ -19,7 +19,7 @@ if ($conn === false) {
 }
 
 // POST 데이터 받기
-$userid = $_POST['username'] ?? '';  // JS에서 username으로 넘기고 있음
+$userid = $_POST['username'] ?? '';
 $password = $_POST['password'] ?? '';
 
 if (empty($userid) || empty($password)) {
