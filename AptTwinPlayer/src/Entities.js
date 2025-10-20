@@ -16,6 +16,20 @@ function rotateAroundWorldAxis(obj, point, axis, angle) {
 	obj.position.add(point);
 }
 
+class Light {
+    constructor(object) {
+        object.traverse((child) => {
+            if (child.isLight) {
+                this.light = child;
+            }
+        });
+    }
+
+    update(state) {
+        this.light.visible = !this.light.visible;
+    }
+}
+
 class Door {
     constructor(object) {
         this.object = object;
@@ -302,7 +316,6 @@ class MovingVaccuum {
         this.object.position.x = posx;
         this.object.position.z = posz;
         this.object.rotation.y = roty;
-        console.log("x,z,ry = " + posx + "," + posz + "," + roty);
 	}
 }
 
@@ -362,6 +375,13 @@ export class EntityManager {
                     const DBid = object.userData.DBid;
                     if(DBid != undefined) {
                         scope.mapUpdateble.set('window'+DBid, window);
+                    }
+                } else if(type == 'light') {
+                    let light = new Light(object);
+
+                    const DBid = object.userData.DBid;
+                    if(DBid != undefined) {
+                        scope.mapUpdateble.set('light'+DBid, light);
                     }
                 } else if(type == 'drawer') {
                     let drawer = new Drawer(object);
@@ -461,14 +481,18 @@ export class EntityManager {
     }
 
     update(data) {
+        const MAX_NUM2 = 20;
         const MAX_NUM = 10;
         const HALF_NUM = 5;
-        for(let i=1; i<=MAX_NUM; i++) {
+        for(let i=1; i<=MAX_NUM2; i++) {
             const id = 'light'+ i;
             const val = data[id];
             const obj = this.mapUpdateble.get(id);
-            if(obj != undefined)
+            if(obj != undefined) {
                 obj.update(val);
+                if(i > 10)
+                    console.log("light " + i + " is changed.");
+            }
         }
         for(let i=1; i<=MAX_NUM; i++) {
             const id = 'door' + i;
