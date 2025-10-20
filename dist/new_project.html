@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>새 프로젝트 | APT Twin</title>
+  <link rel="stylesheet" href="./css/new_project.css" />
+</head>
+<body class="new-project-page">
+  <header class="project-header">
+    <a href="./index.html" class="home-icon" title="홈으로 이동">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" width="36" height="36">
+        <path d="M9 20L24 8L39 20V38C39 39.1046 38.1046 40 37 40H11C9.89543 40 9 39.1046 9 38V20Z"
+              stroke="#b49a77" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M19 40V26H29V40" stroke="#b49a77" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <h1 class="main-title">새 프로젝트 만들기</h1>
+  </header>
+
+  <main class="new-project-container">
+    <section class="search-section">
+      <h2 class="section-title">아파트 위치 선택</h2>
+      <div class="search-box">
+        <input type="text" id="aptSearch" placeholder="아파트명을 검색하세요..." />
+        <button id="searchBtn">검색</button>
+      </div>
+      <div id="map"></div>
+    </section>
+  </main>
+
+  <footer id="footer">
+    <p>© 2025 APT Twin</p>
+  </footer>
+<!-- 1. SDK 먼저 -->
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=56a3c825ab353175c8b75b07523cc5db&autoload=false&libraries=services"></script>
+
+<!-- 2. JS 파일 로드 -->
+<script src="./main_js/new_project.js"></script>
+
+<!-- 3. SDK 로드 완료 후 init 호출 -->
+<script>
+  window.onload = () => {
+    kakao.maps.load(() => {
+      console.log('kakao.maps 객체:', kakao.maps); // ✅ 여기서 찍어야 실제 객체 나옴
+      initKakaoMap();
+    });
+  };
+</script>
+
+
+</body>
+</html>
