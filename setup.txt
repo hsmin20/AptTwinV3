@@ -16,4 +16,4 @@ npm start
 
 //php satart 경로 dist폴더에서 cmd 창열어서 아래 명령어로 php 시작 
 //시작시 오류나면 앞에 php 경로 입력 후 시작
-php -S localhost:8000
+php -S localhost:8080
