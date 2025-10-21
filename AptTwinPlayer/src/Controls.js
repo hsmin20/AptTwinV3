@@ -82,16 +82,11 @@ export class FreeLookControl {
                 }
                 break;
             case 'KeyG':
-                this.processG();
+                this.gravity = !this.gravity;
                 break;
             default:
                 break;
         }
-    }
-
-    processG() {
-        this.gravity = !this.gravity;
-        this.player.processKeyboard('KeyG');
     }
 
     onKeyUp(event) {

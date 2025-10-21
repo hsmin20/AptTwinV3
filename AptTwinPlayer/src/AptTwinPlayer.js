@@ -83,8 +83,8 @@ if(isSample|| house_id != -1) {
         player.initControl();
         player.animate();
 
-        startDataUpdates(10000);
-        player.updating = true;
+        // startDataUpdates(10000);
+        // player.updating = true;
     } catch (error) {
         console.error('Error fetching data:', error);
     }

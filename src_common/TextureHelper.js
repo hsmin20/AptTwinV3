@@ -27,9 +27,10 @@ class TextureHelper {
             ['Leather', './textures/leather.jpg'], ['Fabric', './textures/wool.jpg'], ['BlackFabric', './textures/blackfarbic.jpg'],
             ['GreyPlastic', './textures/greyPlastic.jpg'], ['AC', './textures/AC.jpg'], ['ACside', './textures/ACside.jpg'], 
             ['DrawerInside', './textures/drawerInside.jpg'],['WallAC', './textures/WallAC.jpg'], ['Fire', './textures/Fire.png'],
-            ['Laundry', './textures/laundry.jpg'], ['Vacuum', './textures/vacuum.jpg'], ['Skin1', './textures/skin1.jpg'],
+            ['Laundry', './textures/laundry.jpg'], ['Vacuum', './textures/vacuum.jpg'], ['Skin1', './textures/skin1.jpg'], ['Hand', './textures/hand.png'],
             ['Skin2', './textures/skin2.jpg'], ['Skin3', './textures/skin3.jpg'], ['Skin4', './textures/skin4.jpg'], ['Mirror', './textures/mirror.jpg'],
             ['CityView', './backgrounds/cityview.jpg'], ['Downtown', './backgrounds/downtown.jpg'], ['Romania', './backgrounds/romania.jpg']
+            
         ]);
 	}
 

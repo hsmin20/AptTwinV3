@@ -480,6 +480,15 @@ export class EntityManager {
         }
     }
 
+    isClickable(obj) {
+        const entity = this.mapClickable.get(obj);
+        if(entity != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     update(data) {
         const MAX_NUM2 = 20;
         const MAX_NUM = 10;
@@ -490,8 +499,6 @@ export class EntityManager {
             const obj = this.mapUpdateble.get(id);
             if(obj != undefined) {
                 obj.update(val);
-                if(i > 10)
-                    console.log("light " + i + " is changed.");
             }
         }
         for(let i=1; i<=MAX_NUM; i++) {

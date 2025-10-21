@@ -200,50 +200,51 @@ export class Player {
 	}
 
 	addCrosshair() {
-		var material = new THREE.LineBasicMaterial({ color: 0xAAFFAA });
+        const cameraMin = 0.00025;
+        const cursorSize = 1;
+        const cursorThickness = 1.5;
+        const cursorGeometry = new THREE.RingGeometry(
+            cursorSize * cameraMin,
+            cursorSize * cameraMin * cursorThickness,
+        );
+        const cursorMaterial = new THREE.MeshBasicMaterial({ color: "white" });
+        this.crosshair = new THREE.Mesh(cursorGeometry, cursorMaterial);
 
-		// crosshair size
-		var x = 0.01, y = 0.01;
+		this.crosshair.position.z = -0.1;
 
-		var geometry = new THREE.BufferGeometry();
+        this.camera.add( this.crosshair );
 
-		const vertices = [];
-		vertices.push(0); vertices.push(y); vertices.push(0);
-		vertices.push(0); vertices.push(-y); vertices.push(0);
-		vertices.push(0); vertices.push(0); vertices.push(0);
-		vertices.push(x); vertices.push(0); vertices.push(0);
-		vertices.push(-x); vertices.push(0); vertices.push(0);
-		geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        ///////////////////////////////////////////
+        const handTexture = textureHelper.get('Hand', 1, 1);
+        const handMaterial = new THREE.MeshBasicMaterial({
+            map: handTexture,
+            transparent: true
+        });
+        const handGeometry = new THREE.PlaneGeometry(0.003, 0.003);
+        this.handMesh = new THREE.Mesh(handGeometry, handMaterial);
 
-		var crosshair = new THREE.Line( geometry, material );
-
-		// place it in the center
-		var crosshairPercentX = 50;
-		var crosshairPercentY = 50;
-		var crosshairPositionX = (crosshairPercentX / 100) * 2 - 1;
-		var crosshairPositionY = (crosshairPercentY / 100) * 2 - 1;
-
-		crosshair.position.x = crosshairPositionX * this.camera.aspect;
-		crosshair.position.y = crosshairPositionY;
-
-		crosshair.position.z = -0.3;
-
-		this.camera.add( crosshair );
+        this.handMesh.position.z = -0.1;
+        this.camera.add(this.handMesh);
+        this.handMesh.visible = false;
 	}
 
 	initControl() {
     	this.control = new FreeLookControl(this, this.camera, this.scene);
 	}
-	
-    processKeyboard(keycode) {
-        // this.entityManager.processKeyboard(keycode);
-    }
 
     detectCollison() {
         const DISTANCE = 0.15;
+        const DISTANCE2 = 2.0;
         // Forward
         this.setRaycasterPosDir();
         var intersectedObjects = this.entityManager.intersectObjects(this.raycaster);
+        if (intersectedObjects.length > 0 && intersectedObjects[0].distance < DISTANCE2 && this.entityManager.isClickable(intersectedObjects[0].object)) {
+            this.handMesh.visible = true;
+            this.crosshair.visible = false;
+        } else {
+            this.handMesh.visible = false;
+            this.crosshair.visible = true;
+        }
         if (intersectedObjects.length > 0 && intersectedObjects[0].distance < DISTANCE) {
             return true;
         }
