@@ -136,7 +136,7 @@
     const loginStatus = document.getElementById("loginStatus");
     
     const res = await fetch("./member/php/check_login.php", {
-        credentials: "include",
+        credentials: "same-origin", // ✅ 쿠키 포함
         cache: "no-store"
     });
     const data = await res.json();

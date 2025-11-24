@@ -6,11 +6,12 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
   const resultElem = document.getElementById("loginResult");
 
   try {
-    const response = await fetch("./php/login.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
-    });
+        const response = await fetch("./php/login.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
+            credentials: "same-origin" // ✅ 세션 쿠키 포함
+      });
 
     const data = await response.json();
 
