@@ -1,7 +1,16 @@
 <?php
+ini_set('session.cookie_samesite', 'None');
+
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'secure' => false,
+    'httponly' => true,
+    'samesite' => 'None'
+]);
+
 session_start();
 header('Content-Type: application/json');
-header("Access-Control-Allow-Origin: *");
 
 // DB 연결
 $serverName = "1.220.107.66";
