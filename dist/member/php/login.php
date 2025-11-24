@@ -42,32 +42,12 @@ if ($user) {
     // 비밀번호 검증
     if (password_verify($password, $user['password'])) {
         $_SESSION['userid'] = $user['userid'];
-        echo json_encode([
-            "success" => true,
-            "userid" => $user['userid'],
-            "message" => "로그인 성공",
-            "session_id" => session_id(),
-            "session_save_path" => session_save_path(),
-            "session_file_exists" => file_exists(session_save_path() . "/sess_" . session_id())
-        ]);
+        echo json_encode(["success" => true, "userid" => $user['userid'], "message" => "로그인 성공"]);
     } else {
-        echo json_encode([
-            "success" => false,
-            "message" => "비밀번호가 올바르지 않습니다.",
-            "session_id" => session_id(),
-            "session_save_path" => session_save_path(),
-            "session_file_exists" => file_exists(session_save_path() . "/sess_" . session_id())
-        ]);
+        echo json_encode(["success" => false, "message" => "비밀번호가 올바르지 않습니다."]);
     }
 } else {
-    // ✅ 존재하지 않는 아이디도 세션 정보 포함
-    echo json_encode([
-        "success" => false,
-        "message" => "존재하지 않는 아이디입니다.",
-        "session_id" => session_id(),
-        "session_save_path" => session_save_path(),
-        "session_file_exists" => file_exists(session_save_path() . "/sess_" . session_id())
-    ]);
+    echo json_encode(["success" => false, "message" => "존재하지 않는 아이디입니다."]);
 }
 
 sqlsrv_close($conn);
