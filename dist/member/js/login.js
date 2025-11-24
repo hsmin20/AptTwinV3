@@ -9,6 +9,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
     const response = await fetch("./php/login.php", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      credentials: "include", // 필수
       body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
     });
 
