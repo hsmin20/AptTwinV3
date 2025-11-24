@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-Type: application/json');
-// header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: *");
 
 // DB 연결
 $serverName = "1.220.107.66";
