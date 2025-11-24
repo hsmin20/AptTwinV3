@@ -1,9 +1,9 @@
+// login.js
 document.getElementById("loginForm").addEventListener("submit", async function(e) {
-  e.preventDefault();
+  e.preventDefault(); // 폼 기본 제출 막기
 
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
-  const resultElem = document.getElementById("loginResult");
 
   try {
     const response = await fetch("./php/login.php", {
@@ -14,18 +14,20 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
     const data = await response.json();
 
-    console.log("로그인 결과:", data); // ✅ 테스트용: 콘솔에 출력
+    // ✅ 테스트용: 로그인 결과 콘솔 출력
+    console.log("로그인 결과:", data);
+    alert("로그인 성공/실패 결과는 콘솔 확인!"); 
 
     if (data.success) {
       localStorage.setItem("userid", data.userid);
 
-      // 테스트용: 잠깐 멈춤
-      alert("로그인 성공! 콘솔에서 세션 상태 확인하세요.");
-      // window.location.href = "../index.html"; // ✅ 이동은 잠시 막음
+      // 테스트용: 잠시 이동 막기
+      // window.location.href = "../index.html"; // 나중에 확인 후 주석 해제
     } else {
       alert(data.message);
     }
   } catch (err) {
+    console.error(err);
     alert("서버 오류 발생");
   }
 });
