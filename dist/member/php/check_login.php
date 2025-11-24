@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
         const data = await res.json();
 
-        console.log("check_login 결과:", data); // ✅ 여기서 JSON 확인
+        console.log("check_login 결과:", data); // 콘솔 확인
         loginStatus.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`; // 화면에도 표시
 
         if (data.logged_in) {
