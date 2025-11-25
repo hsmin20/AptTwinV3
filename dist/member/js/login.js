@@ -1,23 +1,27 @@
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
 
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
 
-    const formData = new FormData();
-    formData.append("username", username);
-    formData.append("password", password);
+  const res = await fetch("./php/login.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `username=${username}&password=${password}`,
+    credentials: "include"
+  });
 
-    const res = await fetch("./php/login.php", {
-        method: "POST",
-        body: formData,
-        credentials: "include" // *** 여기 필수 ***
-    });
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    alert("서버 응답 오류");
+    return;
+  }
 
-    const data = await res.json();
-    alert("로그인 결과:\n" + JSON.stringify(data, null, 2));
-
-    if (data.success) {
-        window.location.href = "../index.html";
-    }
+  if (data.success) {
+    window.location.href = "../index.html";
+  } else {
+    alert(data.message || "로그인 실패");
+  }
 });

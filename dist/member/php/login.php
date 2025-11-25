@@ -40,20 +40,25 @@ $user = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
 if ($user) {
     if (password_verify($password, $user['password'])) {
+
         $_SESSION['userid'] = $user['userid'];
 
+        // 로그인 성공 시 꼭 JSON 하나는 줘야 JS가 오류 안 남
         echo json_encode([
-            "success" => true,
-            "userid" => $user['userid'],
-            "message" => "로그인 성공",
-            "session_id" => session_id()
+            "success" => true
         ]);
+        exit;
     } else {
         echo json_encode(["success" => false, "message" => "비밀번호가 올바르지 않습니다."]);
+        exit;
     }
 } else {
     echo json_encode(["success" => false, "message" => "존재하지 않는 아이디입니다."]);
+    exit;
 }
+
+
+
 
 sqlsrv_close($conn);
 ?>
