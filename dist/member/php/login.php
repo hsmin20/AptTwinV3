@@ -11,6 +11,15 @@ session_set_cookie_params([
 session_start();
 header('Content-Type: application/json');
 
+// ★ 추가: 강제로 세션 쿠키 다시 내려주기
+setcookie(session_name(), session_id(), [
+    'expires' => 0,
+    'path' => '/',
+    'secure' => false,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
+
 // DB 연결
 $serverName = "1.220.107.66";
 $connectionOptions = array(
@@ -47,10 +56,15 @@ if ($stmt === false) {
 $user = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
 if ($user) {
-    // 비밀번호 검증
     if (password_verify($password, $user['password'])) {
         $_SESSION['userid'] = $user['userid'];
-        echo json_encode(["success" => true, "userid" => $user['userid'], "message" => "로그인 성공"]);
+
+        echo json_encode([
+            "success" => true,
+            "userid" => $user['userid'],
+            "message" => "로그인 성공",
+            "session_id" => session_id()
+        ]);
     } else {
         echo json_encode(["success" => false, "message" => "비밀번호가 올바르지 않습니다."]);
     }
