@@ -1,29 +1,7 @@
 <?php
-
-// *** 세션 시작은 최상단에서 즉시 ***
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_strict_mode', 1);
-
-session_set_cookie_params([
-    'lifetime' => 0,
-    'path' => '/',
-    'secure' => false,   // HTTP니까 false
-    'httponly' => true,
-    'samesite' => 'Lax'  // fetch + redirect 시 문제 없게 Lax
-]);
-
+ini_set('session.cookie_samesite', 'Lax');
+ini_set('session.cookie_secure', false);
 session_start();
-
-// ⚠️ 반드시 fetch 요청 전에 쿠키 내려야함
-setcookie(session_name(), session_id(), [
-    'expires' => 0,
-    'path' => '/',
-    'secure' => false,
-    'httponly' => true,
-    'samesite' => 'Lax'
-]);
-
-header('Content-Type: application/json');
 
 // DB 연결
 $serverName = "1.220.107.66";
@@ -37,40 +15,44 @@ $connectionOptions = array(
 
 $conn = sqlsrv_connect($serverName, $connectionOptions);
 if ($conn === false) {
-    echo json_encode(["success" => false, "message" => "DB 연결 실패"]);
-    exit;
+    die(json_encode(["success" => false, "message" => "DB 연결 실패"]));
 }
 
 // POST 데이터 받기
 $userid = $_POST['username'] ?? '';
 $password = $_POST['password'] ?? '';
 
-if (!$userid || !$password) {
-    echo json_encode(["success" => false, "message" => "아이디 비밀번호 입력 필요"]);
+if (empty($userid) || empty($password)) {
+    echo json_encode(["success" => false, "message" => "아이디와 비밀번호를 입력해주세요."]);
     exit();
 }
 
+// DB에서 해당 유저 조회
 $sql = "SELECT userid, password FROM users WHERE userid = ?";
-$stmt = sqlsrv_query($conn, [$userid]);
+$params = array($userid);
+$stmt = sqlsrv_query($conn, $sql, $params);
+
+if ($stmt === false) {
+    die(json_encode(["success" => false, "message" => "쿼리 실행 실패"]));
+}
 
 $user = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
-if ($user && password_verify($password, $user['password'])) {
-    $_SESSION['userid'] = $user['userid'];
+if ($user) {
+    if (password_verify($password, $user['password'])) {
+        $_SESSION['userid'] = $user['userid'];
 
-    // ★ 확인용 출력
-    echo json_encode([
-        "success" => true,
-        "userid" => $_SESSION['userid'],
-        "session_id" => session_id(),
-        "cookie_sent" => isset($_COOKIE[session_name()]) ? "브라우저가 쿠키 읽음" : "쿠키 서버만 생성됨"
-    ]);
-
+        echo json_encode([
+            "success" => true,
+            "userid" => $user['userid'],
+            "message" => "로그인 성공",
+            "session_id" => session_id()
+        ]);
+    } else {
+        echo json_encode(["success" => false, "message" => "비밀번호가 올바르지 않습니다."]);
+    }
 } else {
-    echo json_encode([
-        "success" => false,
-        "message" => "아이디 또는 비번 오류"
-    ]);
+    echo json_encode(["success" => false, "message" => "존재하지 않는 아이디입니다."]);
 }
 
 sqlsrv_close($conn);
