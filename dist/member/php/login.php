@@ -1,12 +1,11 @@
 <?php
-ini_set('session.cookie_samesite', 'None');
 
 session_set_cookie_params([
     'lifetime' => 0,
     'path' => '/',
     'secure' => false,
     'httponly' => true,
-    'samesite' => 'None'
+    'samesite' => 'Lax'
 ]);
 
 session_start();
