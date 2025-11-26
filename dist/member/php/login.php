@@ -1,7 +1,24 @@
 <?php
-ini_set('session.cookie_samesite', 'Lax');
-ini_set('session.cookie_secure', false);
+
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'secure' => false,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
+
 session_start();
+header('Content-Type: application/json');
+
+// ★ 추가: 강제로 세션 쿠키 다시 내려주기
+setcookie(session_name(), session_id(), [
+    'expires' => 0,
+    'path' => '/',
+    'secure' => false,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 
 // DB 연결
 $serverName = "1.220.107.66";
