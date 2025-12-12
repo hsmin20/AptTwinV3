@@ -81,6 +81,46 @@ export class MenubarTools {
 
         options.add( new UIHorizontalRule() );
 
+        // Import and Construct 2D floor planner model
+        const form = document.createElement( 'form' );
+        form.style.display = 'none';
+        document.body.appendChild( form );
+
+        const fileInput = document.createElement( 'input' );
+        fileInput.multiple = false;
+        fileInput.type = 'file';
+        fileInput.accetp = '.json';
+        fileInput.addEventListener( 'change', async function () {
+            const file = fileInput.files[ 0 ];
+            if ( file === undefined )
+                return;
+
+            try {
+                const json = JSON.parse( await file.text() );
+
+                editor.clear();
+                editor.constructFrom2DJSON( json );
+            } catch ( e ) {
+                alert( 'Failed To Open Project' );
+                console.error( e );
+            } finally {
+                form.reset();
+            }
+        } );
+        form.appendChild( fileInput );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Construct from 2D planner' );
+        option.onClick( function () {
+
+            fileInput.click();
+
+        } );
+        options.add( option );
+
+        options.add( new UIHorizontalRule() );
+
         // Player
         option = new UIRow();
         option.setClass( 'option' );

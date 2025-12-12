@@ -5,10 +5,16 @@ import { Storage as _Storage } from '../../src_common/Storage.js';
 import { Selector } from './Selector.js';
 
 import { RemoveObjectCommand } from '../../src_common/commands/RemoveObjectCommand.js';
+import { AddGroupCommand } from '../../src_common/commands/AddGroupCommand.js';
+import { SetValueCommand } from '../../src_common/commands/SetValueCommand.js';
 
 import { saveState } from './AptTwinEditor.js';
 
 import { textureHelper } from '../../src_common/TextureHelper.js';
+
+const WallType = { NONE: 0, WALL: 1, FLOOR: 2, DOOR: 3, WINDOW: 4, WINDOW2: 5 };
+const Hinge = { NORMAL: 0, REVERSE: 1 };
+const HEIGHT = 2.3;
 
 var _DEFAULT_CAMERA = new THREE.PerspectiveCamera( 50, 1, 0.1, 1000 );
 _DEFAULT_CAMERA.name = 'Camera';
@@ -202,6 +208,333 @@ export class Editor {
 			scene: this.scene.toJSON()
 		};
 	}
+
+    
+    _createWallPlane(x1, z1, x2, z2, index) {
+        let whichSide = THREE.FrontSide;
+
+        let dx = x2 - x1;
+        let dz = z2 - z1;
+        let rotY = Math.atan2(dz, dx) * -1;
+
+        const width = Math.sqrt(Math.pow(dx, 2) + Math.pow(dz, 2));
+
+        const repeatX = Math.round(width * 2);
+        const repeatY = Math.round(HEIGHT * 2);
+        const wallTexture  = textureHelper.get('Wallpaper1', repeatX, repeatY);
+
+        let mesh = new THREE.Mesh( new THREE.PlaneGeometry(width, HEIGHT), new THREE.MeshStandardMaterial({ map: wallTexture, side: whichSide }) );
+        mesh.name = "new_mesh_" + index;
+        mesh.position.x = x1 + dx / 2.0;
+        mesh.position.y = HEIGHT / 2.0;
+        mesh.position.z = z1 + dz / 2.0;
+        mesh.rotation.y = rotY;
+
+        return mesh;
+    }
+
+    constructWallFrom2DJSON(element, i) {
+        const group = new THREE.Group();
+        group.name = "newWallGroup_" + i;
+
+        this.execute( new AddGroupCommand( this, group ) );
+
+        let posArray = [];
+        posArray.push({ x: element.x1, z: element.z1 });
+        posArray.push({ x: element.x2, z: element.z2 });
+        posArray.push({ x: element.x3, z: element.z3 });
+        posArray.push({ x: element.x4, z: element.z4 });
+
+        for(let k=0; k<posArray.length; k++) {
+            const pos1 = posArray[k];
+            const pos2 = posArray[(k + 1) % posArray.length];
+
+            let mesh = this._createWallPlane(pos1.x, pos1.z, pos2.x, pos2.z, i);
+            group.children.push( mesh );
+            mesh.parent = group;
+        }
+
+        this.objectChanged(group);
+    }
+
+    constructDoorFrom2DJSON(element, i) {
+        const group = new THREE.Group();
+        group.name = "newDoorGroup_" + i;
+
+        this.execute( new AddGroupCommand( this, group ) );
+
+        const x = element.x;
+        const z = element.z;
+        const angle = element.angle;
+        // const angleSign = element.angleSign;
+        const width = element.size;
+        const hinge = element.hinge;
+        // const thick = element.thick; // not used
+
+        const pivotDir = (hinge == hinge.NORMAL) ? 'left' : 'right';
+        const openDir = 'outward'; // (angle > 180) ? 'inward' : 'outward'; //(angleSign == 0) ? 'outward' : 'inward';
+
+        group.position.x = x;
+        group.position.y = HEIGHT / 2.0;
+        group.position.z = z;
+        group.rotation.y = (Math.PI / 180) * angle * -1;
+
+        const doorLeftTexture = (hinge == Hinge.NORMAL) ? 'DoorLeft' : 'DoorRight';
+        const doorRightTexture = (hinge == Hinge.NORMAL) ? 'DoorRight' : 'DoorLeft';
+        const doorLTexture  = textureHelper.get(doorLeftTexture, 1, 1);
+        const doorRTexture = textureHelper.get(doorRightTexture, 1, 1);
+
+        const depth = 0.1;
+        const door = new THREE.Mesh( new THREE.BoxGeometry(width, HEIGHT, depth), [  
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial( { map: doorRTexture } ), 
+            new THREE.MeshStandardMaterial( { map: doorLTexture } )
+        ] );
+        door.name = "Door_" + i;
+
+        var obj = new THREE.Object3D();
+        obj.userData.type = 'door';
+        obj.userData.pivotDir = pivotDir;
+        obj.userData.openDir = openDir;
+        obj.userData.DBid = 'n/a';
+        const userData = obj.userData;
+
+        if ( JSON.stringify( door.userData ) != JSON.stringify( userData ) ) {
+            this.execute( new SetValueCommand( this, door, 'userData', userData ) );
+        }
+        
+        group.children.push( door );
+        door.parent = group;
+    }
+
+    constructWindowFrom2DJSON(element, i) {
+        const group = new THREE.Group();
+        group.name = "newWindowGroup_" + i;
+
+        this.execute( new AddGroupCommand( this, group ) );
+
+        const x = element.x;
+        const z = element.z;
+        const angle = element.angle;
+        const width = element.size;
+        const thick = element.thick; // not used
+
+        group.position.x = x;
+        group.position.y = HEIGHT / 2.0;
+        group.position.z = z;
+        group.rotation.y = (Math.PI / 180) * angle * -1;
+
+        const windowTexture = textureHelper.get('Window', 1, 1);
+        const frameTexture = textureHelper.get('Black', 1, 1);
+
+        const depth = 0.1;
+        const leftWindow = new THREE.Mesh( new THREE.BoxGeometry(width/2.0, HEIGHT, depth), [  
+            new THREE.MeshStandardMaterial(  ), new THREE.MeshStandardMaterial({ map: frameTexture}), new THREE.MeshStandardMaterial(),
+            new THREE.MeshStandardMaterial( { map: frameTexture} ), 
+            new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
+            new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } )
+        ] );
+        leftWindow.name = "Window_left";
+        leftWindow.position.x = -(width / 4.0);
+        leftWindow.position.z = -(depth / 2.0);
+
+        var obj = new THREE.Object3D();
+        obj.userData.type = 'window';
+        obj.userData.openDir = '=>';
+        obj.userData.DBid = 'n/a';
+        const userData = obj.userData;
+
+        if ( JSON.stringify( leftWindow.userData ) != JSON.stringify( userData ) ) {
+            this.execute( new SetValueCommand( this, leftWindow, 'userData', userData ) );
+        }
+        
+        group.children.push( leftWindow );
+        leftWindow.parent = group;
+
+        const rightWindow = new THREE.Mesh( new THREE.BoxGeometry(width/2.0, HEIGHT, depth), [  
+            new THREE.MeshStandardMaterial( { map: frameTexture} ), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+            new THREE.MeshStandardMaterial( { map: frameTexture} ), 
+            new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
+            new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } )
+        ] );
+        rightWindow.name = "Window_right";
+        rightWindow.position.x = width / 4.0;
+        rightWindow.position.z = depth / 2.0;
+
+        var obj2 = new THREE.Object3D();
+        obj2.userData.type = 'window';
+        obj2.userData.openDir = '<=';
+        obj2.userData.DBid = 'n/a';
+        const userData2 = obj2.userData;
+
+        if ( JSON.stringify( rightWindow.userData ) != JSON.stringify( userData2 ) ) {
+            this.execute( new SetValueCommand( this, rightWindow, 'userData', userData2 ) );
+        }
+        
+        group.children.push( rightWindow );
+        rightWindow.parent = group;
+    }
+
+    constructWindow2From2DJSON(element, i) {
+        const group = new THREE.Group();
+        group.name = "newWindow2Group_" + i;
+
+        this.execute( new AddGroupCommand( this, group ) );
+
+        const x = element.x;
+        const z = element.z;
+        const angle = element.angle;
+        const width = element.size;
+        const thick = element.thick; // not used
+
+        group.position.x = x;
+        group.position.y = HEIGHT / 2.0;
+        group.position.z = z;
+        group.rotation.y = (Math.PI / 180) * angle * -1;
+
+        const windowTexture = textureHelper.get('Window', 1, 1);
+        const frameTexture = textureHelper.get('Black', 1, 1);
+
+        const depth = 0.1;
+
+        // Left Window 2
+        const leftWindow2 = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, HEIGHT, depth), [  
+            new THREE.MeshStandardMaterial(  ), new THREE.MeshStandardMaterial({ map: frameTexture}), new THREE.MeshStandardMaterial(),
+            new THREE.MeshStandardMaterial( { map: frameTexture} ), 
+            new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
+            new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } )
+        ] );
+        leftWindow2.name = "Window_left2";
+        leftWindow2.position.x = -(width * 3 / 8.0);
+        leftWindow2.position.z = -(depth / 2.0);
+
+        var obj = new THREE.Object3D();
+        obj.userData.type = 'window';
+        obj.userData.openDir = '=>';
+        obj.userData.DBid = 'n/a';
+        const userData = obj.userData;
+
+        if ( JSON.stringify( leftWindow2.userData ) != JSON.stringify( userData ) ) {
+            this.execute( new SetValueCommand( this, leftWindow2, 'userData', userData ) );
+        }
+        
+        group.children.push( leftWindow2 );
+        leftWindow2.parent = group;
+
+        // Left Window 1
+        const leftWindow = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, HEIGHT, depth), [  
+            new THREE.MeshStandardMaterial(  ), new THREE.MeshStandardMaterial({ map: frameTexture}), new THREE.MeshStandardMaterial(),
+            new THREE.MeshStandardMaterial( { map: frameTexture} ), 
+            new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
+            new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } )
+        ] );
+        leftWindow.name = "Window_left2";
+        leftWindow.position.x = -(width / 8.0);
+        leftWindow.position.z = depth / 2.0;
+
+        group.children.push( leftWindow );
+        leftWindow.parent = group;
+
+        // Right Window 1
+        const rightWindow = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, HEIGHT, depth), [  
+            new THREE.MeshStandardMaterial( { map: frameTexture} ), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+            new THREE.MeshStandardMaterial( { map: frameTexture} ), 
+            new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
+            new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } )
+        ] );
+        rightWindow.name = "Window_right";
+        rightWindow.position.x = width / 8.0;
+        rightWindow.position.z = depth / 2.0;
+
+        group.children.push( rightWindow );
+        rightWindow.parent = group;
+
+        // Right Window 2
+        const rightWindow2 = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, HEIGHT, depth), [  
+            new THREE.MeshStandardMaterial( { map: frameTexture} ), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+            new THREE.MeshStandardMaterial( { map: frameTexture} ), 
+            new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
+            new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } )
+        ] );
+        rightWindow2.name = "Window_right";
+        rightWindow2.position.x = width * 3 / 8.0;
+        rightWindow2.position.z = -(depth / 2.0);
+
+        var obj2 = new THREE.Object3D();
+        obj2.userData.type = 'window';
+        obj2.userData.openDir = '<=';
+        obj2.userData.DBid = 'n/a';
+        const userData2 = obj2.userData;
+
+        if ( JSON.stringify( rightWindow2.userData ) != JSON.stringify( userData2 ) ) {
+            this.execute( new SetValueCommand( this, rightWindow2, 'userData', userData2 ) );
+        }
+        
+        group.children.push( rightWindow2 );
+        rightWindow2.parent = group;
+    }
+
+    constructFloorFrom2DJSON(element, i) {
+        const group = new THREE.Group();
+        group.name = "newFloorCeilingGroup_" + i;
+
+        this.execute( new AddGroupCommand( this, group ) );
+
+        const x1 = element.x1;
+        const x2 = element.x2;
+        const z1 = element.z1;
+        const z2 = element.z2;
+
+        let dx = x2 - x1;
+        let dz = z2 - z1;
+        let width = dx;
+        let height = dz;
+
+        const repeatX = Math.round(width * 2);
+        const repeatY = Math.round(height * 2);
+        const floorTexture  = textureHelper.get('Floor', repeatX, repeatY);
+
+        let mesh = new THREE.Mesh( new THREE.PlaneGeometry(width, height), new THREE.MeshStandardMaterial({ map: floorTexture, side: THREE.BackSide }) );
+        mesh.name = "new_mesh_1_" + i;
+        mesh.position.x = x1 + dx / 2.0;
+        mesh.position.y = 0;
+        mesh.position.z = z1 + dz / 2.0;
+        mesh.rotation.x = Math.PI / 2.0;
+        group.children.push( mesh );
+        mesh.parent = group;
+
+        const ceilingTexture  = textureHelper.get('Ceiling', repeatX, repeatY);
+
+        mesh = new THREE.Mesh( new THREE.PlaneGeometry(width, height), new THREE.MeshStandardMaterial({ map: ceilingTexture, side: THREE.FrontSide }) );
+        mesh.name = "new_mesh_1_" + i;
+        mesh.position.x = x1 + dx / 2.0;
+        mesh.position.y = HEIGHT;
+        mesh.position.z = z1 + dz / 2.0;
+        mesh.rotation.x = Math.PI / 2.0;
+        group.children.push( mesh );
+        mesh.parent = group;
+    }
+
+    constructFrom2DJSON( json ) {
+        const elementArray = JSON.parse(json);
+
+        for(let i=0; i<elementArray.length; i++) {
+            let element = elementArray[i];
+            // console.log('{' + element.x1 + ':' + element.z1 + ',' + element.x2 + ':' + element.z2 + ',' + element.x3 + ':' + element.z3 + ',' + element.x4 + ':' + element.z4);
+            const type = element.type;
+            if(type == WallType.WALL) {
+                this.constructWallFrom2DJSON(element, i);
+            } else if(type == WallType.DOOR) {
+                this.constructDoorFrom2DJSON(element, i);
+            } else if(type == WallType.WINDOW) {
+                this.constructWindowFrom2DJSON(element, i);                
+            } else if(type == WallType.WINDOW2) {
+                this.constructWindow2From2DJSON(element, i);
+            } else if(type == WallType.FLOOR) {
+                this.constructFloorFrom2DJSON(element, i);
+            }
+        }
+    }
 	
 	replaceImageToFilepath(textures, images) {
         textures.forEach(function(texture) {

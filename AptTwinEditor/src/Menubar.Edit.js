@@ -5,6 +5,7 @@ import { RemoveObjectCommand } from '../../src_common/commands/RemoveObjectComma
 
 import { RoomBuilder } from './RoomBuilder.js';
 
+
 export class MenubarEdit {
     constructor( editor ) {
         const self = this;
