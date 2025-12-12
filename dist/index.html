@@ -132,27 +132,38 @@
 	</footer>
 </article><!-- #wrap 전체영역 -->
 <script>
-    document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const loginStatus = document.getElementById("loginStatus");
-    
-    const res = await fetch("./member/php/check_login.php", {
-        credentials: "include",
-        cache: "no-store"
-    });
-    const data = await res.json();
 
-    if (data.logged_in) {
-        loginStatus.innerHTML = `<a href="#" class="login_btn" id="logoutBtn">${data.userid}님 로그아웃</a>`;
-        document.getElementById("logoutBtn").addEventListener("click", async () => {
-        await fetch("./member/php/logout.php", { method: "POST", credentials: "include" });
-        window.location.reload();
+    try {
+        const res = await fetch("./member/php/check_login.php", {
+            credentials: "include",  // ★必
+            cache: "no-store"
         });
-    } else {
-        loginStatus.innerHTML = `<a href="./member/login.html" class="login_btn" id="loginBtn">로그인</a>`;
-    }
-    });
 
+        const data = await res.json();
+
+        if (data.logged_in) {
+            loginStatus.innerHTML = `<a href="#" class="login_btn" id="logoutBtn">${data.userid}님 로그아웃</a>`;
+
+            document.getElementById("logoutBtn").addEventListener("click", async () => {
+                await fetch("./member/php/logout.php", { 
+                    method: "POST",
+                    credentials: "include"
+                });
+                window.location.reload();
+            });
+
+        } else {
+            loginStatus.innerHTML = `<a href="./member/login.html" class="login_btn" id="loginBtn">로그인</a>`;
+        }
+
+    } catch (err) {
+        console.log("로그인 체크 오류:", err);
+    }
+});
 </script>
+
 
 </body>
 </html>

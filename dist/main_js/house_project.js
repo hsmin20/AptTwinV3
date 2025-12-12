@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     cardsHTML += `
       <div class="project-card new-project-card" id="newProjectCard">
         <div class="plus-sign">+</div>
-        <p class="new-text">새 프로젝트</p>
+        <p class="new-text">새 집 만들기 </p>
       </div>
     `;
 
