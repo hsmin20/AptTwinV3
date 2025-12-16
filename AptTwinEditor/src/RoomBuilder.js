@@ -446,7 +446,7 @@ export class RoomBuilder {
         this.editor.execute( new AddGroupCommand( this.editor, group, parent ) );
 
         const toiletTexture = textureHelper.get('PinkPlastic', 1, 1);
-        const cyl = new THREE.Mesh( new THREE.CylinderGeometry(0.1, 0.2, 0.6, 20, 1, true, 0, Math.PI), 
+        const cyl = new THREE.Mesh( new THREE.CylinderGeometry(0.1, 0.4, 0.6, 20, 1, true, -Math.PI / 8, Math.PI * 9 / 8), 
                                     new THREE.MeshStandardMaterial( {map: toiletTexture, side : THREE.DoubleSide} ) );
         cyl.name = bathroomSinkName + "_cyl";
         cyl.position.y = 0.6;

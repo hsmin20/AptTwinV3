@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Floorplanner v0.1</title>
+    </head>
+
+    <body style="background:#f2eee5;margin:0;padding:0; ">
+        <link rel="stylesheet" href="css/floorplanner.css">
+
+    <div id="panel" class="leftBox" style="width:240px;">
+
+        <br />
+        <div class="input-radio"><input type="radio" id="select" name="mode" value="select" checked> <label for="select">Select</label></div>
+        <div class="input-radio"><input type="radio" id="drawwall" name="mode" value="drawwall"> <label for="drawwall">Draw Wall</label></div>
+        <div class="input-radio"><input type="radio" id="drawfloor" name="mode" value="drawfloor"> <label for="drawfloor">Draw Floor</label></div>
+        <div class="input-radio"><input type="radio" id="drawdoor" name="mode" value="drawdoor"> <label for="drawdoor">Add Door</label></div>
+        <div class="input-radio"><input type="radio" id="drawwindow" name="mode" value="drawwindow"> <label for="drawwindow">Add Window</label></div>
+        <div class="input-radio"><input type="radio" id="drawwindow2" name="mode" value="drawwindow2"> <label for="drawwindow2">Add Window2</label></div>
+        <div class="input-radio"><input type="radio" id="cut" name="mode" value="cut"> <label for="cut">Cut</label></div>
+        <br />
+        <!-- <div class="input-radio"><input type="button" id="changetowall" name="changetowall" value="change to wall"> <label for="changetowall"></label></div> -->
+        <div class="input-radio"><input type="button" id="changedoorhinge" name="changedoorhinge" value="change door hinge"> <label for="changedoorhinge"></label></div>
+        <!-- <div class="input-radio"><input type="button" id="changetowindow" name="changetowindow" value="change to window"> <label for="changetowindow"></label></div> -->
+         <p>Width [<span id="doorWindowWidthScale"></span>] : <span id="doorWindowWidthVal"></span> m</span></p>
+        <input type="range" id="doorWindowWidth" step="1" class="range" />
+        <br />
+        <div class="input-radio"><input type="button" id="delete" name="delete" value="delete"> <label for="delete"></label></div>
+        <div class="input-radio"><input type="button" id="empty" name="empty" value="empty"> <label for="empty"></label></div>
+        <br />
+        <div class="input-radio"><input type="button" id="export" name="export" value="export"> <label for="export"></label></div>
+        <div class="input-radio"><input type="button" id="save" name="save" value="save"> <label for="save"></label></div>
+        <div class="input-radio"><input type="button" id="load" name="load" value="load"> <label for="load"></label></div>
+        <br />
+        <div class="input-radio"><input type="button" id="zoomin" name="zoomin" value="zoom+"><label for="zoomin"></label></div>
+        <div class="input-radio"><input type="button" id="zoomout" name="zoomout" value="zoom-"> <label for="zoomout"></label></div>
+        <div class="input-radio"><input type="button" id="reset" name="reset" value="reset"> <label for="reset"></label></div>
+        <br />
+        <div class="input-radio"><input type="button" id="savestate" name="savestate" value="save state manually"> <label for="savestate"></label></div>
+        <br />
+
+    </div>
+        <script src="apttwinfloorplanner.js"></script>
+    </body>
+</html>
