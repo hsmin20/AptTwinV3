@@ -33,77 +33,77 @@ export class MenubarEdit {
         } );
         options.add( option );
 
-        option = new UIRow();
-        option.setClass( 'option' );
-        option.setTextContent( 'Add a Room' );
-        option.onClick( function () {
-            self.addRoom(editorscope);
-        } );
-        options.add( option );
+        // option = new UIRow();
+        // option.setClass( 'option' );
+        // option.setTextContent( 'Add a Room' );
+        // option.onClick( function () {
+        //     self.addRoom(editorscope);
+        // } );
+        // options.add( option );
 
-        option = new UIRow();
-        option.setClass( 'option' );
-        option.setTextContent( 'Add a Plane' );
-        option.onClick( function () {
-            self.addFloor(editorscope);
-        } );
-        options.add( option );
+        // option = new UIRow();
+        // option.setClass( 'option' );
+        // option.setTextContent( 'Add a Plane' );
+        // option.onClick( function () {
+        //     self.addFloor(editorscope);
+        // } );
+        // options.add( option );
 
         options.add( new UIHorizontalRule() );
 
         // Room
-        const roomSubmenuTitle = new UIRow().setTextContent( 'Room' ).addClass( 'option' ).addClass( 'submenu-title' );
-        roomSubmenuTitle.onMouseOver( function () {
-            const { top, right } = roomSubmenuTitle.dom.getBoundingClientRect();
-            const { paddingTop } = getComputedStyle( this.dom );
-            roomSubmenu.setLeft( right + 'px' );
-            roomSubmenu.setTop( top - parseFloat( paddingTop ) + 'px' );
-            roomSubmenu.setStyle( 'max-height', [ `calc( 100vh - ${top}px )` ] );
-            roomSubmenu.setDisplay( 'block' );
-        } );
-        roomSubmenuTitle.onMouseOut( function () {
-            roomSubmenu.setDisplay( 'none' );
-        } );
-        options.add( roomSubmenuTitle );
+        // const roomSubmenuTitle = new UIRow().setTextContent( 'Room' ).addClass( 'option' ).addClass( 'submenu-title' );
+        // roomSubmenuTitle.onMouseOver( function () {
+        //     const { top, right } = roomSubmenuTitle.dom.getBoundingClientRect();
+        //     const { paddingTop } = getComputedStyle( this.dom );
+        //     roomSubmenu.setLeft( right + 'px' );
+        //     roomSubmenu.setTop( top - parseFloat( paddingTop ) + 'px' );
+        //     roomSubmenu.setStyle( 'max-height', [ `calc( 100vh - ${top}px )` ] );
+        //     roomSubmenu.setDisplay( 'block' );
+        // } );
+        // roomSubmenuTitle.onMouseOut( function () {
+        //     roomSubmenu.setDisplay( 'none' );
+        // } );
+        // options.add( roomSubmenuTitle );
 
-        const roomSubmenu = new UIPanel().setPosition( 'fixed' ).addClass( 'options' ).setDisplay( 'none' );
-        roomSubmenuTitle.add( roomSubmenu );
+        // const roomSubmenu = new UIPanel().setPosition( 'fixed' ).addClass( 'options' ).setDisplay( 'none' );
+        // roomSubmenuTitle.add( roomSubmenu );
 
-        option = new UIRow();
-        option.setClass( 'option' );
-        option.setTextContent( 'Add a Wall' );
-        option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
+        // option = new UIRow();
+        // option.setClass( 'option' );
+        // option.setTextContent( 'Add a Wall' );
+        // option.onClick( function () {
+        //     if(editorscope.selected == null) {
+        //         alert('Select an item first');
+        //         return;
+        //     }
 
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
-            self.addWall(editorscope);
-        } );
-        roomSubmenu.add( option );
+        //     if(editorscope.selected.type != 'Group') {
+        //         alert('Select a Group');
+        //         return;
+        //     }
+        //     self.addWall(editorscope);
+        // } );
+        // roomSubmenu.add( option );
 
-        option = new UIRow();
-        option.setClass( 'option' );
-        option.setTextContent( 'Add a Light' );
-        option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
+        // option = new UIRow();
+        // option.setClass( 'option' );
+        // option.setTextContent( 'Add a Light' );
+        // option.onClick( function () {
+        //     if(editorscope.selected == null) {
+        //         alert('Select an item first');
+        //         return;
+        //     }
 
-            if(editorscope.selected.type != 'Group') {
-                alert('Select a Group');
-                return;
-            }
-            self.addLight(editorscope);
-        } );
-        roomSubmenu.add( option );
+        //     if(editorscope.selected.type != 'Group') {
+        //         alert('Select a Group');
+        //         return;
+        //     }
+        //     self.addLight(editorscope);
+        // } );
+        // roomSubmenu.add( option );
 
-        options.add( new UIHorizontalRule() );
+        // options.add( new UIHorizontalRule() );
 
         // Bathroom
         const bathroomSubmenuTitle = new UIRow().setTextContent( 'Bathroom' ).addClass( 'option' ).addClass( 'submenu-title' );
@@ -128,14 +128,14 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'Add a Bathtub' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-            if(!editorscope.selected.name.toLowerCase().includes('bathroom')) {
-                alert('Select a Bathroom first');
-                return;
-            }
+            // if(editorscope.selected == null) {
+            //     alert('Select an item first');
+            //     return;
+            // }
+            // if(!editorscope.selected.name.toLowerCase().includes('bathroom')) {
+            //     alert('Select a Bathroom first');
+            //     return;
+            // }
 
             self.addBathtub(editorscope);
         } );
@@ -145,14 +145,14 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'Add a Sink' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-            if(!editorscope.selected.name.toLowerCase().includes('bathroom')) {
-                alert('Select a Bathroom first');
-                return;
-            }
+            // if(editorscope.selected == null) {
+            //     alert('Select an item first');
+            //     return;
+            // }
+            // if(!editorscope.selected.name.toLowerCase().includes('bathroom')) {
+            //     alert('Select a Bathroom first');
+            //     return;
+            // }
 
             self.addBathroomSink(editorscope);
         } );
@@ -162,14 +162,14 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'Add a Toilet' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-            if(!editorscope.selected.name.toLowerCase().includes('bathroom')) {
-                alert('Select a Bathroom first');
-                return;
-            }
+            // if(editorscope.selected == null) {
+            //     alert('Select an item first');
+            //     return;
+            // }
+            // if(!editorscope.selected.name.toLowerCase().includes('bathroom')) {
+            //     alert('Select a Bathroom first');
+            //     return;
+            // }
 
             self.addToilet(editorscope);
         } );
@@ -202,14 +202,14 @@ export class MenubarEdit {
         option.setClass( 'option' );
         option.setTextContent( 'Add a Sink or Range' );
         option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-            if(!editorscope.selected.name.toLowerCase().includes('kitchen')) {
-                alert('Select a Kitchen first');
-                return;
-            }
+            // if(editorscope.selected == null) {
+            //     alert('Select an item first');
+            //     return;
+            // }
+            // if(!editorscope.selected.name.toLowerCase().includes('kitchen')) {
+            //     alert('Select a Kitchen first');
+            //     return;
+            // }
 
             self.addKitchenSink(editorscope);
         } );
@@ -218,61 +218,61 @@ export class MenubarEdit {
         options.add( new UIHorizontalRule() );
 
         // Split
-        const splitSubmenuTitle = new UIRow().setTextContent( 'Split' ).addClass( 'option' ).addClass( 'submenu-title' );
-        splitSubmenuTitle.onMouseOver( function () {
-            const { top, right } = splitSubmenuTitle.dom.getBoundingClientRect();
-            const { paddingTop } = getComputedStyle( this.dom );
-            splitSubmenu.setLeft( right + 'px' );
-            splitSubmenu.setTop( top - parseFloat( paddingTop ) + 'px' );
-            splitSubmenu.setStyle( 'max-height', [ `calc( 100vh - ${top}px )` ] );
-            splitSubmenu.setDisplay( 'block' );
+        // const splitSubmenuTitle = new UIRow().setTextContent( 'Split' ).addClass( 'option' ).addClass( 'submenu-title' );
+        // splitSubmenuTitle.onMouseOver( function () {
+        //     const { top, right } = splitSubmenuTitle.dom.getBoundingClientRect();
+        //     const { paddingTop } = getComputedStyle( this.dom );
+        //     splitSubmenu.setLeft( right + 'px' );
+        //     splitSubmenu.setTop( top - parseFloat( paddingTop ) + 'px' );
+        //     splitSubmenu.setStyle( 'max-height', [ `calc( 100vh - ${top}px )` ] );
+        //     splitSubmenu.setDisplay( 'block' );
 
-        } );
-        splitSubmenuTitle.onMouseOut( function () {
+        // } );
+        // splitSubmenuTitle.onMouseOut( function () {
 
-            splitSubmenu.setDisplay( 'none' );
+        //     splitSubmenu.setDisplay( 'none' );
 
-        } );
-        options.add( splitSubmenuTitle );
+        // } );
+        // options.add( splitSubmenuTitle );
 
-        const splitSubmenu = new UIPanel().setPosition( 'fixed' ).addClass( 'options' ).setDisplay( 'none' );
-        splitSubmenuTitle.add( splitSubmenu );
+        // const splitSubmenu = new UIPanel().setPosition( 'fixed' ).addClass( 'options' ).setDisplay( 'none' );
+        // splitSubmenuTitle.add( splitSubmenu );
 
-        option = new UIRow();
-        option.setClass( 'option' );
-        option.setTextContent( 'Vertically' );
-        option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-            if(!editorscope.selected.isMesh) {
-                alert('Select a Mesh with Box Geometry');
-                return;
-            }
+        // option = new UIRow();
+        // option.setClass( 'option' );
+        // option.setTextContent( 'Vertically' );
+        // option.onClick( function () {
+        //     if(editorscope.selected == null) {
+        //         alert('Select an item first');
+        //         return;
+        //     }
+        //     if(!editorscope.selected.isMesh) {
+        //         alert('Select a Mesh with Box Geometry');
+        //         return;
+        //     }
 
-            self.splitVertically(editorscope);
-        } );
-        splitSubmenu.add( option );
+        //     self.splitVertically(editorscope);
+        // } );
+        // splitSubmenu.add( option );
 
-        option = new UIRow();
-        option.setClass( 'option' );
-        option.setTextContent( 'Horizontally' );
-        option.onClick( function () {
-            if(editorscope.selected == null) {
-                alert('Select an item first');
-                return;
-            }
-            if(!editorscope.selected.isMesh) {
-                alert('Select a Mesh with Box Geometry');
-                return;
-            }
+        // option = new UIRow();
+        // option.setClass( 'option' );
+        // option.setTextContent( 'Horizontally' );
+        // option.onClick( function () {
+        //     if(editorscope.selected == null) {
+        //         alert('Select an item first');
+        //         return;
+        //     }
+        //     if(!editorscope.selected.isMesh) {
+        //         alert('Select a Mesh with Box Geometry');
+        //         return;
+        //     }
 
-            self.splitHorizontally(editorscope);
-        } );
-        splitSubmenu.add( option );
+        //     self.splitHorizontally(editorscope);
+        // } );
+        // splitSubmenu.add( option );
 
-        options.add( new UIHorizontalRule() );
+        // options.add( new UIHorizontalRule() );
 
         option = new UIRow();
         option.setClass( 'option' );
@@ -601,9 +601,6 @@ export class MenubarEdit {
         addFloorDialog.showModal();
     }
 
-
-
-
     addBathtub(editor) {
         const _html = `
             <dialog id="addBathtubDialog">
@@ -646,7 +643,7 @@ export class MenubarEdit {
         confirmBtn.addEventListener("click", (event) => {
             event.preventDefault(); // We don't want to submit this fake form
 
-            var object = editor.selected;
+            // var object = editor.selected;
             var width = parseFloat(bathtubWidthBox.value);
             var length = parseFloat(bathtubLengthBox.value);
             var height = parseFloat(bathtubHeightBox.value);
@@ -654,7 +651,7 @@ export class MenubarEdit {
             document.body.removeChild(dialog)
             
             // addBathtubDialog.close(); // Have to send the select box value here.
-            this.roomBuilder.addBathtub(object, width, length, height);
+            this.roomBuilder.addBathtub(/*object,*/ width, length, height);
         });
 
         addBathtubDialog.showModal();

@@ -311,35 +311,38 @@ export class RoomBuilder {
         this.editor.execute( new AddObjectCommand( this.editor, bottomWall, group ) );
     }
 
-    addBathtub(parent, width, length, height) {
+    addBathtub(/*parent,*/ width, length, height) {
         // Add four sides, making horizontal basis
-        const offset = 0.0001; // 1mm. needed for cope with 'z-fighting'
 
         // Add a group first
         const group = new THREE.Group();
-		const bathtubName = parent.name + "_bathtub";
+		const bathtubName = /*parent.name +*/ "_bathtub";
         group.name = bathtubName;
 
-        this.editor.execute( new AddGroupCommand( this.editor, group, parent ) );
+        this.editor.execute( new AddGroupCommand( this.editor, group/*, parent*/ ) );
 
+        const bathtubTexture = textureHelper.get('PinkPlastic', 1, 1);
         const depth = 0.1;
+        const west_depth = depth * 2;
+        const floor_height = 0.1;
+
         // Add 4 box for bathtub
-        const northWall = new THREE.Mesh( new THREE.BoxGeometry(width-offset, height, depth), [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+        const northWall = new THREE.Mesh( new THREE.BoxGeometry(width, height, depth), [  
+            new THREE.MeshStandardMaterial({ map: bathtubTexture }), new THREE.MeshStandardMaterial({ map: bathtubTexture }), new THREE.MeshStandardMaterial({ map: bathtubTexture }),
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial( { map: bathtubTexture }), new THREE.MeshStandardMaterial({ map: bathtubTexture })
         ] );
         northWall.name = bathtubName + "_NorthSide";
         northWall.position.x = 0.0;
-        northWall.position.y = height / 2.0;
+        northWall.position.y = height / 2.0 ;
         northWall.position.z = -(length - depth) / 2.0;
 
         // this.editor.execute( new AddObjectCommand( this.editor, northWall, group ) );
         group.children.push( northWall );
 		northWall.parent = group;
 
-        const eastWall = new THREE.Mesh( new THREE.BoxGeometry(length-offset, height, depth),  [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+        const eastWall = new THREE.Mesh( new THREE.BoxGeometry(length-depth*2, height, depth),  [  
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial( { map: bathtubTexture }),
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial( { map: bathtubTexture }), new THREE.MeshStandardMaterial( { map: bathtubTexture })
         ] );
         eastWall.name = bathtubName + "_EastSide";
         eastWall.position.x = (width - depth) / 2.0;
@@ -351,9 +354,9 @@ export class RoomBuilder {
         group.children.push( eastWall );
 		eastWall.parent = group;
 
-        const southWall = new THREE.Mesh( new THREE.BoxGeometry(width-offset, height, depth),  [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+        const southWall = new THREE.Mesh( new THREE.BoxGeometry(width, height, depth),  [  
+            new THREE.MeshStandardMaterial({ map: bathtubTexture }), new THREE.MeshStandardMaterial({ map: bathtubTexture }), new THREE.MeshStandardMaterial( { map: bathtubTexture }),
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial( { map: bathtubTexture }), new THREE.MeshStandardMaterial( { map: bathtubTexture })
         ] );
         southWall.name = bathtubName + "_SouthSide";
         southWall.position.x = 0.0;
@@ -365,10 +368,9 @@ export class RoomBuilder {
         group.children.push( southWall );
 		southWall.parent = group;
 
-        const west_depth = depth * 2;
-        const westWall = new THREE.Mesh( new THREE.BoxGeometry(length-offset, height, west_depth),  [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+        const westWall = new THREE.Mesh( new THREE.BoxGeometry(length-depth*2, height, west_depth),  [  
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial( { map: bathtubTexture }),
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial( { map: bathtubTexture }), new THREE.MeshStandardMaterial( { map: bathtubTexture })
         ] );
 
         westWall.name = bathtubName + "_WestSide";
@@ -382,13 +384,12 @@ export class RoomBuilder {
 		westWall.parent = group;
 
         // Consider changing to PlaneGeometry later
-        const floor_height = 0.1;
-        const floor = new THREE.Mesh( new THREE.BoxGeometry(width, floor_height, length),  [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+        const floor = new THREE.Mesh( new THREE.BoxGeometry(width-depth*3, floor_height, length-depth*2),  [  
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial( { map: bathtubTexture }),
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
         ] );
         floor.name = bathtubName + "_Floor";
-        floor.position.x = 0.0;
+        floor.position.x = depth / 2.0;
         floor.position.y = floor_height / 2.0;
 
         // this.editor.execute( new AddObjectCommand( this.editor, floor, group ) );
@@ -401,12 +402,16 @@ export class RoomBuilder {
     addBathroomSink(parent) {
         // Add a group first
         const group = new THREE.Group();
-		const bathroomSinkName = parent.name + "_sink";
+		const bathroomSinkName = "_sink";
+        if(parent != null)
+            bathroomSinkName =  parent.name + bathroomSinkName;
         group.name = bathroomSinkName;
 
-        this.editor.execute( new AddGroupCommand( this.editor, group, parent ) );
+        this.editor.execute( new AddGroupCommand( this.editor, group/*, parent*/ ) );
 
-        const con = new THREE.Mesh( new THREE.ConeGeometry(0.3, 0.3, 8, 1, true, 0, Math.PI), new THREE.MeshStandardMaterial( {color: 0xffffff, side : THREE.DoubleSide} ) );
+        const bathroomSinkTexture = textureHelper.get('PinkPlastic', 1, 1);
+        const con = new THREE.Mesh( new THREE.ConeGeometry(0.3, 0.3, 8, 1, true, 0, Math.PI), 
+                                    new THREE.MeshStandardMaterial( {map: bathroomSinkTexture, side : THREE.DoubleSide} ) );
         con.name = bathroomSinkName + "_con";
         con.position.y = 1.0;
         con.rotation.z = Math.PI;
@@ -415,8 +420,9 @@ export class RoomBuilder {
         con.parent = group;
 
         const stand = new THREE.Mesh( new THREE.BoxGeometry(0.6, 0.3, 0.1), [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+            new THREE.MeshStandardMaterial({map: bathroomSinkTexture}), new THREE.MeshStandardMaterial({map: bathroomSinkTexture}), 
+            new THREE.MeshStandardMaterial({map: bathroomSinkTexture}), new THREE.MeshStandardMaterial(), 
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: bathroomSinkTexture})
         ] );
         stand.name = bathroomSinkName + "_stand";
         stand.position.y = 1.0;
@@ -432,12 +438,16 @@ export class RoomBuilder {
     addToilet(parent) {
         // Add a group first
         const group = new THREE.Group();
-		const bathroomSinkName = parent.name + "_toilet";
+		const bathroomSinkName = "_toilet";
+        if(parent != null)
+            bathroomSinkName = parent.name + bathroomSinkName;
         group.name = bathroomSinkName;
 
         this.editor.execute( new AddGroupCommand( this.editor, group, parent ) );
 
-        const cyl = new THREE.Mesh( new THREE.CylinderGeometry(0.1, 0.2, 0.6, 20, 1, true, 0, Math.PI), new THREE.MeshStandardMaterial( {color: 0xffffff, side : THREE.DoubleSide} ) );
+        const toiletTexture = textureHelper.get('PinkPlastic', 1, 1);
+        const cyl = new THREE.Mesh( new THREE.CylinderGeometry(0.1, 0.2, 0.6, 20, 1, true, 0, Math.PI), 
+                                    new THREE.MeshStandardMaterial( {map: toiletTexture, side : THREE.DoubleSide} ) );
         cyl.name = bathroomSinkName + "_cyl";
         cyl.position.y = 0.6;
         cyl.rotation.z = Math.PI;
@@ -446,8 +456,9 @@ export class RoomBuilder {
         cyl.parent = group;
 
         const stand = new THREE.Mesh( new THREE.BoxGeometry(0.6, 0.8, 0.1), [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+            new THREE.MeshStandardMaterial({map: toiletTexture}), new THREE.MeshStandardMaterial({map: toiletTexture}), 
+            new THREE.MeshStandardMaterial({map: toiletTexture}), new THREE.MeshStandardMaterial(), 
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: toiletTexture})
         ] );
         stand.name = bathroomSinkName + "_stand";
         stand.position.y = 0.7;
@@ -458,12 +469,14 @@ export class RoomBuilder {
         stand.parent = group;
 
         const bottom = new THREE.Mesh( new THREE.BoxGeometry(0.3, 0.3, 0.3), [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+            new THREE.MeshStandardMaterial({map: toiletTexture}), new THREE.MeshStandardMaterial({map: toiletTexture}), 
+            new THREE.MeshStandardMaterial({map: toiletTexture}), new THREE.MeshStandardMaterial(), 
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: toiletTexture})
         ] );
         bottom.name = bathroomSinkName + "_bottom";
         bottom.position.y = 0.15;
         bottom.position.x = -0.05;
+        bottom.rotation.y = Math.PI / 2.0;
 
         group.children.push( bottom );
         bottom.parent = group;
@@ -475,54 +488,163 @@ export class RoomBuilder {
         const group = new THREE.Group();
         group.name = name;
 
+        group.userData.isInterior = true;
+        group.userData.interiorType = 'GasRange';
+        group.userData.DBid = 'n/a';
+
         this.editor.execute( new AddGroupCommand( this.editor, group, parent ) );
 
+        // Sink Up-Panels
+        const marbleTexture = textureHelper.get('Marble', 1, 1);
+        const kitchenSinkTexture = textureHelper.get('KitchenSink', 1, 1);
+        const rangeTexture = textureHelper.get('GasRange4Burner', 1, 1);
 
         const depth = 0.1;
-
-        const upPanel = new THREE.Mesh( new THREE.BoxGeometry(width-offset, depth, length), [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+        const one_width = width / 3.0;
+        const upPanel1 = new THREE.Mesh( new THREE.BoxGeometry(one_width, depth, length), [  
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: rangeTexture}),
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: marbleTexture}), new THREE.MeshStandardMaterial()
         ] );
-        upPanel.name = name + "_sinkUpPanel";
-        upPanel.position.y = height + 0.05;
-        upPanel.position.x = 0.0;
+        upPanel1.name = name + "_sinkUpPanel1";
+        upPanel1.position.y = height + 0.05;
+        upPanel1.position.x = -one_width;
 
-        this.editor.execute( new AddObjectCommand( this.editor, upPanel, group ) );
-        upPanel.parent = group;
+        this.editor.execute( new AddObjectCommand( this.editor, upPanel1, group ) );
+        upPanel1.parent = group;
 
-        const front = new THREE.Mesh( new THREE.BoxGeometry(width, height, depth), [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+        const upPanel2 = new THREE.Mesh( new THREE.BoxGeometry(one_width, depth, length), [  
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: kitchenSinkTexture}),
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: marbleTexture}), new THREE.MeshStandardMaterial()
         ] );
-        front.name = name + "_sinkFront";
-        front.position.y = height / 2.0;
-        front.position.z = (length - depth) / 2.0;
+        upPanel2.name = name + "_sinkUpPanel2";
+        upPanel2.position.y = height + 0.05;
+        upPanel2.position.x = 0.0;
 
-        this.editor.execute( new AddObjectCommand( this.editor, front, group ) );
-        front.parent = group;
+        this.editor.execute( new AddObjectCommand( this.editor, upPanel2, group ) );
+        upPanel2.parent = group;
 
-        const east = new THREE.Mesh( new THREE.BoxGeometry(length-offset, height, depth), [  
+        const upPanel3 = new THREE.Mesh( new THREE.BoxGeometry(one_width, depth, length), [  
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: marbleTexture}),
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: marbleTexture}), new THREE.MeshStandardMaterial()
+        ] );
+        upPanel3.name = name + "_sinkUpPanel3";
+        upPanel3.position.y = height + 0.05;
+        upPanel3.position.x = one_width;
+
+        this.editor.execute( new AddObjectCommand( this.editor, upPanel3, group ) );
+        upPanel3.parent = group;
+
+        // Front Doors (4 doors)
+        const sinkDoorDepth = 0.03;
+        const sinkDoorWidth = width / 4.0;
+        const leftDoorTexture = textureHelper.get('DrawerDoorLeft', 1, 1);
+        const rightDoorTexture = textureHelper.get('DrawerDoorRight', 1, 1);
+        const sideTexture = textureHelper.get('WhitePlastic', 1, 1);
+
+        const doorGroup = new THREE.Group();
+        doorGroup.name = 'doorGroup';
+        doorGroup.position.y = height / 2.0;
+        doorGroup.position.z = (length - sinkDoorDepth) / 2.0;
+
+        const frontDoor1 = new THREE.Mesh( new THREE.BoxGeometry(sinkDoorWidth, height, sinkDoorDepth), [  
+            new THREE.MeshStandardMaterial({map:sideTexture}), new THREE.MeshStandardMaterial({map:sideTexture}), 
+            new THREE.MeshStandardMaterial({map:sideTexture}), new THREE.MeshStandardMaterial(), 
+            new THREE.MeshStandardMaterial({map:leftDoorTexture}), new THREE.MeshStandardMaterial({map:sideTexture})
+        ] );
+        frontDoor1.name = name + "_sinkFrontDoor1";
+        frontDoor1.position.x = -sinkDoorWidth * 3 / 2.0;
+        // frontDoor1.position.y = height / 2.0;
+        // frontDoor1.position.z = (length - sinkDoorDepth) / 2.0;
+
+        frontDoor1.userData.type = 'door';
+        frontDoor1.userData.pivotDir = 'left';
+        frontDoor1.userData.openDir = 'inward';
+        frontDoor1.userData.DBid = 'n/a';
+
+        this.editor.addObject( frontDoor1, doorGroup );
+        frontDoor1.parent = doorGroup;
+
+        const frontDoor2 = new THREE.Mesh( new THREE.BoxGeometry(sinkDoorWidth, height, sinkDoorDepth), [  
+            new THREE.MeshStandardMaterial({map:sideTexture}), new THREE.MeshStandardMaterial({map:sideTexture}), 
+            new THREE.MeshStandardMaterial({map:sideTexture}), new THREE.MeshStandardMaterial(), 
+            new THREE.MeshStandardMaterial({map:rightDoorTexture}), new THREE.MeshStandardMaterial({map:sideTexture})
+        ] );
+        frontDoor2.name = name + "_sinkFrontDoor2";
+        frontDoor2.position.x = -sinkDoorWidth / 2.0;
+        // frontDoor2.position.y = height / 2.0;
+        // frontDoor2.position.z = (length - sinkDoorDepth) / 2.0;
+
+        frontDoor2.userData.type = 'door';
+        frontDoor2.userData.pivotDir = 'right';
+        frontDoor2.userData.openDir = 'inward';
+        frontDoor2.userData.DBid = 'n/a';
+
+        this.editor.addObject( frontDoor2, doorGroup );
+        frontDoor2.parent = doorGroup;
+
+        const frontDoor3 = new THREE.Mesh( new THREE.BoxGeometry(sinkDoorWidth, height, sinkDoorDepth), [  
+            new THREE.MeshStandardMaterial({map:sideTexture}), new THREE.MeshStandardMaterial({map:sideTexture}), 
+            new THREE.MeshStandardMaterial({map:sideTexture}), new THREE.MeshStandardMaterial(), 
+            new THREE.MeshStandardMaterial({map:leftDoorTexture}), new THREE.MeshStandardMaterial({map:sideTexture})
+        ] );
+        frontDoor3.name = name + "_sinkFrontDoor3";
+        frontDoor3.position.x = sinkDoorWidth / 2.0;
+        // frontDoor3.position.y = height / 2.0;
+        // frontDoor3.position.z = (length - sinkDoorDepth) / 2.0;
+
+        frontDoor3.userData.type = 'door';
+        frontDoor3.userData.pivotDir = 'left';
+        frontDoor3.userData.openDir = 'inward';
+        frontDoor3.userData.DBid = 'n/a';
+
+        this.editor.addObject( frontDoor3, doorGroup );
+        frontDoor3.parent = doorGroup;
+
+        const frontDoor4 = new THREE.Mesh( new THREE.BoxGeometry(sinkDoorWidth, height, sinkDoorDepth), [  
+            new THREE.MeshStandardMaterial({map:sideTexture}), new THREE.MeshStandardMaterial({map:sideTexture}), 
+            new THREE.MeshStandardMaterial({map:sideTexture}), new THREE.MeshStandardMaterial(), 
+            new THREE.MeshStandardMaterial({map:rightDoorTexture}), new THREE.MeshStandardMaterial({map:sideTexture})
+        ] );
+        frontDoor4.name = name + "_sinkFrontDoor4";
+        frontDoor4.position.x = sinkDoorWidth * 3 / 2.0;
+        // frontDoor4.position.y = height / 2.0;
+        // frontDoor4.position.z = (length - sinkDoorDepth) / 2.0;
+
+        frontDoor4.userData.type = 'door';
+        frontDoor4.userData.pivotDir = 'right';
+        frontDoor4.userData.openDir = 'inward';
+        frontDoor4.userData.DBid = 'n/a';
+
+        this.editor.addObject( frontDoor4, doorGroup );
+        frontDoor4.parent = group;
+
+        this.editor.addObject( doorGroup, group );
+        group.parent = doorGroup;
+
+        // sink side panels (Only inside is visible)
+        const sideLength = length - sinkDoorDepth;
+        const east = new THREE.Mesh( new THREE.BoxGeometry(sideLength, height, depth), [  
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
         ] );
         east.name = name + "_sinkEast";
         east.position.x = (width - depth) / 2.0;
         east.position.y = height / 2.0;
-        east.position.z = 0.0;
+        east.position.z = -sinkDoorDepth / 2.0;
         east.rotation.y = -Math.PI / 2.0;
 
-        this.editor.execute( new AddObjectCommand( this.editor, east, group ) );
+        // this.editor.execute( new AddObjectCommand( this.editor, east, group ) );
+        group.children.push( east );
         east.parent = group;
 
-        const west = new THREE.Mesh( new THREE.BoxGeometry(length-offset, height, depth),  [  
+        const west = new THREE.Mesh( new THREE.BoxGeometry(sideLength, height, depth),  [  
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
         ] );
         west.name = name + "_sinkWest";
         west.position.x = -(width - depth) / 2.0;
         west.position.y = height / 2.0;
-        west.position.z = 0.0;
+        west.position.z = -sinkDoorDepth / 2.0;
         west.rotation.y = Math.PI / 2.0;
 
         // this.editor.execute( new AddObjectCommand( this.editor, west, group ) );

@@ -147,25 +147,25 @@ export class SidebarObject {
 
         // this.container.add( this.objectUserDataRow );
 
-        this.objectChangeRow = new UIRow();
+        // this.objectChangeRow = new UIRow();
 
-        const changeToDoorButton = new UIButton( 'Change to Door');
-        changeToDoorButton.setWidth( '80px' );
-        changeToDoorButton.setMarginLeft( '10px' );
-        changeToDoorButton.setMarginRight( '10px' );
-        var changeToDoorFunc = this.changeToDoorwithUserData.bind(this);
-        changeToDoorButton.onClick( changeToDoorFunc );
+        // const changeToDoorButton = new UIButton( 'Change to Door');
+        // changeToDoorButton.setWidth( '80px' );
+        // changeToDoorButton.setMarginLeft( '10px' );
+        // changeToDoorButton.setMarginRight( '10px' );
+        // var changeToDoorFunc = this.changeToDoorwithUserData.bind(this);
+        // changeToDoorButton.onClick( changeToDoorFunc );
 
-        this.objectChangeRow.add( changeToDoorButton );
+        // this.objectChangeRow.add( changeToDoorButton );
 
-        const changeToWindowButton = new UIButton( 'Change to Window');
-        changeToWindowButton.setWidth( '80px' );
-        changeToWindowButton.setMarginLeft( '10px' );
-        changeToWindowButton.setMarginRight( '10px' );
-        var changeToWindowFunc = this.changeToWindowwithUserData.bind(this);
-        changeToWindowButton.onClick( changeToWindowFunc );
+        // const changeToWindowButton = new UIButton( 'Change to Window');
+        // changeToWindowButton.setWidth( '80px' );
+        // changeToWindowButton.setMarginLeft( '10px' );
+        // changeToWindowButton.setMarginRight( '10px' );
+        // var changeToWindowFunc = this.changeToWindowwithUserData.bind(this);
+        // changeToWindowButton.onClick( changeToWindowFunc );
 
-        this.objectChangeRow.add( changeToWindowButton );
+        // this.objectChangeRow.add( changeToWindowButton );
 
 
         // user data
@@ -179,7 +179,7 @@ export class SidebarObject {
 
         this.container.add( this.objectUserDataRow );
 
-        this.container.add( this.objectChangeRow );
+        // this.container.add( this.objectChangeRow );
     }
 
     objectNameUpdated() {

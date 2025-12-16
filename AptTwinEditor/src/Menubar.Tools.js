@@ -124,6 +124,14 @@ export class MenubarTools {
         // Player
         option = new UIRow();
         option.setClass( 'option' );
+        option.setTextContent( 'Go to Interior' );
+        option.onClick( () => {
+            window.location.href = './interior.html';
+        } );
+        options.add( option );
+
+        option = new UIRow();
+        option.setClass( 'option' );
         option.setTextContent( 'Go to Player' );
         option.onClick( () => {
             window.location.href = './player.html';
