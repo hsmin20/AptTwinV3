@@ -2,12 +2,14 @@ import { Storage } from './storage.js';
 import { Util, METER } from './util.js';
 import { qSVG } from './qSVG.js';
 import { Wall, WallType } from './wall.js';
-import { Door, Hinge } from './door.js';
+import { Floor } from './floor.js';
+import { Door, Door2, Hinge } from './door.js';
 import { Window, Window2 } from './window.js';
 import { Socle } from './opening.js';
 
 const Action = { NONE: 0, CLICKED: 1, MOVE: 2 };
-export const Mode = { SELECT: 0, DRAW_WALL: 1, BIND: 2, EDIT: 3, CUT: 4, DRAW_FLOOR: 5, ADD_DOOR: 6, ADD_WINDOW: 7, ADD_WINDOW2: 8, OBJECT: 9, EDIT_DOOR: 10, EDIT_WINDOW: 11 };
+export const Mode = { SELECT: 0, DRAW_WALL: 1, BIND: 2, EDIT: 3, CUT: 4, DRAW_FLOOR: 5, DRAW_FLOOR2: 6,DRAW_FLOOR3: 7, DRAW_FLOOR4: 8, DRAW_FLOOR5: 9,
+                        ADD_DOOR: 10, ADD_DOOR2: 11, ADD_WINDOW: 12, ADD_WINDOW2: 13, OBJECT: 14, EDIT_DOOR: 15, EDIT_WINDOW: 16 };
 const Binder = { NODE: 0, SEGMENT: 1, OBJECT: 2, NONE: 3 };
 const Magnetic = { NONE: 0, HOR: 1, VER: 2 };
 const Drag = { OFF: 0, ON: 1 };
@@ -365,10 +367,10 @@ export class Editor {
         let startX2 = wall.coords[1].x;
         let startY2 = wall.coords[1].y;
 
-        const endX = wall.coords[2].x;
-        const endY = wall.coords[2].y;
-        const endX2 = wall.coords[3].x;
-        const endY2 = wall.coords[3].y;
+        let endX = wall.coords[2].x;
+        let endY = wall.coords[2].y;
+        let endX2 = wall.coords[3].x;
+        let endY2 = wall.coords[3].y;
 
         for(let i=0; i<distObj.length; i++) {
             const obj = distObj[i].obj;
@@ -379,10 +381,15 @@ export class Editor {
             let angle = obj.angle;
             if(angle == 180)
                 angle = 0;
-            if(angle == 90)
+            else if(angle == 90)
                 angle = 270;
+            
+            if((angle % 90) != 0) {
+                if(angle > 180)
+                    angle -= 180;
+            }
 
-            const angleRadian = (angle) * (Math.PI / 180);
+            const angleRadian = -(angle) * (Math.PI / 180);
 
             let coords = [{ x: -size / 2, y: -thick / 2 }, { x: -size / 2, y: thick / 2 }, { x: size / 2, y: -thick / 2 }, { x: size / 2, y: thick / 2 }];
             const leftTopX = (coords[0].y * Math.sin(angleRadian) + coords[0].x * Math.cos(angleRadian)) + x;
@@ -492,12 +499,13 @@ export class Editor {
         for(let k in this.arFloors) {
             let floor = this.arFloors[k];
 
+            const type = floor.type;
             const x1 = (floor.start.x - centerX) / METER;
             const z1 = (floor.start.y - centerY) / METER;
             const x2 = (floor.end.x - centerX) / METER;
             const z2 = (floor.end.y - centerY) / METER;
 
-            var arCoords = {  'type': WallType.FLOOR, 'x1': x1, 'z1': z1, 'x2': x2, 'z2': z2 };
+            var arCoords = { 'type': type, 'x1': x1, 'z1': z1, 'x2': x2, 'z2': z2 };
 
             elementArray.push(arCoords);
         }
@@ -505,6 +513,7 @@ export class Editor {
         for(let k in this.arDoors) {
             let door = this.arDoors[k];
 
+            const type = door.type;
             const x = (door.x - centerX) / METER;
             const z = (door.y - centerY) / METER;
             const angle = door.angle;
@@ -513,7 +522,7 @@ export class Editor {
             const hinge = door.hinge;
             const thick = door.thick / METER;
 
-            var arCoords = {  'type': WallType.DOOR, 'x': x, 'z': z, 'angle': angle, 'angleSign': angleSign, 'size': size, 'hinge': hinge, 'thick': thick };
+            var arCoords = {  'type': type, 'x': x, 'z': z, 'angle': angle, 'angleSign': angleSign, 'size': size, 'hinge': hinge, 'thick': thick };
 
             elementArray.push(arCoords);
         }
@@ -630,11 +639,15 @@ export class Editor {
             if(element.type == WallType.NORMAL) {
                 let wall = new Wall(element.start, element.end, element.type, element.thick, element.color);
                 this.arWalls.push(wall);
-            } else if(element.type == WallType.FLOOR) {
-                let floor = new Floor(element.start, element.end, element.color);
+            } else if(element.type >= WallType.FLOOR || element.type <= WallType.FLOOR5) {
+                let floor = new Floor(element.start, element.end, element.type);
                 this.arFloors.push(floor);
             } else if(element.type == WallType.DOOR) {
                 let door = new Door(element.pos, element.angle, element.angleSign, element.size, element.hinge, element.thick);
+                door.update();
+                this.arDoors.push(door);
+            } else if(element.type == WallType.DOOR2) {
+                let door = new Door2(element.pos, element.angle, element.angleSign, element.size, element.hinge, element.thick);
                 door.update();
                 this.arDoors.push(door);
             } else if(element.type == WallType.WINDOW) {
@@ -858,7 +871,7 @@ export class Editor {
                 var found = true;
                 for (var k in this.arWalls) {
                     if (qSVG.rayCasting(wall.end, this.arWalls[k].coords) && !Util.isObjectsEquals(this.arWalls[k], wall.child)
-                         && !isObjectsEquals(this.arWalls[k], wall)) {
+                         && !Util.isObjectsEquals(this.arWalls[k], wall)) {
                         if (wall.child.parent != null && Util.isObjectsEquals(wall, wall.child.parent)) 
                             wall.child.parent = null;
                         if (wall.child.child != null && Util.isObjectsEquals(wall, wall.child.child)) 
@@ -999,7 +1012,7 @@ export class Editor {
                 this.pox = snap.xMouse;
                 this.poy = snap.yMouse;
             }
-        } else if (this.mode == Mode.DRAW_WALL || this.mode == Mode.DRAW_FLOOR) {
+        } else if (this.mode == Mode.DRAW_WALL || (this.mode >= Mode.DRAW_FLOOR && this.mode <= Mode.DRAW_FLOOR5)) {
             if (this.action == Action.NONE) {
                 const snap = this.calcul_snap(event, this.grid_snap);
                 this.pox = snap.x;
@@ -1453,7 +1466,10 @@ export class Editor {
             }
         } else {
             if(this.binder != null) {
-                this.binder.remove();
+                if(this.binder.graph != null)
+                    this.binder.graph.remove();
+                else
+                    this.binder.remove();
                 delete this.binder;
             }
             if (this.wallEndConstruc === null) 
@@ -1569,6 +1585,9 @@ export class Editor {
                 if(this.mode == Mode.ADD_DOOR) {
                     const door_width = 48; // 60 / METER = 1m, 48 -> 0.8m
                     this.binder = new Door({x:wallSelect.x, y:wallSelect.y}, 0, 0, door_width, Hinge.NORMAL, wall.thick);
+                } else if(this.mode == Mode.ADD_DOOR2) {
+                    const door_width = 60; // 60 / METER = 1m, 48 -> 0.8m
+                    this.binder = new Door2({x:wallSelect.x, y:wallSelect.y}, 0, 0, door_width, Hinge.NORMAL, wall.thick);
                 } else if(this.mode == Mode.ADD_WINDOW) {
                     const window_width = 120; // 2m
                     this.binder = new Window({x:wallSelect.x, y:wallSelect.y}, 0, window_width, wall.thick);
@@ -1588,7 +1607,7 @@ export class Editor {
                 var startCoords = qSVG.middle(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
                 this.binder.x = startCoords.x;
                 this.binder.y = startCoords.y;
-                this.binder.angle = angleWall;
+                this.binder.angle = angleWall % 360;
                 
                 this.binder.update();
 
@@ -1609,7 +1628,7 @@ export class Editor {
                 if (qSVG.btwn(limits[0].x, wall.start.x, wall.end.x) && qSVG.btwn(limits[0].y, wall.start.y, wall.end.y) && qSVG.btwn(limits[1].x, wall.start.x, wall.end.x) && qSVG.btwn(limits[1].y, wall.start.y, wall.end.y)) {
                     this.binder.x = wallSelect.x;
                     this.binder.y = wallSelect.y;
-                    this.binder.angle = angleWall;
+                    this.binder.angle = angleWall % 360;
                     this.binder.thick = wall.thick;
                     this.binder.limit = limits;
                     this.binder.update();
@@ -1857,11 +1876,11 @@ export class Editor {
             if (qSVG.btwn(limits[0].x, wall.start.x, wall.end.x) && qSVG.btwn(limits[0].y, wall.start.y, wall.end.y) && qSVG.btwn(limits[1].x, wall.start.x, wall.end.x) && qSVG.btwn(limits[1].y, wall.start.y, wall.end.y)) {
                 this.binder.x = wallSelect.x;
                 this.binder.y = wallSelect.y;
-                this.binder.angle = angleWall;
+                this.binder.angle = angleWall % 360;
                 this.binder.thick = wall.thick;
                 objTarget.x = wallSelect.x;
                 objTarget.y = wallSelect.y;
-                objTarget.angle = angleWall;
+                objTarget.angle = angleWall % 360;
                 objTarget.thick = wall.thick;
                 objTarget.limit = limits;
                 this.binder.update();
@@ -1884,13 +1903,58 @@ export class Editor {
                     objTarget.limit = limits;
                 }
 
-                this.binder.angle = angleWall;
+                this.binder.angle = angleWall % 360;
                 this.binder.thick = wall.thick;
-                objTarget.angle = angleWall;
+                objTarget.angle = angleWall % 360;
                 objTarget.thick = wall.thick;
                 this.binder.update();
                 objTarget.update();
             }
+        }
+    }
+
+    _showPreWallSizes(start, end, node) {
+        const shift = 10;
+
+        const wall = node.wall;
+        const angle = wall.angle;
+        const dStart = Math.sqrt(Math.pow(wall.start.x - node.x, 2) + Math.pow(wall.start.y - node.y, 2));
+        const dEnd = Math.sqrt(Math.pow(wall.end.x - node.x, 2) + Math.pow(wall.end.y - node.y, 2));
+
+        let sizeText = [];
+        var boxRib = document.getElementById('boxRib');
+        while (boxRib.firstChild) {
+            boxRib.removeChild(boxRib.firstChild);
+        }
+
+        let angleText = angle * (180 / Math.PI);
+        let shiftValue = -shift;
+        if (angleText > 90 || angleText < -89) {
+            angleText -= 180;
+        }
+
+        for(let n=0; n<2; n++) {
+            let valueText = (n == 0) ? dStart : dEnd;
+
+            sizeText[n] = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            let startText = (n == 0) ? qSVG.middle(wall.start.x, wall.start.y, node.x, node.y) : 
+                        qSVG.middle(wall.end.x, wall.end.y, node.x, node.y);
+
+            sizeText[n].setAttributeNS(null, 'x', startText.x);
+            sizeText[n].setAttributeNS(null, 'y', startText.y + shiftValue);
+            sizeText[n].setAttributeNS(null, 'text-anchor', 'middle');
+            sizeText[n].setAttributeNS(null, 'font-family', 'roboto');
+            sizeText[n].setAttributeNS(null, 'stroke', '#ffffff');
+            sizeText[n].textContent = valueText.toFixed(2);
+            if (sizeText[n].textContent < 1) {
+                sizeText[n].setAttributeNS(null, 'font-size', '0.8em');
+                sizeText[n].textContent = sizeText[n].textContent.substring(1, sizeText[n].textContent.length);
+            } else sizeText[n].setAttributeNS(null, 'font-size', '0.8em');
+            sizeText[n].setAttributeNS(null, 'stroke-width', '0.2px');
+            sizeText[n].setAttributeNS(null, 'fill', '#555555');
+            sizeText[n].setAttribute("transform", "rotate(" + angleText + " " + startText.x + "," + startText.y + ")");
+
+            boxRib.appendChild(sizeText[n]);
         }
     }
 
@@ -1930,6 +1994,8 @@ export class Editor {
                     this.binder.setAttribute("transform", 
                         "translate(" + (addNode.x) + "," + (addNode.y) + ") rotate(" + (angleWall.deg + 90) + ",0,0)");
                     this.binder.data = addNode;
+
+                    this._showPreWallSizes({ x:x1, y:y1}, { x:x2, y:y2}, addNode);
                 }
                 else {
                     if(this.binder != null) {
@@ -1967,7 +2033,7 @@ export class Editor {
             }
         }
 
-        if (this.mode == Mode.DRAW_WALL || this.mode == Mode.DRAW_FLOOR) {
+        if (this.mode == Mode.DRAW_WALL || (this.mode >= Mode.DRAW_FLOOR && this.mode <= Mode.DRAW_FLOOR5)) {
             if(this.action == Action.NONE) {
                 this._handleMouseHovering(snap);
             } else if(this.action == Action.CLICKED) {
@@ -1979,7 +2045,7 @@ export class Editor {
             }
         }
 
-        if (this.mode == Mode.ADD_DOOR || this.mode == Mode.ADD_WINDOW || this.mode == Mode.ADD_WINDOW2) {
+        if (this.mode == Mode.ADD_DOOR || this.mode == Mode.ADD_DOOR2 || this.mode == Mode.ADD_WINDOW || this.mode == Mode.ADD_WINDOW2) {
             this._handleMouseMoveAddDoorWindow(snap);
         }
 
@@ -2362,7 +2428,7 @@ export class Editor {
             y: this.poy,
             width: this.curx - this.pox,
             height: this.cury - this.poy,
-            "fill": "#cbf7f5",
+            "fill": "#dce5f3ff",
             "fill-opacity": 0.9,
             "stroke": "transparent",
             "stroke-width": 1,
@@ -2376,7 +2442,7 @@ export class Editor {
             y: this.poy,
             width: this.curx - this.pox,
             height: this.cury - this.poy,
-            "fill": "#cbf7f5",
+            "fill": "#dce5f3ff",
             "fill-opacity": 0.9,
             "stroke": "transparent",
             "stroke-width": 0.5,
@@ -2431,7 +2497,28 @@ export class Editor {
         if (this.lineconstruc != null && check_size > 0.1) {
             var sizeWall = Thickness.WALL;
 
-            var wall = new Wall({ x: this.pox, y: this.poy }, { x: this.curx, y: this.cury }, WallType.NORMAL, sizeWall);
+            var startPos = { x: this.pox, y: this.poy };
+            var endPos = { x: this.curx, y: this.cury };
+
+            var eq = qSVG.createEquation(this.pox, this.poy, this.curx, this.cury);
+            if(eq.A == 'h') {
+                if(startPos.x > endPos.x) {
+                    startPos = { x: this.curx, y: this.cury };
+                    endPos = { x: this.pox, y: this.poy };
+                }
+            } else if(eq.A == 'v') {
+                if(startPos.y < endPos.y) {
+                    startPos = { x: this.curx, y: this.cury };
+                    endPos = { x: this.pox, y: this.poy };
+                }
+            } else {
+                if(startPos.x > endPos.x && startPos.y > endPos.y) {
+                    startPos = { x: this.curx, y: this.cury };
+                    endPos = { x: this.pox, y: this.poy };
+                }
+            }
+
+            var wall = new Wall(startPos, endPos, WallType.NORMAL, sizeWall);
             this.arWalls.push(wall);
             this._computeWalls();
 
@@ -2472,7 +2559,7 @@ export class Editor {
         check_size = check_size / METER;
         
         if (this.rectconstruc != null && check_size > 0.2) {
-            var floor = new Floor( { x: this.pox, y: this.poy }, { x: this.curx, y: this.cury } );
+            var floor = new Floor( { x: this.pox, y: this.poy }, { x: this.curx, y: this.cury }, this.mode-3 );
             this.arFloors.push(floor);
             this._computeFloors();
 
@@ -2495,7 +2582,10 @@ export class Editor {
         } else {
             this.action = Action.NONE;
             if(this.binder != null) {
-                this.binder.remove();
+                if(this.binder.graph != null)
+                    this.binder.graph.remove();
+                else
+                    this.binder.remove();
                 delete this.binder;
             }
             const snap = this.calcul_snap(event, this.grid_snap);
@@ -2683,11 +2773,11 @@ export class Editor {
             this._handleMouseUpDrawWall(event);
         }
 
-        if (this.mode == Mode.DRAW_FLOOR) {
+        if ((this.mode >= Mode.DRAW_FLOOR && this.mode <= Mode.DRAW_FLOOR5)) {
             this._handleMouseUpDrawFloor(event);
         }
 
-        if (this.mode == Mode.ADD_DOOR) {
+        if (this.mode == Mode.ADD_DOOR || this.mode == Mode.ADD_DOOR2) {
             this._handleMouseUpAddDoor(event);
         }
 

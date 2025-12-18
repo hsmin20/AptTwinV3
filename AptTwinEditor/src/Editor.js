@@ -12,7 +12,7 @@ import { saveState } from './AptTwinEditor.js';
 
 import { textureHelper } from '../../src_common/TextureHelper.js';
 
-const WallType = { NONE: 0, WALL: 1, FLOOR: 2, DOOR: 3, WINDOW: 4, WINDOW2: 5 };
+const WallType = { NEW: 0, WALL: 1, FLOOR: 2, FLOOR2: 3, FLOOR3: 4, FLOOR4: 5, FLOOR5: 6, DOOR: 7, DOOR2: 8, WINDOW: 9, WINDOW2: 10 };
 const Hinge = { NORMAL: 0, REVERSE: 1 };
 const HEIGHT = 2.3;
 
@@ -271,6 +271,8 @@ export class Editor {
         const hinge = element.hinge;
         // const thick = element.thick; // not used
 
+        const type = element.type;
+
         const pivotDir = (hinge == hinge.NORMAL) ? 'left' : 'right';
         const openDir = 'outward'; // (angle > 180) ? 'inward' : 'outward'; //(angleSign == 0) ? 'outward' : 'inward';
 
@@ -279,10 +281,20 @@ export class Editor {
         group.position.z = z;
         group.rotation.y = (Math.PI / 180) * angle * -1;
 
-        const doorLeftTexture = (hinge == Hinge.NORMAL) ? 'DoorLeft' : 'DoorRight';
-        const doorRightTexture = (hinge == Hinge.NORMAL) ? 'DoorRight' : 'DoorLeft';
-        const doorLTexture  = textureHelper.get(doorLeftTexture, 1, 1);
-        const doorRTexture = textureHelper.get(doorRightTexture, 1, 1);
+        let doorLTexture  = null;
+        let doorRTexture = null;
+
+        if(type == WallType.DOOR) {
+            const doorLeftTexture = (hinge == Hinge.NORMAL) ? 'DoorLeft' : 'DoorRight';
+            const doorRightTexture = (hinge == Hinge.NORMAL) ? 'DoorRight' : 'DoorLeft';
+            doorLTexture  = textureHelper.get(doorLeftTexture, 1, 1);
+            doorRTexture = textureHelper.get(doorRightTexture, 1, 1);
+        } else if(type == WallType.DOOR2) {
+            const doorLeftTexture = (hinge == Hinge.NORMAL) ? 'FrontDoorLeft' : 'FrontDoorRight';
+            const doorRightTexture = (hinge == Hinge.NORMAL) ? 'FrontDoorRight' : 'FrontDoorLeft';
+            doorLTexture  = textureHelper.get(doorLeftTexture, 1, 1);
+            doorRTexture = textureHelper.get(doorRightTexture, 1, 1);
+        }
 
         const depth = 0.1;
         const door = new THREE.Mesh( new THREE.BoxGeometry(width, HEIGHT, depth), [  
@@ -492,7 +504,17 @@ export class Editor {
 
         const repeatX = Math.round(width * 2);
         const repeatY = Math.round(height * 2);
-        const floorTexture  = textureHelper.get('Floor', repeatX, repeatY);
+        let floorTexture  = null;
+        if(element.type == WallType.FLOOR) // Room
+            textureHelper.get('RoomFloor', repeatX, repeatY);
+        else if(element.type == WallType.FLOOR2) // Livingroom
+            textureHelper.get('Floor', repeatX, repeatY);
+        else if(element.type == WallType.FLOOR3) // Bathroom
+            textureHelper.get('Tile', repeatX, repeatY);
+        else if(element.type == WallType.FLOOR4) // Veranda
+            textureHelper.get('BalconyTile', repeatX, repeatY);
+        else if(element.type == WallType.FLOOR5) // Cement
+            textureHelper.get('Concrete', repeatX, repeatY);
 
         let mesh = new THREE.Mesh( new THREE.PlaneGeometry(width, height), new THREE.MeshStandardMaterial({ map: floorTexture, side: THREE.BackSide }) );
         mesh.name = "new_mesh_1_" + i;
@@ -524,7 +546,7 @@ export class Editor {
             const type = element.type;
             if(type == WallType.WALL) {
                 this.constructWallFrom2DJSON(element, i);
-            } else if(type == WallType.DOOR) {
+            } else if(type == WallType.DOOR || type == WallType.DOOR2) {
                 this.constructDoorFrom2DJSON(element, i);
             } else if(type == WallType.WINDOW) {
                 this.constructWindowFrom2DJSON(element, i);                

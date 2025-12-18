@@ -120,8 +120,18 @@ function handleButtonClick(editor) {
     dwb.onclick = function() { editor.mode = Mode.DRAW_WALL; }
     var dfb = document.getElementById("drawfloor");
     dfb.onclick = function() { editor.mode = Mode.DRAW_FLOOR; }
+    var dfb2 = document.getElementById("drawfloor2");
+    dfb2.onclick = function() { editor.mode = Mode.DRAW_FLOOR2; }
+    var dfb3 = document.getElementById("drawfloor3");
+    dfb3.onclick = function() { editor.mode = Mode.DRAW_FLOOR3; }
+    var dfb4 = document.getElementById("drawfloor4");
+    dfb4.onclick = function() { editor.mode = Mode.DRAW_FLOOR4; }
+    var dfb5 = document.getElementById("drawfloor5");
+    dfb5.onclick = function() { editor.mode = Mode.DRAW_FLOOR5; }
     var ddb = document.getElementById("drawdoor");
     ddb.onclick = function() { editor.mode = Mode.ADD_DOOR; }
+    var ddb2 = document.getElementById("drawdoor2");
+    ddb2.onclick = function() { editor.mode = Mode.ADD_DOOR2; }
     var dwb2 = document.getElementById("drawwindow");
     dwb2.onclick = function() { editor.mode = Mode.ADD_WINDOW; }
     var dwb4 = document.getElementById("drawwindow2");
