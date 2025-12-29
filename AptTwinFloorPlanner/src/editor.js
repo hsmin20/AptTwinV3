@@ -6,11 +6,13 @@ import { Floor } from './floor.js';
 import { Door, Door2, Hinge } from './door.js';
 import { Window, Window2 } from './window.js';
 import { Socle } from './opening.js';
+import { Bathtub, Toilet, Bathsink, Kitchensink } from './bathobjects.js';
 
 const Action = { NONE: 0, CLICKED: 1, MOVE: 2 };
 export const Mode = { SELECT: 0, DRAW_WALL: 1, BIND: 2, EDIT: 3, CUT: 4, DRAW_FLOOR: 5, DRAW_FLOOR2: 6,DRAW_FLOOR3: 7, DRAW_FLOOR4: 8, DRAW_FLOOR5: 9,
-                        ADD_DOOR: 10, ADD_DOOR2: 11, ADD_WINDOW: 12, ADD_WINDOW2: 13, OBJECT: 14, EDIT_DOOR: 15, EDIT_WINDOW: 16 };
-const Binder = { NODE: 0, SEGMENT: 1, OBJECT: 2, NONE: 3 };
+                        ADD_DOOR: 10, ADD_DOOR2: 11, ADD_WINDOW: 12, ADD_WINDOW2: 13, OBJECT: 14, EDIT_DOOR: 15, EDIT_WINDOW: 16, EDIT_FLOOR: 17,
+                        ADD_BATHTUB: 18, ADD_TOILET: 19, ADD_BATHSINK: 20, ADD_KITCHENSINK: 21 };
+const Binder = { NODE: 0, SEGMENT: 1, RECTNODE: 2, OBJECT: 3, NONE: 4 };
 const Magnetic = { NONE: 0, HOR: 1, VER: 2 };
 const Drag = { OFF: 0, ON: 1 };
 const Grid_Snap = { OFF: 0, ON: 1 };
@@ -57,6 +59,7 @@ export class Editor {
         this.arFloors = [];
         this.arDoors = [];
         this.arWindows = [];
+        this.arBathObjects = [];
 
         this.arWallListRun = [];
 
@@ -206,21 +209,6 @@ export class Editor {
         this._showInsideSize(wallBind);
     }
 
-    // changeToWindow() {
-    //     if(this.binder != null) {
-    //         let wall = this.binder.wall;
-    //         wall.thick = Thickness.WINDOW;
-    //         wall.color = Color.WINDOW;
-
-    //         this._computeWalls();
-
-    //         wall.graph.setAttribute('fill', Color.WINDOW);
-    //         wall.type = WallType.WINDOW;
-
-    //         this.saveState();
-    //     }
-    // }
-
     deleteSome() {
         if(this.mode == Mode.EDIT) {
             this.deleteWall();
@@ -228,6 +216,10 @@ export class Editor {
             this.deleteDoor();
         } else if(this.mode == Mode.EDIT_WINDOW) {
             this.deleteWindow();
+        } else if(this.mode == Mode.EDIT_FLOOR) {
+            this.deleteFloor();
+        } else if(this.mode == Mode.EDIT_OBJECT) {
+            this.deleteObject();
         }
     }
 
@@ -239,26 +231,36 @@ export class Editor {
                 return;
             
             let wall = this.binder.wall;
-            if(wall.type != WallType.FLOOR) {
-                for (let k in this.arWalls) {
-                    if (Util.isObjectsEquals(this.arWalls[k].child, wall)) {
-                        this.arWalls[k].child = null;
-                    }
-                    if (Util.isObjectsEquals(this.arWalls[k].parent, wall)) {
-                        this.arWalls[k].parent = null;
-                    }
+            for (let k in this.arWalls) {
+                if (Util.isObjectsEquals(this.arWalls[k].child, wall)) {
+                    this.arWalls[k].child = null;
                 }
-                this.arWalls.splice(this.arWalls.indexOf(wall), 1);
+                if (Util.isObjectsEquals(this.arWalls[k].parent, wall)) {
+                    this.arWalls[k].parent = null;
+                }
+            }
+            this.arWalls.splice(this.arWalls.indexOf(wall), 1);
 
-                wall.graph.remove();
-                this.binder.graph.remove();
-                this._computeWalls();
+            wall.graph.remove();
+            this.binder.graph.remove();
+            this._computeWalls();
 
-                this._showBothWallSizes();
-                this.mode = Mode.SELECT;
+            this._showBothWallSizes();
+            this.mode = Mode.SELECT;
 
-                this.saveState();
-            } else if(wall.type == WallType.FLOOR) {
+            this.saveState();
+        }
+    }
+
+    deleteFloor() {
+        if(this.binder != null) {
+            const userResponse = confirm("Do you want to delete this floor?");
+
+            if (userResponse == false)
+                return;
+            
+            let wall = this.binder.wall;
+            if(wall.type >= WallType.FLOOR && wall.type <= WallType.FLOOR5) {
                 this.arFloors.splice(this.arFloors.indexOf(wall), 1);
 
                 wall.graph.remove();
@@ -310,6 +312,27 @@ export class Editor {
             delete this.binder;
             
             this._showBothWallSizes();
+            this.mode = Mode.SELECT;
+
+            this.saveState();
+        }
+    }
+
+    deleteObject() {
+        if(this.binder.obj != null) {
+            const userResponse = confirm("Do you want to delete this object?");
+
+            if (userResponse == false)
+                return;
+
+            let obj = this.binder.obj;
+            obj.graph.remove();
+
+            this.arBathObjects.splice(this.arBathObjects.indexOf(obj), 1);
+            
+            this.binder.graph.remove();
+            delete this.binder;
+            
             this.mode = Mode.SELECT;
 
             this.saveState();
@@ -505,6 +528,8 @@ export class Editor {
             const x2 = (floor.end.x - centerX) / METER;
             const z2 = (floor.end.y - centerY) / METER;
 
+            
+
             var arCoords = { 'type': type, 'x1': x1, 'z1': z1, 'x2': x2, 'z2': z2 };
 
             elementArray.push(arCoords);
@@ -536,6 +561,21 @@ export class Editor {
             const angle = window.angle;
             const size = window.size / METER;
             const thick = window.thick / METER;
+
+            var arCoords = {  'type': type, 'x': x, 'z': z, 'angle': angle, 'size': size, 'thick': thick };
+
+            elementArray.push(arCoords);
+        }
+
+         for(let k in this.arBathObjects) {
+            let obj = this.arBathObjects[k];
+
+            const type = obj.type;
+            const x = (obj.x - centerX) / METER;
+            const z = (obj.y - centerY) / METER;
+            const angle = obj.angle;
+            const size = obj.size / METER;
+            const thick = obj.thick / METER;
 
             var arCoords = {  'type': type, 'x': x, 'z': z, 'angle': angle, 'size': size, 'thick': thick };
 
@@ -608,6 +648,13 @@ export class Editor {
             elementArray.push(str);
         }
 
+        for(let i=0; i<this.arBathObjects.length; i++) {
+            let obj = this.arBathObjects[i];
+
+            let str = obj.toJson();
+            elementArray.push(str);
+        }
+
         let data = JSON.stringify(elementArray);
         return data;
     }
@@ -639,7 +686,7 @@ export class Editor {
             if(element.type == WallType.NORMAL) {
                 let wall = new Wall(element.start, element.end, element.type, element.thick, element.color);
                 this.arWalls.push(wall);
-            } else if(element.type >= WallType.FLOOR || element.type <= WallType.FLOOR5) {
+            } else if(element.type >= WallType.FLOOR && element.type <= WallType.FLOOR5) {
                 let floor = new Floor(element.start, element.end, element.type);
                 this.arFloors.push(floor);
             } else if(element.type == WallType.DOOR) {
@@ -658,6 +705,22 @@ export class Editor {
                 let window = new Window2(element.pos, element.angle, element.size, element.thick);
                 window.update();
                 this.arWindows.push(window);
+            } else if(element.type == WallType.BATHTUB) {
+                let bathtub = new Bathtub(element.pos, element.angle, element.angleSign, element.size, element.thick);
+                bathtub.update();
+                this.arBathObjects.push(bathtub);
+            } else if(element.type == WallType.TOILET) {
+                let bathtub = new Toilet(element.pos, element.angle, element.angleSign, element.size, element.thick);
+                bathtub.update();
+                this.arBathObjects.push(bathtub);
+            } else if(element.type == WallType.BATHSINK) {
+                let bathtub = new Bathsink(element.pos, element.angle, element.angleSign, element.size, element.thick);
+                bathtub.update();
+                this.arBathObjects.push(bathtub);
+            } else if(element.type == WallType.KITCHENSINK) {
+                let bathtub = new Kitchensink(element.pos, element.angle, element.angleSign, element.size, element.thick);
+                bathtub.update();
+                this.arBathObjects.push(bathtub);
             }
         }
 
@@ -665,6 +728,7 @@ export class Editor {
         this._computeFloors();
         this._computeDoors();
         this._computeWindows();
+        this._computeBathObjects();
 
         this.saveState();
 	}
@@ -704,11 +768,13 @@ export class Editor {
         this.arFloors = [];
         this.arDoors = [];
         this.arWindows = [];
+        this.arBathObjects = [];
 
         this._computeWalls();
         this._computeFloors();
         this._computeDoors();
         this._computeWindows();
+        this._computeBathObjects();
 
         var boxRib = document.getElementById('boxRib');
         while (boxRib.firstChild) {
@@ -961,32 +1027,43 @@ export class Editor {
         this.action = Action.CLICKED;
     }
 
-    _mouseDownRect() {
-        var wall = this.binder.wall;
+     _mouseDownRect() {
+        // var floor = this.binder.wall;
 
-        this.binder.before = this.binder.wall.start;
-        this.equation2 = wall.createEquation();
+        // this.pox = floor.start.x;
+        // this.poy = floor.start.y;
 
-        this.equationFollowers = [];
-        for (var k in this.arWalls) {
-            if (this.arWalls[k].child == null && qSVG.rayCasting(this.arWalls[k].end, wall.coords) 
-                && !Util.isObjectsEquals(wall, this.arWalls[k])) {
-                this.equationFollowers.push({
-                    wall: this.arWalls[k],
-                    eq: this.arWalls[k].createEquation(),
-                    type: "end"
-                });
-            }
-            if (this.arWalls[k].parent == null && qSVG.rayCasting(this.arWalls[k].start, wall.coords) 
-                && !Util.isObjectsEquals(wall, this.arWalls[k])) {
-                this.equationFollowers.push({
-                    wall: this.arWalls[k],
-                    eq: this.arWalls[k].createEquation(),
-                    type: "start"
-                });
-            }
+        // // this.binder.graph.remove();
+        // // delete this.binder;
+
+        // // this.binder = qSVG.create('boxBind', 'circle', {
+        // //             id: "circlebinder",
+        // //             class: "circle_css_2",
+        // //             cx: floor.end.x,
+        // //             cy: floor.end.y,
+        // //             r: RADIUS_CIRCLE_BINDER
+        // //         });
+        // // this.binder.data = floor;
+
+        // this._createTempRect();
+
+        this.mode = Mode.EDIT_FLOOR;
+        this.binder.type = Binder.RECTNODE;
+    }
+
+     _mouseDownRectNode() {
+        if(this.binder != null) {
+            var floor = this.binder.data;
+            this.pox = floor.start.x;
+            this.poy = floor.start.y;
+            // var nodeControl = { x: this.pox, y: this.poy };
+
+            this.magnetic = Magnetic.NONE;
+
+            this.mode = Mode.EDIT_FLOOR;
+
+            this.action = Action.CLICKED;
         }
-        this.action = Action.CLICKED;
     }
 
     _MOUSEDOWN(event) {
@@ -1002,6 +1079,8 @@ export class Editor {
                     this._mouseDownSegment();
                 } else if (this.binder.type == Binder.RECT) {
                     this._mouseDownRect();
+                } else if (this.binder.type == Binder.RECTNODE) {
+                    this._mouseDownRectNode();
                 } else if (this.binder.type == Binder.OBJECT) {
                     this.action = Action.CLICKED;
                 }
@@ -1067,21 +1146,33 @@ export class Editor {
         return objTarget;
     }
 
+    _checkObject(snap) {
+        var objTarget = null;
+        for (var i = 0; i < this.arBathObjects.length; i++) {
+            const obj = this.arBathObjects[i];
+            var realBboxCoords = obj.coords;
+            if (qSVG.rayCasting(snap, realBboxCoords)) {
+                objTarget = obj;
+            }
+        }
+
+        return objTarget;
+    }
+
     _handleBinderObject(objTarget, event) {
         if (objTarget !== null) {
-            if (this.binder != null && this.binder.type == Binder.SEGMENT) {
-                this.binder.graph.remove();
-                delete this.binder;
-                this.cursor('default');
-            }
+            // if (this.binder != null && this.binder.type != Binder.OBJECT) {
+            //     this.binder.graph.remove();
+            //     delete this.binder;
+            //     this.cursor('default');
+            // }
 
             if (this.binder == null) {
                 var wallList = this._rayCastingWall(objTarget);
-                if (wallList.length > 1) 
-                    wallList = wallList[0];
-
-                this._showInsideSize(wallList); // inWallRib(wallList);
-                var thickObj = wallList.thick;
+                if (wallList.length > 0) { 
+                    this._showInsideSize(wallList); // inWallRib(wallList);
+                }
+                var thickObj = wallList.length > 0 ? wallList.thick : objTarget.thick;
                 var sizeObj = objTarget.size;
 
                 this.binder = new Socle({x: objTarget.x, y: objTarget.y }, objTarget.angle, sizeObj, thickObj, objTarget.type);
@@ -1092,16 +1183,18 @@ export class Editor {
                 var boxBind = document.getElementById('boxBind');
                 boxBind.appendChild(this.binder.graph);
             } else {
-                if (event.target == this.binder.graph.children[0]) {
-                    this.cursor('move');
-                    this.binder.graph.children[0].setAttribute("class", "circle_css_2");
-                    this.binder.type = Binder.OBJECT;
-                    this.binder.obj = objTarget;
-                }
-                else {
-                    this.cursor('default');
-                    this.binder.graph.children[0].setAttribute("class", "circle_css");
-                    this.binder.type = Binder.NONE;
+                if(this.binder.graph.children != undefined) {
+                    if (event.target == this.binder.graph.children[0]) {
+                        this.cursor('move');
+                        this.binder.graph.children[0].setAttribute("class", "circle_css_2");
+                        this.binder.type = Binder.OBJECT;
+                        this.binder.obj = objTarget;
+                    }
+                    else {
+                        this.cursor('default');
+                        this.binder.graph.children[0].setAttribute("class", "circle_css");
+                        this.binder.type = Binder.NONE;
+                    }
                 }
             }
         } else {
@@ -1118,6 +1211,8 @@ export class Editor {
                 this._showBothWallSizes(); // rib();
             }
         }
+
+        return objTarget;
     }
 
     _bindNode(snap) {
@@ -1136,6 +1231,8 @@ export class Editor {
                 this.binder.type = Binder.NODE;
             }
             this.cursor('move');
+
+            return true;
         } else {
             if (this.binder != null && this.binder.type == Binder.NODE) {
                 this.binder.remove();
@@ -1150,6 +1247,8 @@ export class Editor {
                 
                 this._showBothWallSizes(); // rib in homrRough
             }
+
+            return false;
         }
     }
 
@@ -1164,14 +1263,11 @@ export class Editor {
                 wallList.push(this.arWalls[i]); // Return EDGES Index
             }
         }
-        if (wallList.length == 0) 
-            return false;
-        else {
-            if (wallList.length == 1) 
-                return wallList[0];
-            else 
-                return wallList;
-        }
+
+        if (wallList.length == 1) 
+            return wallList[0];
+        else 
+            return wallList;
     }
 
     _rayCastingWalls(snap) {
@@ -1285,6 +1381,20 @@ export class Editor {
 
             this.binder.type = Binder.RECT;
             this.cursor('pointer');
+        } else {
+            if (this.binder != null && this.binder.type == Binder.RECT) {
+                this.binder.graph.remove();
+                delete this.binder;
+                
+                var boxBind = document.getElementById('boxBind');
+                while (boxBind.firstChild) {
+                    boxBind.removeChild(boxBind.firstChild);
+                }
+
+                this.cursor('default');
+                
+                this._showBothWallSizes(); // rib in homrRough
+            }
         }
     }
 
@@ -1296,19 +1406,23 @@ export class Editor {
     }
 
     _handleMouseMoveSelect(event, snap) {
-        let door = this._checkDoor(snap);
-        if(door != null)
-            this._handleBinderObject(door, event);
+        let obj = this._checkDoor(snap);
+        if(obj == null)
+            obj = this._checkWindow(snap);
+        if(obj == null)
+            obj = this._checkObject(snap);
 
-        let window = this._checkWindow(snap);
-        if(window != null)
-            this._handleBinderObject(window, event);
+        var objTarget = this._handleBinderObject(obj, event);
+        if(objTarget != null)
+            return;
 
         this._bindNode(snap);
 
         this._bindSegment(snap);
 
-        this._bindRect(snap);
+        // this._bindRect(snap);
+
+        
     }
 
     _handleMouseHovering(snap) {
@@ -1658,6 +1772,101 @@ export class Editor {
         }
     }
 
+    _handleMouseMoveAddBathObject(snap) {
+        let wallSelect = Util.nearWall(this.arWalls, snap);
+        if (wallSelect != null) {
+            var wall = wallSelect.wall;
+            if (this.binder == null) {
+                if(this.mode == Mode.ADD_BATHTUB) {
+                    const width = 96; // 1.6m
+                    const length = 36; // 0.6m;
+                    this.binder = new Bathtub({x:wallSelect.x, y:wallSelect.y}, 0, 0, width, length);
+                } else if(this.mode == Mode.ADD_TOILET) {
+                    const width = 24; // 0.4m
+                    const length = 18; // 0.3m
+                    this.binder = new Toilet({x:wallSelect.x, y:wallSelect.y}, 0, 0, width, length);
+                } else if(this.mode == Mode.ADD_BATHSINK) {
+                    const width = 30; // 0.5m
+                    const length = 24; // 0.4m
+                    this.binder = new Bathsink({x:wallSelect.x, y:wallSelect.y}, 0, 0, width, length);
+                } else if(this.mode == Mode.ADD_KITCHENSINK) {
+                    const width = 132; // 2.2m
+                    const length = 30; // 0.5m
+                    this.binder = new Kitchensink({x:wallSelect.x, y:wallSelect.y}, 0, 0, width, length);
+                }
+
+                var angleWall = qSVG.angleDeg(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
+                var v1 = qSVG.vectorXY({ x: wall.start.x, y: wall.start.y }, { x: wall.end.x, y: wall.end.y });
+                var v2 = qSVG.vectorXY({ x: wall.end.x, y: wall.end.y }, snap);
+                var newAngle = qSVG.vectorDeter(v1, v2);
+                if (Math.sign(newAngle) == 1) {
+                    angleWall += 180;
+                    this.binder.angleSign = 1;
+                }
+                var startCoords = qSVG.middle(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
+                this.binder.x = startCoords.x;
+                this.binder.y = startCoords.y;
+                this.binder.angle = angleWall % 360;
+                
+                this.binder.update();
+
+                var boxBind = document.getElementById('boxBind');
+                boxBind.appendChild(this.binder.graph);
+            } else {
+                var angleWall = qSVG.angleDeg(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
+                var v1 = qSVG.vectorXY({ x: wall.start.x, y: wall.start.y }, { x: wall.end.x, y: wall.end.y });
+                var v2 = qSVG.vectorXY({ x: wall.end.x, y: wall.end.y }, snap);
+                var newAngle = qSVG.vectorDeter(v1, v2);
+                this.binder.angleSign = 0;
+                if (Math.sign(newAngle) == 1) {
+                    this.binder.angleSign = 1;
+                    angleWall += 180;
+                }
+
+                var offset = (wall.thick + this.binder.thick) / 2.0;
+
+                var limits = Util.limitObj(wall.equations.base, this.binder.size, wallSelect);
+                if (qSVG.btwn(limits[0].x, wall.start.x, wall.end.x) && qSVG.btwn(limits[0].y, wall.start.y, wall.end.y) && qSVG.btwn(limits[1].x, wall.start.x, wall.end.x) && qSVG.btwn(limits[1].y, wall.start.y, wall.end.y)) {
+                    this.binder.x = wallSelect.x;
+                    this.binder.y = wallSelect.y;
+                    this.binder.angle = angleWall % 360;
+
+                    if(this.binder.angle == 0)
+                        this.binder.y -= offset;
+                    else if(this.binder.angle == 180)
+                        this.binder.y += offset;
+                    else if(this.binder.angle == 90)
+                        this.binder.x += offset;
+                    else if(this.binder.angle == 270)
+                        this.binder.x -= offset;
+
+                    this.binder.limit = limits;
+                    this.binder.update();
+                }
+
+                if ((wallSelect.x == wall.start.x && wallSelect.y == wall.start.y) || (wallSelect.x == wall.end.x && wallSelect.y == wall.end.y)) {
+                    if (qSVG.btwn(limits[0].x, wall.start.x, wall.end.x) && qSVG.btwn(limits[0].y, wall.start.y, wall.end.y)) {
+                        this.binder.x = limits[0].x;
+                        this.binder.y = limits[0].y;
+                    }
+                    if (qSVG.btwn(limits[1].x, wall.start.x, wall.end.x) && qSVG.btwn(limits[1].y, wall.start.y, wall.end.y)) {
+                        this.binder.x = limits[1].x;
+                        this.binder.y = limits[1].y;
+                    }
+                    this.binder.limit = limits;
+                    this.binder.angle = angleWall;
+                   
+                    this.binder.update();
+                }
+            }
+        } else {
+            if (this.binder != null) {
+                this.binder.graph.remove();
+                delete this.binder;
+            }
+        }
+    }
+
     _handleMouseMoveNode(snap) {
         var coords = snap;
         var magnetic = Magnetic.NONE;
@@ -1852,6 +2061,43 @@ export class Editor {
         this.floorplannerElement.style.cursor = 'pointer';
     }
 
+    _handleMouseMoveRect(snap) {
+
+    }
+
+    _handleMouseMoveRectNode(snap) {
+        // this.curx = snap.x;
+        // this.cury = snap.y;
+        // const starter = Math.abs(Math.abs(this.pox - snap.x) + Math.abs(this.poy - snap.y));
+
+        // if(this.rectconstruc == null) {
+        //     var wallNode = Util.nearWallNode(this.arWalls, snap, BIND_CIRCLE_DISTANCE);
+        //     if (wallNode != null) {
+        //         this.pox = wallNode.x;
+        //         this.poy = wallNode.y;
+        //         this.wallStartConstruc = null;
+        //         if (wallNode.bestWall == this.arWalls.length - 1) {
+        //             this.cursor('validation');
+        //         }
+        //         else {
+        //             this.cursor('grab');
+        //         }
+        //     } else {
+        //         this.cursor('crosshair');
+        //     }
+        // }
+
+        // if (starter > this.grid) {
+        //     if(this.rectconstruc == null) {
+        //         this._createTempRect();
+        //     } 
+        //     // else { 
+        //     //     // lines and binders are created
+        //     //     this._handleTempRect(snap);
+        //     // }
+        // }
+    }
+
     _handleMouseMoveObject(snap) {
         let wallSelect = Util.nearWall(this.arWalls, snap);
         if (wallSelect != null) {
@@ -1877,12 +2123,32 @@ export class Editor {
                 this.binder.x = wallSelect.x;
                 this.binder.y = wallSelect.y;
                 this.binder.angle = angleWall % 360;
-                this.binder.thick = wall.thick;
                 objTarget.x = wallSelect.x;
                 objTarget.y = wallSelect.y;
                 objTarget.angle = angleWall % 360;
-                objTarget.thick = wall.thick;
                 objTarget.limit = limits;
+
+                if(objTarget.type >= WallType.BATHTUB && objTarget.type <= WallType.KITCHENSINK) {
+                    var offset = (wall.thick + this.binder.thick) / 2.0;
+
+                    if(this.binder.angle == 0) {
+                        this.binder.y -= offset;
+                        objTarget.y -= offset;
+                    } else if(this.binder.angle == 180) {
+                        this.binder.y += offset;
+                        objTarget.y += offset;
+                    } else if(this.binder.angle == 90) {
+                        this.binder.x += offset;
+                        objTarget.x += offset;
+                    } else if(this.binder.angle == 270) {
+                        this.binder.x -= offset;
+                        objTarget.x -= offset;
+                    }
+                } else {
+                    this.binder.thick = wall.thick;
+                    objTarget.thick = wall.thick;
+                }
+
                 this.binder.update();
                 objTarget.update();
             }
@@ -1904,9 +2170,11 @@ export class Editor {
                 }
 
                 this.binder.angle = angleWall % 360;
-                this.binder.thick = wall.thick;
                 objTarget.angle = angleWall % 360;
-                objTarget.thick = wall.thick;
+                if(objTarget.type <= WallType.BATHTUB || objTarget.type >= WallType.KITCHENSINK) {
+                    this.binder.thick = wall.thick;
+                    objTarget.thick = wall.thick;
+                }
                 this.binder.update();
                 objTarget.update();
             }
@@ -1918,8 +2186,8 @@ export class Editor {
 
         const wall = node.wall;
         const angle = wall.angle;
-        const dStart = Math.sqrt(Math.pow(wall.start.x - node.x, 2) + Math.pow(wall.start.y - node.y, 2));
-        const dEnd = Math.sqrt(Math.pow(wall.end.x - node.x, 2) + Math.pow(wall.end.y - node.y, 2));
+        const dStart = Math.sqrt(Math.pow(wall.start.x - node.x, 2) + Math.pow(wall.start.y - node.y, 2)) / METER;
+        const dEnd = Math.sqrt(Math.pow(wall.end.x - node.x, 2) + Math.pow(wall.end.y - node.y, 2)) / METER;
 
         let sizeText = [];
         var boxRib = document.getElementById('boxRib');
@@ -2049,17 +2317,27 @@ export class Editor {
             this._handleMouseMoveAddDoorWindow(snap);
         }
 
+        if (this.mode == Mode.ADD_BATHTUB || this.mode == Mode.ADD_TOILET || this.mode == Mode.ADD_BATHSINK || this.mode == Mode.ADD_KITCHENSINK) {
+            this._handleMouseMoveAddBathObject(snap);
+        }
+
         if (this.mode == Mode.BIND && this.action == Action.CLICKED) {
             if (this.binder.type == Binder.NODE) {
                 this._handleMouseMoveNode(snap);
             } else if(this.binder.type == Binder.SEGMENT) {
                 this._handleMouseMoveSegment(snap);
+            } else if(this.binder.type == Binder.RECT) {
+                this._handleMouseMoveRect(snap);
             } else if(this.binder.type == Binder.OBJECT) {
                 this._handleMouseMoveObject(snap);
             }
 
             if (this.binder.type != Binder.OBJECT && this.binder.type != Binder.SEGMENT)
                 this._showBothWallSizes(); // rib();
+        }
+
+        if(this.mode == Mode.EDIT_FLOOR && this.action == Action.CLICKED) {
+            this._handleMouseMoveRectNode(snap);
         }
 
         if (this.mode == Mode.CUT) {
@@ -2358,6 +2636,21 @@ export class Editor {
         this.saveState();
     }
 
+    _computeBathObjects() {
+        // remove all first
+        var boxObject = document.getElementById('boxObject');
+        while (boxObject.firstChild) {
+            boxObject.removeChild(boxObject.firstChild);
+        }
+
+        for (var vertice = 0; vertice < this.arBathObjects.length; vertice++) {
+            var obj = this.arBathObjects[vertice];
+            boxObject.appendChild(obj.graph);
+        }
+
+        this.saveState();
+    }
+
     _createTempLine() {
         // var ws = (this.mode == Mode.PARTITION) ? 20 : 10;
         var ws = 2;
@@ -2559,7 +2852,12 @@ export class Editor {
         check_size = check_size / METER;
         
         if (this.rectconstruc != null && check_size > 0.2) {
-            var floor = new Floor( { x: this.pox, y: this.poy }, { x: this.curx, y: this.cury }, this.mode-3 );
+            const x1 = this.pox < this.curx ? this.pox : this.curx;
+            const x2 = this.pox < this.curx ? this.curx : this.pox;
+            const y1 = this.poy < this.cury ? this.poy : this.cury;
+            const y2 = this.poy < this.cury ? this.cury : this.poy;
+
+            var floor = new Floor( { x: x1, y: y1 }, { x: x2, y: y2 }, this.mode-3 );
             this.arFloors.push(floor);
             this._computeFloors();
 
@@ -2579,6 +2877,46 @@ export class Editor {
             
             this.pox = this.curx;
             this.poy = this.cury;
+        } else {
+            this.action = Action.NONE;
+            if(this.binder != null) {
+                if(this.binder.graph != null)
+                    this.binder.graph.remove();
+                else
+                    this.binder.remove();
+                delete this.binder;
+            }
+            const snap = this.calcul_snap(event, this.grid_snap);
+            this.pox = snap.x;
+            this.poy = snap.y;
+        }
+    }
+
+    _handleMouseUpEditFloor(event) {
+        if(this.action == Action.NONE) {
+            this.action = Action.CLICKED;
+            return;
+        }
+
+        if(this.recttemp != null)
+            this.recttemp.remove();
+        Util.intersectionOff();
+
+        var check_size = qSVG.measure({ x: this.curx, y: this.cury }, { x: this.pox, y: this.poy });
+        check_size = check_size / METER;
+        
+        if (this.rectconstruc != null && check_size > 0.2) {
+            let floor = this.binder.wall;
+            floor.end.x = this.curx;
+            floor.end.y = this.cury;
+
+            this._computeFloors();
+
+            this.action = Action.NONE;
+            this.mode = Mode.SELECT;
+
+            this.rectconstruc.remove();
+            delete this.rectconstruc;
         } else {
             this.action = Action.NONE;
             if(this.binder != null) {
@@ -2624,6 +2962,20 @@ export class Editor {
         }
     }
 
+    _handleMouseUpAddBathObject(event) {
+        if (this.binder != null) {
+            this.arBathObjects.push(this.binder);
+
+            var boxObject = document.getElementById('boxObject');
+            boxObject.appendChild(this.arBathObjects[this.arBathObjects.length-1].graph);
+
+            // this.binder.graph.remove();
+            delete this.binder;
+
+            this.saveState();
+        }
+    }
+
     _handleMouseUpBind() {
         this.action = Action.NONE;
         // construc = 0; // CONSTRUC 0 TO FREE BINDER GROUP NODE WALL MOVING
@@ -2653,12 +3005,16 @@ export class Editor {
                     this.mode = Mode.EDIT_DOOR;
                 else if (this.binder.prototype == WallType.WINDOW || this.binder.prototype == WallType.WINDOW2)
                     this.mode = Mode.EDIT_WINDOW;
+                else if (this.binder.prototype >= WallType.BATHTUB && this.binder.prototype <= WallType.KITCHENSINK)
+                    this.mode = Mode.EDIT_OBJECT;
             }
 
             if (this.mode == Mode.BIND) {
                 this.binder.remove();
                 delete this.binder;
             }
+
+            this.saveState();
         }
     }
 
@@ -2785,12 +3141,20 @@ export class Editor {
             this._handleMouseUpAddWindow(event);
         }
 
+        if (this.mode == Mode.ADD_BATHTUB || this.mode == Mode.ADD_TOILET || this.mode == Mode.ADD_BATHSINK ||this.mode == Mode.ADD_KITCHENSINK) {
+            this._handleMouseUpAddBathObject(event);
+        }
+
         if (this.mode == Mode.BIND) {
             this._handleMouseUpBind();
         }
 
         if (this.mode == Mode.CUT) {
             this._handleMouseUpCut();
+        }
+
+        if (this.mode == Mode.EDIT_FLOOR) {
+            // this._handleMouseUpEditFloor(event);
         }
 
         this._showOuterArrows();
@@ -2823,6 +3187,14 @@ export class Editor {
             var search = qSVG.nearPointOnEquation(eq, window);
             if (search.distance < 0.01 && qSVG.btwn(window.x, wall.start.x, wall.end.x) && qSVG.btwn(window.y, wall.start.y, wall.end.y))
                 objList.push(window);
+        }
+
+        for (var i = 0; i<this.arBathObjects.length; i++) {
+            let obj = this.arBathObjects[i]
+            var eq = qSVG.createEquation(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
+            var search = qSVG.nearPointOnEquation(eq, obj);
+            if (search.distance < 0.01 && qSVG.btwn(obj.x, wall.start.x, wall.end.x) && qSVG.btwn(obj.y, wall.start.y, wall.end.y))
+                objList.push(obj);
         }
 
         return objList;

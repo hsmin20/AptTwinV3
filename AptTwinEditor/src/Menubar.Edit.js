@@ -11,7 +11,7 @@ export class MenubarEdit {
         const self = this;
         const editorscope = editor;
 
-        this.roomBuilder = new RoomBuilder(editor);
+        this.roomBuilder = editor.roomBuilder;
 
         this.container = new UIPanel();
         this.container.setClass( 'menu' );

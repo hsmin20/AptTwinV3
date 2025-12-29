@@ -11,8 +11,10 @@ import { SetValueCommand } from '../../src_common/commands/SetValueCommand.js';
 import { saveState } from './AptTwinEditor.js';
 
 import { textureHelper } from '../../src_common/TextureHelper.js';
+import { RoomBuilder } from './RoomBuilder.js';
 
-const WallType = { NEW: 0, WALL: 1, FLOOR: 2, FLOOR2: 3, FLOOR3: 4, FLOOR4: 5, FLOOR5: 6, DOOR: 7, DOOR2: 8, WINDOW: 9, WINDOW2: 10 };
+const WallType = { NEW: 0, WALL: 1, FLOOR: 2, FLOOR2: 3, FLOOR3: 4, FLOOR4: 5, FLOOR5: 6, DOOR: 7, DOOR2: 8, WINDOW: 9, 
+                            WINDOW2: 10, BATHTUB: 11, TOILET: 12, BATHSINK: 13, KITCHENSINK: 14 };
 const Hinge = { NORMAL: 0, REVERSE: 1 };
 const HEIGHT = 2.3;
 
@@ -43,6 +45,8 @@ export class Editor {
         this.geometries = {};
         this.materials = {};
         this.textures = {};
+
+        this.roomBuilder = new RoomBuilder(this);
 
         this.materialsRefCounter = new Map();
 
@@ -504,17 +508,17 @@ export class Editor {
 
         const repeatX = Math.round(width * 2);
         const repeatY = Math.round(height * 2);
-        let floorTexture  = null;
+        let floorTexture = null;
         if(element.type == WallType.FLOOR) // Room
-            textureHelper.get('RoomFloor', repeatX, repeatY);
+            floorTexture = textureHelper.get('RoomFloor', repeatX, repeatY);
         else if(element.type == WallType.FLOOR2) // Livingroom
-            textureHelper.get('Floor', repeatX, repeatY);
+            floorTexture = textureHelper.get('Floor', repeatX, repeatY);
         else if(element.type == WallType.FLOOR3) // Bathroom
-            textureHelper.get('Tile', repeatX, repeatY);
+            floorTexture = textureHelper.get('Tile', repeatX, repeatY);
         else if(element.type == WallType.FLOOR4) // Veranda
-            textureHelper.get('BalconyTile', repeatX, repeatY);
+            floorTexture = textureHelper.get('BalconyTile', repeatX, repeatY);
         else if(element.type == WallType.FLOOR5) // Cement
-            textureHelper.get('Concrete', repeatX, repeatY);
+            floorTexture = textureHelper.get('Concrete', repeatX, repeatY);
 
         let mesh = new THREE.Mesh( new THREE.PlaneGeometry(width, height), new THREE.MeshStandardMaterial({ map: floorTexture, side: THREE.BackSide }) );
         mesh.name = "new_mesh_1_" + i;
@@ -537,7 +541,57 @@ export class Editor {
         mesh.parent = group;
     }
 
+    constructBathtubFrom2DJSON(element, i) {
+        const width = element.size;
+        const length = element.thick;
+        const height = 1.2;
+
+        const xpos = element.x;
+        const zpos = element.z;
+        const angle = element.angle;
+
+        this.roomBuilder.addBathtub(null, width, length, height, xpos, zpos, angle);
+    }
+
+    constructToiletFrom2DJSON(element, i) {
+        const width = element.size;
+        const length = element.thick;
+        const height = 1.2;
+
+        const xpos = element.x;
+        const zpos = element.z;
+        const angle = element.angle - 90;
+
+        var toiletGroup = this.roomBuilder.addToilet(null, xpos, zpos, angle);
+    }
+
+    constructBathsinkFrom2DJSON(element, i) {
+        const width = element.size;
+        const length = element.thick;
+        const height = 1.2;
+
+        const xpos = element.x;
+        const zpos = element.z;
+        const angle = element.angle - 90;
+
+        this.roomBuilder.addBathroomSink(null, xpos, zpos, angle);
+    }
+
+    constructKitchensinkFrom2DJSON(element, i) {
+        const width = element.size;
+        const length = element.thick;
+        const height = 1.2;
+
+        const xpos = element.x;
+        const zpos = element.z;
+        const angle = element.angle - 180;
+
+        this.roomBuilder.addKitchenSink(null, 'KitchenSink', width, length, height, xpos, zpos, angle);
+    }
+
     constructFrom2DJSON( json ) {
+        this.roomBuilder.addTHREELight('AmbientLight', 'Ambient');
+
         const elementArray = JSON.parse(json);
 
         for(let i=0; i<elementArray.length; i++) {
@@ -552,8 +606,16 @@ export class Editor {
                 this.constructWindowFrom2DJSON(element, i);                
             } else if(type == WallType.WINDOW2) {
                 this.constructWindow2From2DJSON(element, i);
-            } else if(type == WallType.FLOOR) {
+            } else if(type >= WallType.FLOOR && type <= WallType.FLOOR5) {
                 this.constructFloorFrom2DJSON(element, i);
+            } else if(type == WallType.BATHTUB) {
+                this.constructBathtubFrom2DJSON(element, i);
+            } else if(type == WallType.TOILET) {
+                this.constructToiletFrom2DJSON(element, i);
+            } else if(type == WallType.BATHSINK) {
+                this.constructBathsinkFrom2DJSON(element, i);
+            } else if(type == WallType.KITCHENSINK) {
+                this.constructKitchensinkFrom2DJSON(element, i);
             }
         }
     }

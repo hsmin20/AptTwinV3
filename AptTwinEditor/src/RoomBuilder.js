@@ -311,13 +311,19 @@ export class RoomBuilder {
         this.editor.execute( new AddObjectCommand( this.editor, bottomWall, group ) );
     }
 
-    addBathtub(/*parent,*/ width, length, height) {
+    addBathtub(parent, width, length, height, xpos=0, zpos=0, angle=0) {
         // Add four sides, making horizontal basis
 
         // Add a group first
         const group = new THREE.Group();
-		const bathtubName = /*parent.name +*/ "_bathtub";
+		const bathtubName = "Bathtub";
+        if(parent != null)
+            bathtubName = parent.name + "_" + bathtubName;
         group.name = bathtubName;
+
+        group.position.x = xpos;
+        group.position.z = zpos;
+        group.rotation.y = angle * Math.PI / 180;
 
         this.editor.execute( new AddGroupCommand( this.editor, group/*, parent*/ ) );
 
@@ -399,13 +405,17 @@ export class RoomBuilder {
         this.editor.objectChanged(group);
     }
 
-    addBathroomSink(parent) {
+    addBathroomSink(parent, xpos=0, zpos=0, angle=0) {
         // Add a group first
         const group = new THREE.Group();
-		const bathroomSinkName = "_sink";
+		const bathroomSinkName = "BathSink";
         if(parent != null)
             bathroomSinkName =  parent.name + bathroomSinkName;
         group.name = bathroomSinkName;
+
+        group.position.x = xpos;
+        group.position.z = zpos;
+        group.rotation.y = angle * Math.PI / 180;
 
         this.editor.execute( new AddGroupCommand( this.editor, group/*, parent*/ ) );
 
@@ -435,20 +445,24 @@ export class RoomBuilder {
         this.editor.objectChanged(group);
     }
 
-    addToilet(parent) {
+    addToilet(parent, xpos=0, zpos=0, angle=0) {
         // Add a group first
         const group = new THREE.Group();
-		const bathroomSinkName = "_toilet";
+		const toiletName = "Toilet";
         if(parent != null)
-            bathroomSinkName = parent.name + bathroomSinkName;
-        group.name = bathroomSinkName;
+            toiletName = parent.name + toiletName;
+        group.name = toiletName;
+
+        group.position.x = xpos;
+        group.position.z = zpos;
+        group.rotation.y = angle * Math.PI / 180;
 
         this.editor.execute( new AddGroupCommand( this.editor, group, parent ) );
 
         const toiletTexture = textureHelper.get('PinkPlastic', 1, 1);
         const cyl = new THREE.Mesh( new THREE.CylinderGeometry(0.1, 0.4, 0.6, 20, 1, true, -Math.PI / 8, Math.PI * 9 / 8), 
                                     new THREE.MeshStandardMaterial( {map: toiletTexture, side : THREE.DoubleSide} ) );
-        cyl.name = bathroomSinkName + "_cyl";
+        cyl.name = toiletName + "_cyl";
         cyl.position.y = 0.6;
         cyl.rotation.z = Math.PI;
         
@@ -460,7 +474,7 @@ export class RoomBuilder {
             new THREE.MeshStandardMaterial({map: toiletTexture}), new THREE.MeshStandardMaterial(), 
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: toiletTexture})
         ] );
-        stand.name = bathroomSinkName + "_stand";
+        stand.name = toiletName + "_stand";
         stand.position.y = 0.7;
         stand.position.x = 0.05;
         stand.rotation.y = Math.PI / 2.0;
@@ -473,7 +487,7 @@ export class RoomBuilder {
             new THREE.MeshStandardMaterial({map: toiletTexture}), new THREE.MeshStandardMaterial(), 
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: toiletTexture})
         ] );
-        bottom.name = bathroomSinkName + "_bottom";
+        bottom.name = toiletName + "_bottom";
         bottom.position.y = 0.15;
         bottom.position.x = -0.05;
         bottom.rotation.y = Math.PI / 2.0;
@@ -484,9 +498,14 @@ export class RoomBuilder {
         this.editor.objectChanged(group);
     }
 
-    addKitchenSink(parent, name, width, length, height) {
+    addKitchenSink(parent, name, width, length, height, xpos=0, zpos=0, angle=0) {
         const group = new THREE.Group();
         group.name = name;
+
+        group.position.x = xpos;
+        group.position.y = 0;
+        group.position.z = zpos;
+        group.rotation.y = angle * Math.PI / 180;
 
         group.userData.isInterior = true;
         group.userData.interiorType = 'GasRange';
@@ -509,7 +528,7 @@ export class RoomBuilder {
         upPanel1.position.y = height + 0.05;
         upPanel1.position.x = -one_width;
 
-        this.editor.execute( new AddObjectCommand( this.editor, upPanel1, group ) );
+        group.children.push( upPanel1 );
         upPanel1.parent = group;
 
         const upPanel2 = new THREE.Mesh( new THREE.BoxGeometry(one_width, depth, length), [  
@@ -520,7 +539,7 @@ export class RoomBuilder {
         upPanel2.position.y = height + 0.05;
         upPanel2.position.x = 0.0;
 
-        this.editor.execute( new AddObjectCommand( this.editor, upPanel2, group ) );
+        group.children.push(upPanel2 );
         upPanel2.parent = group;
 
         const upPanel3 = new THREE.Mesh( new THREE.BoxGeometry(one_width, depth, length), [  
@@ -531,7 +550,7 @@ export class RoomBuilder {
         upPanel3.position.y = height + 0.05;
         upPanel3.position.x = one_width;
 
-        this.editor.execute( new AddObjectCommand( this.editor, upPanel3, group ) );
+        group.children.push(upPanel3 );
         upPanel3.parent = group;
 
         // Front Doors (4 doors)
@@ -553,15 +572,13 @@ export class RoomBuilder {
         ] );
         frontDoor1.name = name + "_sinkFrontDoor1";
         frontDoor1.position.x = -sinkDoorWidth * 3 / 2.0;
-        // frontDoor1.position.y = height / 2.0;
-        // frontDoor1.position.z = (length - sinkDoorDepth) / 2.0;
 
         frontDoor1.userData.type = 'door';
         frontDoor1.userData.pivotDir = 'left';
         frontDoor1.userData.openDir = 'inward';
         frontDoor1.userData.DBid = 'n/a';
 
-        this.editor.addObject( frontDoor1, doorGroup );
+        doorGroup.children.push( frontDoor1 );
         frontDoor1.parent = doorGroup;
 
         const frontDoor2 = new THREE.Mesh( new THREE.BoxGeometry(sinkDoorWidth, height, sinkDoorDepth), [  
@@ -571,15 +588,13 @@ export class RoomBuilder {
         ] );
         frontDoor2.name = name + "_sinkFrontDoor2";
         frontDoor2.position.x = -sinkDoorWidth / 2.0;
-        // frontDoor2.position.y = height / 2.0;
-        // frontDoor2.position.z = (length - sinkDoorDepth) / 2.0;
 
         frontDoor2.userData.type = 'door';
         frontDoor2.userData.pivotDir = 'right';
         frontDoor2.userData.openDir = 'inward';
         frontDoor2.userData.DBid = 'n/a';
 
-        this.editor.addObject( frontDoor2, doorGroup );
+        doorGroup.children.push( frontDoor2 );
         frontDoor2.parent = doorGroup;
 
         const frontDoor3 = new THREE.Mesh( new THREE.BoxGeometry(sinkDoorWidth, height, sinkDoorDepth), [  
@@ -589,15 +604,13 @@ export class RoomBuilder {
         ] );
         frontDoor3.name = name + "_sinkFrontDoor3";
         frontDoor3.position.x = sinkDoorWidth / 2.0;
-        // frontDoor3.position.y = height / 2.0;
-        // frontDoor3.position.z = (length - sinkDoorDepth) / 2.0;
 
         frontDoor3.userData.type = 'door';
         frontDoor3.userData.pivotDir = 'left';
         frontDoor3.userData.openDir = 'inward';
         frontDoor3.userData.DBid = 'n/a';
 
-        this.editor.addObject( frontDoor3, doorGroup );
+        doorGroup.children.push( frontDoor3 );
         frontDoor3.parent = doorGroup;
 
         const frontDoor4 = new THREE.Mesh( new THREE.BoxGeometry(sinkDoorWidth, height, sinkDoorDepth), [  
@@ -607,19 +620,17 @@ export class RoomBuilder {
         ] );
         frontDoor4.name = name + "_sinkFrontDoor4";
         frontDoor4.position.x = sinkDoorWidth * 3 / 2.0;
-        // frontDoor4.position.y = height / 2.0;
-        // frontDoor4.position.z = (length - sinkDoorDepth) / 2.0;
 
         frontDoor4.userData.type = 'door';
         frontDoor4.userData.pivotDir = 'right';
         frontDoor4.userData.openDir = 'inward';
         frontDoor4.userData.DBid = 'n/a';
 
-        this.editor.addObject( frontDoor4, doorGroup );
-        frontDoor4.parent = group;
+        doorGroup.children.push( frontDoor4 );
+        frontDoor4.parent = doorGroup;
 
-        this.editor.addObject( doorGroup, group );
-        group.parent = doorGroup;
+        group.children.push( doorGroup );
+        doorGroup.parent = group;
 
         // sink side panels (Only inside is visible)
         const sideLength = length - sinkDoorDepth;
@@ -701,7 +712,5 @@ export class RoomBuilder {
         floor.parent = parent;
 
         this.editor.execute(new AddObjectCommand(this.editor, floor, this.editor.scene));
-
     }
-
 }

@@ -84,6 +84,10 @@ function createGroups(svg) {
     svg.appendChild(group);
 
     group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    group.setAttribute("id", "boxObject");
+    svg.appendChild(group);
+
+    group = document.createElementNS("http://www.w3.org/2000/svg", "g");
     group.setAttribute("id", "boxRib");
     svg.appendChild(group);
 
@@ -136,6 +140,16 @@ function handleButtonClick(editor) {
     dwb2.onclick = function() { editor.mode = Mode.ADD_WINDOW; }
     var dwb4 = document.getElementById("drawwindow2");
     dwb4.onclick = function() { editor.mode = Mode.ADD_WINDOW2; }
+
+    var abtb = document.getElementById("addbathtub");
+    abtb.onclick = function() { editor.mode = Mode.ADD_BATHTUB; }
+    var atb = document.getElementById("addtoilet");
+    atb.onclick = function() { editor.mode = Mode.ADD_TOILET; }
+    var absb = document.getElementById("addbathsink");
+    absb.onclick = function() { editor.mode = Mode.ADD_BATHSINK; }
+    var aksb = document.getElementById("addkitchensink");
+    aksb.onclick = function() { editor.mode = Mode.ADD_KITCHENSINK; }
+
     var cb = document.getElementById("cut");
     cb.onclick = function() { editor.mode = Mode.CUT; }
 
