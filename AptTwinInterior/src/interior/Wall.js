@@ -6,7 +6,7 @@ import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class Wall {
 
-    static add_Internal(editor, walltype, whichside) {
+    static add_Internal(editor, ObjectType, whichside) {
         let object = editor.selected;
         let materials = object.material;
 
@@ -23,7 +23,7 @@ export class Wall {
                 const repeatX = materials[i]['map'].repeat.x;
                 const repeatY = materials[i]['map'].repeat.y;
 
-                const texture = textureHelper.get(walltype, repeatX, repeatY);
+                const texture = textureHelper.get(ObjectType, repeatX, repeatY);
                 if ( texture !== null ) {
                     texture.colorSpace = THREE.SRGBColorSpace;
                     materials.needsUpdate = true;
@@ -41,7 +41,7 @@ export class Wall {
 
     static add(editor) {
         const _html = `
-            <dialog id="wallTypeDialog">
+            <dialog id="ObjectTypeDialog">
             <form>
                 <p>
                 <label>
@@ -49,19 +49,19 @@ export class Wall {
                     <div class="responsive">
                     <div class="gallery">
                         <img src="./textures/wallpaper1.jpg" alt="wallpaper1" width="60" height="40">
-                        <input type="radio" name="walltype" id="wallpaper1" value="Wallpaper1" checked/>Type 1
+                        <input type="radio" name="ObjectType" id="wallpaper1" value="Wallpaper1" checked/>Type 1
                     </div>
                     </div>
                     <div class="responsive">
                     <div class="gallery">
                         <img src="./textures/pointwall.jpg" alt="pointwall" width="60" height="40">
-                        <input type="radio" name="walltype" id="pointwall" value="PointWall"/>Type 2
+                        <input type="radio" name="ObjectType" id="pointwall" value="PointWall"/>Type 2
                     </div>
                     </div>
                     <div class="responsive">
                     <div class="gallery">
                         <img src="./textures/pointwall2.jpg" alt="pointwall2" width="60" height="40">
-                        <input type="radio" name="walltype" id="pointwall2" value="PointWall2"/>Type 3
+                        <input type="radio" name="ObjectType" id="pointwall2" value="PointWall2"/>Type 3
                     </div>
                     </div>
                 </label>
@@ -95,12 +95,12 @@ export class Wall {
         const dialog = dom.querySelector("dialog");
         document.body.appendChild(dialog)
 
-        const wallTypeDialog = document.getElementById("wallTypeDialog");
+        const ObjectTypeDialog = document.getElementById("ObjectTypeDialog");
 
-        const confirmBtn = wallTypeDialog.querySelector("#confirmBtn");
+        const confirmBtn = ObjectTypeDialog.querySelector("#confirmBtn");
 
         // "Cancel" button closes the dialog without submitting because of [formmethod="dialog"], triggering a close event.
-        wallTypeDialog.addEventListener("close", (e) => {
+        ObjectTypeDialog.addEventListener("close", (e) => {
             document.body.removeChild(dialog)
         });
 
@@ -108,16 +108,16 @@ export class Wall {
         confirmBtn.addEventListener("click", (event) => {
             event.preventDefault(); // We don't want to submit this fake form
             
-            // wallTypeDialog.close(); // Have to send the select box value here.
-            const walltype = document.querySelector('input[name=walltype]:checked').value;
+            // ObjectTypeDialog.close(); // Have to send the select box value here.
+            const ObjectType = document.querySelector('input[name=ObjectType]:checked').value;
             const whichside = document.querySelector('input[name=whichside]:checked').value;
 
             document.body.removeChild(dialog)
             
-            this.add_Internal(editor, walltype, whichside);
+            this.add_Internal(editor, ObjectType, whichside);
         });
 
-        wallTypeDialog.showModal();
+        ObjectTypeDialog.showModal();
     }
 
 }

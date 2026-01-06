@@ -1,16 +1,15 @@
-import { Opening } from './opening.js';
-import { WallType } from './wall.js';
+import { ObjectType, HouseObject } from './houseobject.js';
 import { Color } from './editor.js';
 
 export const Hinge = { NORMAL: 1, REVERSE: -1 };
 
-export class Door extends Opening {
+export class Door extends HouseObject {
     constructor(pos, angle, angleSign, size, hinge, thick) {
         super(pos, angle, size, thick);
 
         this.angleSign = angleSign;
         this.hinge = hinge;
-        this.type = WallType.DOOR;
+        this.type = ObjectType.DOOR;
 
         this.create();
     }
@@ -27,7 +26,7 @@ export class Door extends Opening {
         construc.params.rotate = false;
 
         this.pushToConstruc(construc, "M " + (-sizeObj / 2) + "," + (-thickObj / 2) + " L " + (-sizeObj / 2) + "," + thickObj / 2 +
-            " L " + sizeObj / 2 + "," + thickObj / 2 + " L " + sizeObj / 2 + "," + (-thickObj / 2) + " Z", "#ccc", "none",
+            " L " + sizeObj / 2 + "," + thickObj / 2 + " L " + sizeObj / 2 + "," + (-thickObj / 2) + " Z", "#e6e3fbff", "none",
             '');
 
         this.pushToConstruc(construc, "M " + (-sizeObj / 2) + "," + (-thickObj / 2) + " L " + (-sizeObj / 2) + "," +
@@ -57,13 +56,13 @@ export class Door extends Opening {
     }
 }
 
-export class Door2 extends Opening {
+export class Door2 extends HouseObject {
     constructor(pos, angle, angleSign, size, hinge, thick) {
         super(pos, angle, size, thick);
 
         this.angleSign = angleSign;
         this.hinge = hinge;
-        this.type = WallType.DOOR2;
+        this.type = ObjectType.DOOR2;
 
         this.create();
     }
@@ -80,7 +79,7 @@ export class Door2 extends Opening {
         construc.params.rotate = false;
 
         this.pushToConstruc(construc, "M " + (-sizeObj / 2) + "," + (-thickObj / 2) + " L " + (-sizeObj / 2) + "," + thickObj / 2 +
-            " L " + sizeObj / 2 + "," + thickObj / 2 + " L " + sizeObj / 2 + "," + (-thickObj / 2) + " Z", "#c21313ff", "none",
+            " L " + sizeObj / 2 + "," + thickObj / 2 + " L " + sizeObj / 2 + "," + (-thickObj / 2) + " Z", "#f29c9cff", "none",
             '');
 
         this.pushToConstruc(construc, "M " + (-sizeObj / 2) + "," + (-thickObj / 2) + " L " + (-sizeObj / 2) + "," +

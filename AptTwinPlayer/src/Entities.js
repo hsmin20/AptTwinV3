@@ -71,7 +71,7 @@ class Door {
                 xoffset *= -1;
 
             this.pivotPos = new THREE.Vector3(this.object.position.x+xoffset, this.object.position.y, 0);
-            this.state = 1; // 1 is opening
+            this.state = 1; // 1 is HouseObject
         }
         if(this.state == 2) {
             let offset = -1;
@@ -134,7 +134,7 @@ class Window {
 
         this.moved = 0;
         if(this.state == 0) {
-            this.state = 1; // 1 is opening
+            this.state = 1; // 1 is HouseObject
         } else if(this.state == 2) {
             this.state = 3; // 3 is closing
         }
@@ -186,7 +186,7 @@ class Drawer {
 
         this.moved = 0;
         if(this.state == 0) {
-            this.state = 1; // 1 is opening
+            this.state = 1; // 1 is HouseObject
         } else if(this.state == 2) {
             this.state = 3; // 3 is closing
         }

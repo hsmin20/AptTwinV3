@@ -539,7 +539,7 @@ export class MenubarEdit {
 
             document.body.removeChild(dialog)
             
-            this.roomBuilder.addLightLamp(parent, lighttype, color);
+            this.roomBuilder.addLightLampInRoom(parent, lighttype, color);
         });
 
         lightTypeDialog.showModal();

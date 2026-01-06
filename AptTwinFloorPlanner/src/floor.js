@@ -1,4 +1,4 @@
-import { WallType } from "./wall.js";
+import { ObjectType } from "./houseobject.js";
 import { qSVG } from './qSVG.js';
 
 export class Floor {
@@ -6,15 +6,15 @@ export class Floor {
         this.start = start;
         this.end = end;
         this.type = type;
-        if (type == WallType.FLOOR) // Room floor
+        if (type == ObjectType.FLOOR) // Room floor
             this.color = '#d1cba0ff';
-        else if(type == WallType.FLOOR2) // Livingroom floor
+        else if(type == ObjectType.FLOOR2) // Livingroom floor
             this.color = '#e4ae30bd';
-        else if(type == WallType.FLOOR3) // Bathroom floor
+        else if(type == ObjectType.FLOOR3) // Bathroom floor
             this.color = '#a2f8fab1';
-        else if(type == WallType.FLOOR4) // Veranda floor
+        else if(type == ObjectType.FLOOR4) // Veranda floor
             this.color = '#f5eb82b1';
-        else if(type == WallType.FLOOR5) // Storage floor
+        else if(type == ObjectType.FLOOR5) // Storage floor
             this.color = '#f3f7f0f9';
     }
 

@@ -129,7 +129,7 @@ export class RoomBuilder {
         this.editor.execute( new AddObjectCommand( this.editor, newWall, parent ) );
     }
 
-    addLightLamp(parent, lighttype, color) {
+    addLightLampInRoom(parent, lighttype, color) {
          // Add a group first
         const group = new THREE.Group();
 		group.name = parent.name + '_light';
@@ -169,22 +169,55 @@ export class RoomBuilder {
         group.children.push( light_new );
         light_new.parent = group;
 
-        this.addLight(name+'_source', 0, y_pos, 0, width, length, color, group);
+        this.addLight(name+'_source', xpos, y_pos, zpos, width, length, color, group);
 
         this.editor.objectChanged(group);
     }
 
-    addLight(name, xpos, ypos, zpos, width, height, color, parent) {
-        // const dlight = new THREE.DirectionalLight(color, 1);
-        // dlight.name = name + '_directional';
-		// dlight.position.set(xpos, ypos-0.1, zpos);
-		// dlight.castShadow = false; // if true, makes it too slow
-        // dlight.visible = false;
-        
-        // parent.children.push( dlight );
-		// dlight.parent = parent;
+    addLightLamp(parent, lighttype, xpos, zpos, width, length) {
+         // Add a group first
+        const group = new THREE.Group();
+		group.name = 'Light';
+        if(parent != null)
+            group.name = parent.name + '_Light';
+        group.userData.type = 'light';
+        group.userData.DBid = 'n/a';
 
-        const light = new THREE.RectAreaLight(color, 1, width, height);
+        this.editor.execute( new AddGroupCommand( this.editor, group, parent ) );
+
+        const texture = textureHelper.get(lighttype, 1, 1);
+        let color = '#e4f1f6';
+
+        const y_pos = 2.28;
+        const name = lighttype + '_new';
+
+        let light_new;
+        if(lighttype == 'Light1') {
+            light_new = new THREE.Mesh( new THREE.PlaneGeometry(width, length), new THREE.MeshStandardMaterial( { map: texture} ));
+        } else if(lighttype == 'Light2') {
+            light_new = new THREE.Mesh( new THREE.PlaneGeometry(width, length), new THREE.MeshStandardMaterial( { map: texture} ));
+        } else if(lighttype == 'Light3') {
+            const radius = width;
+            color = '#f0eb9e';
+            light_new = new THREE.Mesh( new THREE.CircleGeometry(radius, 32), new THREE.MeshStandardMaterial( { map: texture} ));
+        }
+
+        light_new.name = name;
+        light_new.position.x = xpos;
+        light_new.position.y = y_pos;
+        light_new.position.z = zpos;
+        light_new.rotation.x = Math.PI / 2.0;
+
+        group.children.push( light_new );
+        light_new.parent = group;
+
+        this.addLight(name+'_source', xpos, y_pos, zpos, width, length, color, group);
+
+        this.editor.objectChanged(group);
+    }
+
+    addLight(name, xpos, ypos, zpos, width, length, color, parent) {
+        const light = new THREE.RectAreaLight(color, 1, width, length);
         light.name = name + '_rectarea';
         light.rotation.x = Math.PI * -1.5;
 		light.position.set(xpos, ypos-0.2, zpos);

@@ -98,8 +98,9 @@ async function fetchDataAndUpdateScene() {
     const urlParams = new URL(location.href).searchParams;
     let house_id = urlParams.get('house_id');
     if(house_id == undefined) {
-        console.log('No House ID exists');
-        return;
+        house_id = 48;
+        // console.log('No House ID exists');
+        // return;
     }
 
     try {

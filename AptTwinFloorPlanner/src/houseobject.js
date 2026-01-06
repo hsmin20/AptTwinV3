@@ -2,7 +2,10 @@ import { qSVG } from './qSVG.js';
 import { METER } from './util.js';
 import { g_factor, g_offset, g_originX_viewbox, g_originY_viewbox } from './editor.js';
 
-export class Opening {
+export const ObjectType = { NEW: 0, NORMAL: 1, FLOOR: 2, FLOOR2: 3, FLOOR3: 4, FLOOR4: 5, FLOOR5: 6, DOOR: 7, DOOR2: 8, WINDOW: 9, 
+                            WINDOW2: 10, BATHTUB: 11, TOILET: 12, BATHSINK: 13, KITCHENSINK: 14, LIGHT: 15, LIGHT2: 16 };
+                            
+export class HouseObject {
     constructor(pos, angle, size, thick) {
         this.x = pos.x;
         this.y = pos.y;
@@ -105,7 +108,7 @@ export class Opening {
     }
 }
 
-export class Socle extends Opening {
+export class Socle extends HouseObject {
     constructor(pos, angle, size, thick, type) {
         super(pos, angle, size, thick);
 

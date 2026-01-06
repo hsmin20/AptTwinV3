@@ -150,6 +150,11 @@ function handleButtonClick(editor) {
     var aksb = document.getElementById("addkitchensink");
     aksb.onclick = function() { editor.mode = Mode.ADD_KITCHENSINK; }
 
+    var alb = document.getElementById("addlight");
+    alb.onclick = function() { editor.mode = Mode.ADD_LIGHT; }
+    var al2b = document.getElementById("addlight2");
+    al2b.onclick = function() { editor.mode = Mode.ADD_LIGHT2; }
+
     var cb = document.getElementById("cut");
     cb.onclick = function() { editor.mode = Mode.CUT; }
 
@@ -157,21 +162,18 @@ function handleButtonClick(editor) {
     var deteteBtn = document.getElementById('delete');
     deteteBtn.onclick = deleteFunc;
 
-    // var changetowallFunc = editor.changeToWall.bind(editor);
-    // var changetowallBtn = document.getElementById('changetowall');
-    // changetowallBtn.onclick = changetowallFunc;
-
     var changeDoorHingeFunc = editor.changeDoorHinge.bind(editor);
     var changedoorhingeBtn = document.getElementById('changedoorhinge');
     changedoorhingeBtn.onclick = changeDoorHingeFunc;
 
-    // var changetowindowFunc = editor.changeToWindow.bind(editor);
-    // var changetowindowBtn = document.getElementById('changetowindow');
-    // changetowindowBtn.onclick = changetowindowFunc;
-
     var changeWidthFunc = editor.changeWidth.bind(editor);
     var widthSlider = document.getElementById('doorWindowWidth');
     widthSlider.addEventListener('input', changeWidthFunc);
+
+    var changeHeightFunc = editor.changeHeight.bind(editor);
+    var heightSlider = document.getElementById('doorWindowHeight');
+    heightSlider.addEventListener('input', changeHeightFunc);
+
 
     var exportFunc = editor.export.bind(editor);
     var exportBtn = document.getElementById('export');

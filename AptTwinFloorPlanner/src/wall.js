@@ -1,8 +1,5 @@
 import { qSVG } from './qSVG.js';
 
-export const WallType = { NEW: 0, NORMAL: 1, FLOOR: 2, FLOOR2: 3, FLOOR3: 4, FLOOR4: 5, FLOOR5: 6, DOOR: 7, DOOR2: 8, WINDOW: 9, 
-                            WINDOW2: 10, BATHTUB: 11, TOILET: 12, BATHSINK: 13, KITCHENSINK: 14 };
-
 export class Wall {
     constructor(start, end, type, thick, color="#666666") {
         this.thick = thick;

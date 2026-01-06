@@ -13,8 +13,8 @@ import { saveState } from './AptTwinEditor.js';
 import { textureHelper } from '../../src_common/TextureHelper.js';
 import { RoomBuilder } from './RoomBuilder.js';
 
-const WallType = { NEW: 0, WALL: 1, FLOOR: 2, FLOOR2: 3, FLOOR3: 4, FLOOR4: 5, FLOOR5: 6, DOOR: 7, DOOR2: 8, WINDOW: 9, 
-                            WINDOW2: 10, BATHTUB: 11, TOILET: 12, BATHSINK: 13, KITCHENSINK: 14 };
+const ObjectType = { NEW: 0, WALL: 1, FLOOR: 2, FLOOR2: 3, FLOOR3: 4, FLOOR4: 5, FLOOR5: 6, DOOR: 7, DOOR2: 8, WINDOW: 9, 
+                            WINDOW2: 10, BATHTUB: 11, TOILET: 12, BATHSINK: 13, KITCHENSINK: 14, LIGHT: 15, LIGHT2: 16 };
 const Hinge = { NORMAL: 0, REVERSE: 1 };
 const HEIGHT = 2.3;
 
@@ -288,12 +288,12 @@ export class Editor {
         let doorLTexture  = null;
         let doorRTexture = null;
 
-        if(type == WallType.DOOR) {
+        if(type == ObjectType.DOOR) {
             const doorLeftTexture = (hinge == Hinge.NORMAL) ? 'DoorLeft' : 'DoorRight';
             const doorRightTexture = (hinge == Hinge.NORMAL) ? 'DoorRight' : 'DoorLeft';
             doorLTexture  = textureHelper.get(doorLeftTexture, 1, 1);
             doorRTexture = textureHelper.get(doorRightTexture, 1, 1);
-        } else if(type == WallType.DOOR2) {
+        } else if(type == ObjectType.DOOR2) {
             const doorLeftTexture = (hinge == Hinge.NORMAL) ? 'FrontDoorLeft' : 'FrontDoorRight';
             const doorRightTexture = (hinge == Hinge.NORMAL) ? 'FrontDoorRight' : 'FrontDoorLeft';
             doorLTexture  = textureHelper.get(doorLeftTexture, 1, 1);
@@ -509,15 +509,15 @@ export class Editor {
         const repeatX = Math.round(width * 2);
         const repeatY = Math.round(height * 2);
         let floorTexture = null;
-        if(element.type == WallType.FLOOR) // Room
+        if(element.type == ObjectType.FLOOR) // Room
             floorTexture = textureHelper.get('RoomFloor', repeatX, repeatY);
-        else if(element.type == WallType.FLOOR2) // Livingroom
+        else if(element.type == ObjectType.FLOOR2) // Livingroom
             floorTexture = textureHelper.get('Floor', repeatX, repeatY);
-        else if(element.type == WallType.FLOOR3) // Bathroom
+        else if(element.type == ObjectType.FLOOR3) // Bathroom
             floorTexture = textureHelper.get('Tile', repeatX, repeatY);
-        else if(element.type == WallType.FLOOR4) // Veranda
+        else if(element.type == ObjectType.FLOOR4) // Veranda
             floorTexture = textureHelper.get('BalconyTile', repeatX, repeatY);
-        else if(element.type == WallType.FLOOR5) // Cement
+        else if(element.type == ObjectType.FLOOR5) // Cement
             floorTexture = textureHelper.get('Concrete', repeatX, repeatY);
 
         let mesh = new THREE.Mesh( new THREE.PlaneGeometry(width, height), new THREE.MeshStandardMaterial({ map: floorTexture, side: THREE.BackSide }) );
@@ -589,6 +589,25 @@ export class Editor {
         this.roomBuilder.addKitchenSink(null, 'KitchenSink', width, length, height, xpos, zpos, angle);
     }
 
+    constructLightFrom2DJSON(element, i) {
+        const type = element.type;
+
+        const width = element.size;
+        const length = element.thick;
+
+        const xpos = element.x;
+        const zpos = element.z;
+        // const angle = element.angle - 180;
+
+        let lightType = 'Light1';
+        if(width == length)
+            lightType = 'Light2';
+        if(type == ObjectType.LIGHT)
+            lightType = 'Light3';
+
+        this.roomBuilder.addLightLamp(null, lightType, xpos, zpos, width, length);
+    }
+
     constructFrom2DJSON( json ) {
         this.roomBuilder.addTHREELight('AmbientLight', 'Ambient');
 
@@ -598,24 +617,26 @@ export class Editor {
             let element = elementArray[i];
             // console.log('{' + element.x1 + ':' + element.z1 + ',' + element.x2 + ':' + element.z2 + ',' + element.x3 + ':' + element.z3 + ',' + element.x4 + ':' + element.z4);
             const type = element.type;
-            if(type == WallType.WALL) {
+            if(type == ObjectType.WALL) {
                 this.constructWallFrom2DJSON(element, i);
-            } else if(type == WallType.DOOR || type == WallType.DOOR2) {
+            } else if(type == ObjectType.DOOR || type == ObjectType.DOOR2) {
                 this.constructDoorFrom2DJSON(element, i);
-            } else if(type == WallType.WINDOW) {
+            } else if(type == ObjectType.WINDOW) {
                 this.constructWindowFrom2DJSON(element, i);                
-            } else if(type == WallType.WINDOW2) {
+            } else if(type == ObjectType.WINDOW2) {
                 this.constructWindow2From2DJSON(element, i);
-            } else if(type >= WallType.FLOOR && type <= WallType.FLOOR5) {
+            } else if(type >= ObjectType.FLOOR && type <= ObjectType.FLOOR5) {
                 this.constructFloorFrom2DJSON(element, i);
-            } else if(type == WallType.BATHTUB) {
+            } else if(type == ObjectType.BATHTUB) {
                 this.constructBathtubFrom2DJSON(element, i);
-            } else if(type == WallType.TOILET) {
+            } else if(type == ObjectType.TOILET) {
                 this.constructToiletFrom2DJSON(element, i);
-            } else if(type == WallType.BATHSINK) {
+            } else if(type == ObjectType.BATHSINK) {
                 this.constructBathsinkFrom2DJSON(element, i);
-            } else if(type == WallType.KITCHENSINK) {
+            } else if(type == ObjectType.KITCHENSINK) {
                 this.constructKitchensinkFrom2DJSON(element, i);
+            } else if(type == ObjectType.LIGHT || type == ObjectType.LIGHT2) {
+                this.constructLightFrom2DJSON(element, i);
             }
         }
     }
