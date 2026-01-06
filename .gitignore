@@ -1,7 +1,4 @@
 # root
 node_modules/
-dist/*.js
 dist/*.txt
-!dist/bogus.js
-!dist/login.js
 .vscode/*
