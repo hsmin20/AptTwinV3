@@ -152,7 +152,7 @@ export class Editor {
     changeDoorHinge() {
         if(this.binder.obj != null) {
             let objTarget = this.binder.obj;
-            if(objTarget.type != ObjectType.DOOR) {
+            if(objTarget.type != ObjectType.DOOR && objTarget.type != ObjectType.DOOR2) {
                 alert('Not a Door');
                 return;
             }

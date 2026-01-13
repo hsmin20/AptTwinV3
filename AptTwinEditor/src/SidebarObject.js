@@ -117,69 +117,35 @@ export class SidebarObject {
         this.container.add( objectVisibleRow );
 
         // user data
-        // this.objectUserDataRow = new UIRow();
-        // this.objectUserData = new UITextArea().setWidth( '250px' ).setHeight( '60px' ).setFontSize( '12px' );
-
-        // var userDataChangedFunc = this.userDataChanged.bind(this);
-        // this.objectUserData.onChange( userDataChangedFunc );
-
-        // const addUserDataButton = new UIButton( 'User Data' );
-        // addUserDataButton.setWidth( '80px' );
-        // addUserDataButton.setMarginLeft( '10px' );
-        // addUserDataButton.setMarginRight( '10px' );
-        // addUserDataButton.onClick( () => {
-        //     if(editor.selected == editor.scene) {
-        //         this.addModelHouseInfo();
-        //         return;
-        //     }
-        //     const name = this.editor.selected.name.toLowerCase();
-        //     if(name.includes('door')) {
-        //         this.addDoorUserData();
-        //     } else if(name.includes('window')) {
-        //         this.addWindowUserData();
-        //     } else {
-        //         alert('No User Data applicable');
-        //     }
-        // } );
-
-        // this.objectUserDataRow.add( addUserDataButton );
-        // this.objectUserDataRow.add( this.objectUserData );
-
-        // this.container.add( this.objectUserDataRow );
-
-        // this.objectChangeRow = new UIRow();
-
-        // const changeToDoorButton = new UIButton( 'Change to Door');
-        // changeToDoorButton.setWidth( '80px' );
-        // changeToDoorButton.setMarginLeft( '10px' );
-        // changeToDoorButton.setMarginRight( '10px' );
-        // var changeToDoorFunc = this.changeToDoorwithUserData.bind(this);
-        // changeToDoorButton.onClick( changeToDoorFunc );
-
-        // this.objectChangeRow.add( changeToDoorButton );
-
-        // const changeToWindowButton = new UIButton( 'Change to Window');
-        // changeToWindowButton.setWidth( '80px' );
-        // changeToWindowButton.setMarginLeft( '10px' );
-        // changeToWindowButton.setMarginRight( '10px' );
-        // var changeToWindowFunc = this.changeToWindowwithUserData.bind(this);
-        // changeToWindowButton.onClick( changeToWindowFunc );
-
-        // this.objectChangeRow.add( changeToWindowButton );
-
-
-        // user data
         this.objectUserDataRow = new UIRow();
         this.objectUserData = new UITextArea().setWidth( '250px' ).setHeight( '60px' ).setFontSize( '12px' );
 
         var userDataChangedFunc = this.userDataChanged.bind(this);
         this.objectUserData.onChange( userDataChangedFunc );
 
+        const addUserDataButton = new UIButton( 'User Data' );
+        addUserDataButton.setWidth( '80px' );
+        addUserDataButton.setMarginLeft( '10px' );
+        addUserDataButton.setMarginRight( '10px' );
+        addUserDataButton.onClick( () => {
+            if(editor.selected == editor.scene) {
+                this.addModelHouseInfo();
+                return;
+            }
+            const name = this.editor.selected.name.toLowerCase();
+            if(name.includes('door')) {
+                this.addDoorUserData();
+            } else if(name.includes('window')) {
+                this.addWindowUserData();
+            } else {
+                alert('No User Data applicable');
+            }
+        } );
+
+        this.objectUserDataRow.add( addUserDataButton );
         this.objectUserDataRow.add( this.objectUserData );
 
         this.container.add( this.objectUserDataRow );
-
-        // this.container.add( this.objectChangeRow );
     }
 
     objectNameUpdated() {

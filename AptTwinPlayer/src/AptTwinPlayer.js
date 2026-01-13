@@ -98,7 +98,7 @@ async function fetchDataAndUpdateScene() {
     const urlParams = new URL(location.href).searchParams;
     let house_id = urlParams.get('house_id');
     if(house_id == undefined) {
-        house_id = 48;
+        house_id = 47; // admin model state
         // console.log('No House ID exists');
         // return;
     }

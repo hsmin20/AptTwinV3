@@ -47,7 +47,7 @@ async function initKakaoMap() {
             const data = await res.json();
             const cache = {};
             if (data.exists) {
-                cache[aptName] = { model_id: data.model_id, model_json: data.model_json };
+                cache[aptName] = { model_id: data.model_id, model_json: data.model_json, size_m2: data.size_m2, type: data.type };
             }
             return cache;
         } catch (err) {
@@ -127,6 +127,8 @@ async function initKakaoMap() {
                         return;
                     }
 
+                    // console.log(modelData.size_m2 + ', ' + modelData.type);
+
                     const modal = document.getElementById('uploadModal');
                     const overlay = document.getElementById('modalOverlay');
                     modal.style.display = 'block';
@@ -185,8 +187,10 @@ async function initKakaoMap() {
     function placesSearchCB(data, status) {
         if (status === kakao.maps.services.Status.OK) {
             const apartments = filterApartments(data);
-            if (apartments.length === 0) alert('검색 결과 중 아파트가 없습니다.');
-            else displayPlaces(apartments);
+            if (apartments.length === 0) 
+                alert('검색 결과 중 아파트가 없습니다.');
+            else 
+                displayPlaces(apartments);
         } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
             alert('검색 결과가 없습니다.');
         } else {

@@ -33,6 +33,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           <button class="interior-btn" data-houseid="${p.house_id}">
             ✏️ Interior 수정하기
           </button>
+          <button class="delete-btn" data-houseid="${p.house_id}">
+            삭제하기
+          </button>
         </div>
       `
         )
@@ -65,6 +68,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         e.stopPropagation(); // 카드 클릭 이벤트 방지
         const houseId = btn.getAttribute("data-houseid");
         window.location.href = `interior.html?house_id=${houseId}`;
+      });
+    });
+
+    // Delete 버튼 클릭
+    document.querySelectorAll(".delete-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation(); // 카드 클릭 이벤트 방지
+        if (confirm("정말로 삭제하시겠습니까?") == true) {
+            const houseId = btn.getAttribute("data-houseid");
+            fetch(`./house_delete.php?house_id=${houseId}`);
+
+            window.location.reload();
+        }
       });
     });
 

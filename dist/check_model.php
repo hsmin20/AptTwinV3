@@ -26,7 +26,7 @@ if (!$aptName) {
 }
 
 // 단일 조회 (complex_name과 정확 매칭)
-$sql = "SELECT model_id, model_json FROM [APT_TWIN].[dbo].[ModelHouses] WHERE complex_name = ?";
+$sql = "SELECT model_id, model_json, size_m2, type FROM [APT_TWIN].[dbo].[ModelHouses] WHERE complex_name = ?";
 $params = [$aptName];
 $stmt = sqlsrv_query($conn, $sql, $params);
 if ($stmt === false) {
@@ -38,7 +38,9 @@ if ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
     echo json_encode([
         "exists" => true,
         "model_id" => $row['model_id'],
-        "model_json" => $row['model_json']
+        "model_json" => $row['model_json'],
+        "size_m2" => $row['size_m2'],
+        "type" => $row['type']
     ]);
 } else {
     echo json_encode(["exists" => false]);
