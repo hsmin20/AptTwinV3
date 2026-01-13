@@ -560,7 +560,7 @@ export class Editor {
 
         const xpos = element.x;
         const zpos = element.z;
-        const angle = element.angle - 90;
+        const angle = (element.angle - 270) * - 1;
 
         var toiletGroup = this.roomBuilder.addToilet(null, xpos, zpos, angle);
     }
@@ -572,7 +572,7 @@ export class Editor {
 
         const xpos = element.x;
         const zpos = element.z;
-        const angle = element.angle - 90;
+        const angle = (element.angle - 270) * -1;
 
         this.roomBuilder.addBathroomSink(null, xpos, zpos, angle);
     }
