@@ -10,9 +10,9 @@ import { Light, Light2 } from './light.js';
 import { Bathtub, Toilet, Bathsink, Kitchensink } from './bathobjects.js';
 
 const Action = { NONE: 0, CLICKED: 1, MOVE: 2 };
-export const Mode = { SELECT: 0, DRAW_WALL: 1, BIND: 2, EDIT: 3, CUT: 4, DRAW_FLOOR: 5, DRAW_FLOOR2: 6,DRAW_FLOOR3: 7, DRAW_FLOOR4: 8, DRAW_FLOOR5: 9,
-                        ADD_DOOR: 10, ADD_DOOR2: 11, ADD_WINDOW: 12, ADD_WINDOW2: 13, OBJECT: 14, EDIT_DOOR: 15, EDIT_WINDOW: 16, EDIT_FLOOR: 17,
-                        ADD_BATHTUB: 18, ADD_TOILET: 19, ADD_BATHSINK: 20, ADD_KITCHENSINK: 21, ADD_LIGHT: 22, ADD_LIGHT2: 23 };
+export const Mode = { SELECT: 0, SELECT_FLOOR: 1, DRAW_WALL: 2, BIND: 3, EDIT: 4, CUT: 5, DRAW_FLOOR: 6, DRAW_FLOOR2: 7, DRAW_FLOOR3: 8, DRAW_FLOOR4: 9,
+                        DRAW_FLOOR5: 10, ADD_DOOR: 11, ADD_DOOR2: 12, ADD_WINDOW: 13, ADD_WINDOW2: 14, OBJECT: 15, EDIT_DOOR: 16, EDIT_WINDOW: 17, EDIT_FLOOR: 18,
+                        ADD_BATHTUB: 19, ADD_TOILET: 20, ADD_BATHSINK: 21, ADD_KITCHENSINK: 22, ADD_LIGHT: 23, ADD_LIGHT2: 24 };
 const Binder = { NODE: 0, SEGMENT: 1, RECTNODE: 2, OBJECT: 3, NONE: 4 };
 const Magnetic = { NONE: 0, HOR: 1, VER: 2 };
 const Drag = { OFF: 0, ON: 1 };
@@ -295,7 +295,7 @@ export class Editor {
                 this.arFloors.splice(this.arFloors.indexOf(wall), 1);
 
                 wall.graph.remove();
-                this.binder.graph.remove();
+                this.binder.remove();
                 this._computeFloors();
 
                 this.mode = Mode.SELECT;
@@ -1069,44 +1069,57 @@ export class Editor {
         this.action = Action.CLICKED;
     }
 
-    // _mouseDownRect() {
-    //     var floor = this.binder.wall;
+    _mouseDownRect() {
+        var floor = this.binder.wall;
 
-    //     this.pox = floor.start.x;
-    //     this.poy = floor.start.y;
+        this.pox = floor.start.x;
+        this.poy = floor.start.y;
 
-    //     // this.binder.graph.remove();
-    //     // delete this.binder;
+        if(this.binder != null) {
+            if(this.binder.graph != null)
+                this.binder.graph.remove();
+            delete this.binder;
+        }
 
-    //     // this.binder = qSVG.create('boxBind', 'circle', {
-    //     //             id: "circlebinder",
-    //     //             class: "circle_css_2",
-    //     //             cx: floor.end.x,
-    //     //             cy: floor.end.y,
-    //     //             r: RADIUS_CIRCLE_BINDER
-    //     //         });
-    //     // this.binder.data = floor;
+        this.binder = qSVG.create('boxBind', 'rect', {
+            x: floor.start.x,
+            y: floor.start.y,
+            width: floor.end.x - floor.start.x,
+            height: floor.end.y - floor.start.y,
+            "fill": '#a9fc03',
+            "fill-opacity": 0.9,
+            "stroke": "transparent",
+            "stroke-width": 1,
+            "stroke-opacity": 0.7,
+            stroke: "#9fb2e2"
+        });
 
-    //     this._createTempRect();
+        this.binder.wall = floor;
 
-    //     this.mode = Mode.EDIT_FLOOR;
-    //     this.binder.type = Binder.RECTNODE;
-    // }
+        this._createTempRect();
 
-    //  _mouseDownRectNode() {
-    //     if(this.binder != null) {
-    //         var floor = this.binder.data;
-    //         this.pox = floor.start.x;
-    //         this.poy = floor.start.y;
-    //         // var nodeControl = { x: this.pox, y: this.poy };
+        this.mode = Mode.EDIT_FLOOR;
+        this.binder.type = Binder.RECTNODE;
+    }
 
-    //         this.magnetic = Magnetic.NONE;
+     _mouseDownRectNode() {
+        if(this.binder != null) {
+            var floor = this.binder.data;
+            this.pox = floor.start.x;
+            this.poy = floor.start.y;
+            // var nodeControl = { x: this.pox, y: this.poy };
 
-    //         this.mode = Mode.EDIT_FLOOR;
+            this.magnetic = Magnetic.NONE;
 
-    //         this.action = Action.CLICKED;
-    //     }
-    // }
+            this.mode = Mode.EDIT_FLOOR;
+
+            this.action = Action.CLICKED;
+        }
+    }
+
+    _mouseDownFloorNode() {
+        this.action = Action.CLICKED;
+    }
 
     _MOUSEDOWN(event) {
         event.preventDefault();
@@ -1119,10 +1132,6 @@ export class Editor {
                     this._mouseDownNode();
                 } else if (this.binder.type == Binder.SEGMENT) {
                     this._mouseDownSegment();
-                // } else if (this.binder.type == Binder.RECT) {
-                //     this._mouseDownRect();
-                // } else if (this.binder.type == Binder.RECTNODE) {
-                //     this._mouseDownRectNode();
                 } else if (this.binder.type == Binder.OBJECT) {
                     this.action = Action.CLICKED;
                 }
@@ -1132,6 +1141,16 @@ export class Editor {
                 const snap = this.calcul_snap(event, this.grid_snap);
                 this.pox = snap.xMouse;
                 this.poy = snap.yMouse;
+            }
+        } else if (this.mode == Mode.SELECT_FLOOR) {
+            if (this.binder != null) {
+                if (this.binder.type == Binder.RECT) {
+                    this._mouseDownRect();
+                } else if (this.binder.type == Binder.RECTNODE) {
+                    this._mouseDownRectNode();
+                } else if (this.binder.type == Binder.NODE) {
+                    this._mouseDownFloorNode();
+                }
             }
         } else if (this.mode == Mode.DRAW_WALL || (this.mode >= Mode.DRAW_FLOOR && this.mode <= Mode.DRAW_FLOOR5)) {
             if (this.action == Action.NONE) {
@@ -1421,6 +1440,27 @@ export class Editor {
             this.binder.graph = qSVG.create('none', 'g');
             this.binder.graph.appendChild(rect);
 
+            const BINDER_DISTANCE = 5;
+            const nodeMove = Util.nearFloorPoint(floor, snap, BINDER_DISTANCE);
+            if (nodeMove != null) {
+                var circle = qSVG.create('none', 'circle', {
+                    id: "circlebinder",
+                    class: "circle_css_2",
+                    cx: nodeMove.x,
+                    cy: nodeMove.y,
+                    r: RADIUS_CIRCLE_BINDER / 2
+                });
+
+                this.binder.type = Binder.NODE;
+                this.binder.wall = floor;
+
+                this.binder.graph.appendChild(circle);
+
+                this.cursor('grab');
+            } else {
+                this.cursor('move');
+            }
+
             var boxBind = document.getElementById('boxBind');
             boxBind.appendChild(this.binder.graph);
 
@@ -1437,8 +1477,6 @@ export class Editor {
                 }
 
                 this.cursor('default');
-                
-                this._showBothWallSizes(); // rib in homrRough
             }
         }
     }
@@ -1464,8 +1502,14 @@ export class Editor {
         this._bindNode(snap);
 
         this._bindSegment(snap);
+    }
 
-        // this._bindRect(snap);
+    _handleMouseMoveSelect2(event, snap) {
+        if(this.action == Action.NONE) {
+            this._bindRect(snap);
+        } else if(this.action == Action.CLICKED) {
+            
+        }
     }
 
     _handleMouseHovering(snap) {
@@ -1504,7 +1548,7 @@ export class Editor {
         } else {
             if (helpConstruc == null) 
                 this.cursor('crosshair');
-            // if (typeof (binder) != "undefined") {
+
             if(this.binder != null) {
                 if (this.binder.graph) 
                     this.binder.graph.remove();
@@ -2253,6 +2297,59 @@ export class Editor {
         }
     }
 
+    _handleMouseMoveRectNode(snap) {
+        const BINDER_DISTANCE = 5;
+
+        const floor = this.binder.wall;
+        if(this.action == Action.NONE) {
+            const nodeMove = Util.nearFloorPoint(floor, snap, BINDER_DISTANCE);
+            if (nodeMove != null) {
+                this.binder = qSVG.create('boxBind', 'circle', {
+                    id: "circlebinder",
+                    class: "circle_css_2",
+                    cx: nodeMove.x,
+                    cy: nodeMove.y,
+                    r: RADIUS_CIRCLE_BINDER / 2
+                });
+
+                this.binder.type = Binder.NODE;
+                this.binder.wall = floor;
+
+                this.cursor('move');
+                this.cursor('grab');
+            } else {
+                this.cursor('move');
+            }
+        }
+
+        // if(this.action == Action.CLICKED) {
+        //     this.curx = snap.x;
+        //     this.cury = snap.y;
+        //     const starter = Math.abs(Math.abs(this.pox - snap.x) + Math.abs(this.poy - snap.y));
+
+        //     if(this.rectconstruc == null) {
+        //         var floorNode = Util.nearFloorPoint(floor, snap, BIND_CIRCLE_DISTANCE);
+        //         if (floorNode != null) {
+        //             this.pox = floorNode.x;
+        //             this.poy = floorNode.y;
+
+        //             this.cursor('grab');
+        //         } else {
+        //             this.cursor('crosshair');
+        //         }
+        //     }
+
+        //     if (starter > this.grid) {
+        //         if(this.rectconstruc == null) {
+        //             this._createTempRect();
+        //         } else { 
+        //             // lines and binders are created
+        //             this._handleTempRect(snap);
+        //         }
+        //     }
+        // }
+    }
+
     _handleMouseMoveCut(snap) {
         if (this.binder === undefined) {            
             let addNode = Util.nearWall(this.arWalls, snap, 30);
@@ -2328,6 +2425,10 @@ export class Editor {
             }
         }
 
+        if (this.mode == Mode.SELECT_FLOOR) {
+            this._handleMouseMoveSelect2(event, snap);
+        }
+
         if (this.mode == Mode.DRAW_WALL || (this.mode >= Mode.DRAW_FLOOR && this.mode <= Mode.DRAW_FLOOR5)) {
             if(this.action == Action.NONE) {
                 this._handleMouseHovering(snap);
@@ -2371,8 +2472,8 @@ export class Editor {
                 this._showBothWallSizes(); // rib();
         }
 
-        if(this.mode == Mode.EDIT_FLOOR && this.action == Action.CLICKED) {
-            // this._handleMouseMoveRectNode(snap);
+        if(this.mode == Mode.EDIT_FLOOR) {
+            this._handleMouseMoveRectNode(snap);
         }
 
         if (this.mode == Mode.CUT) {
@@ -2940,31 +3041,31 @@ export class Editor {
         var check_size = qSVG.measure({ x: this.curx, y: this.cury }, { x: this.pox, y: this.poy });
         check_size = check_size / METER;
         
-        if (this.rectconstruc != null && check_size > 0.2) {
-            let floor = this.binder.wall;
-            floor.end.x = this.curx;
-            floor.end.y = this.cury;
+        // if (this.rectconstruc != null && check_size > 0.2) {
+        //     let floor = this.binder.wall;
+        //     floor.end.x = this.curx;
+        //     floor.end.y = this.cury;
 
-            this._computeFloors();
+        //     this._computeFloors();
 
-            this.action = Action.NONE;
-            this.mode = Mode.SELECT;
+        //     this.action = Action.NONE;
+        //     this.mode = Mode.SELECT;
 
-            this.rectconstruc.remove();
-            delete this.rectconstruc;
-        } else {
-            this.action = Action.NONE;
-            if(this.binder != null) {
-                if(this.binder.graph != null)
-                    this.binder.graph.remove();
-                else
-                    this.binder.remove();
-                delete this.binder;
-            }
-            const snap = this.calcul_snap(event, this.grid_snap);
-            this.pox = snap.x;
-            this.poy = snap.y;
-        }
+        //     this.rectconstruc.remove();
+        //     delete this.rectconstruc;
+        // } else {
+        //     this.action = Action.NONE;
+        //     if(this.binder != null) {
+        //         if(this.binder.graph != null) 
+        //             this.binder.graph.remove();
+        //         else
+        //             this.binder.remove();
+        //         delete this.binder;
+        //     }
+        //     const snap = this.calcul_snap(event, this.grid_snap);
+        //     this.pox = snap.x;
+        //     this.poy = snap.y;
+        // }
     }
 
     _handleMouseUpAddDoor(event) {
@@ -3174,6 +3275,15 @@ export class Editor {
             }
         }
 
+        if (this.mode == Mode.SELECT_FLOOR) {
+            if (this.binder != null) {
+                this.binder.graph.remove();
+                delete this.binder;
+            }
+
+            this.action = Action.NONE;
+        }
+
         if (this.mode == Mode.DRAW_WALL) {
             this._handleMouseUpDrawWall(event);
         }
@@ -3207,7 +3317,7 @@ export class Editor {
         }
 
         if (this.mode == Mode.EDIT_FLOOR) {
-            // this._handleMouseUpEditFloor(event);
+            this._handleMouseUpEditFloor(event);
         }
 
         this._showOuterArrows();

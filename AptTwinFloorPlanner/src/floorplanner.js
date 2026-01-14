@@ -120,6 +120,8 @@ function handleMouseInLeftPanel(editor) {
 function handleButtonClick(editor) {
     var sb = document.getElementById("select");
     sb.onclick = function() { editor.mode = Mode.SELECT; }
+    var sb2 = document.getElementById("select2");
+    sb2.onclick = function() { editor.mode = Mode.SELECT_FLOOR; }
     var dwb = document.getElementById("drawwall");
     dwb.onclick = function() { editor.mode = Mode.DRAW_WALL; }
     var dfb = document.getElementById("drawfloor");

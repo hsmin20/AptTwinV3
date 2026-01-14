@@ -5,6 +5,15 @@ export const METER = 60;
 export class Util {
     static lineIntersectionP = null;
 
+    static nearFloorPoint(floor, snap, range = 10000) {
+        var distance = qSVG.gap(snap, { x: floor.end.x, y: floor.end.y });
+
+        if(distance < range)
+            return { x: floor.end.x, y: floor.end.y };
+        else
+            return null;
+    }
+
     static _nearVertice(arWalls, snap, range = 10000) {
         var bestDistance = Infinity;
         var bestVertice;
