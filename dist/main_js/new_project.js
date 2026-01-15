@@ -1,4 +1,5 @@
 let CURRENT_USER_ID = null;
+let searchAptName = ''; // To use in callback function
 
 // 페이지 로드시 먼저 로그인 유저 가져오기 후 지도 초기화
 async function initPage() {
@@ -45,10 +46,7 @@ async function initKakaoMap() {
                 body: JSON.stringify({ apt_name: aptName })
             });
             const data = await res.json();
-            // const cache = {};
-            // if (data.exists) {
-            //     cache = { model_id: data.model_id, model_json: data.model_json, size_m2: data.size_m2, type: data.type };
-            // }
+
             return data;
         } catch (err) {
             console.error(err);
@@ -88,12 +86,12 @@ async function initKakaoMap() {
     }
 
     function filterApartments(data) {
-        const blockWords = ['경로당', '관리사무소', '상가', '주유소', '공원', '노인정'];
+        const blockWords = ['경로당', '관리사무소', '상가', '주유소', '공원', '노인정', '충전소'];
         return data.filter(place => {
             const name = place.place_name || '';
             const isBlocked = blockWords.some(word => name.includes(word));
             const isAptCategory = place.category_group_code === 'APT';
-            const isAptName = name.includes('아파트');
+            const isAptName = name.includes('아파트') && name.includes(searchAptName);
             return !isBlocked && (isAptCategory || isAptName);
         });
     }
@@ -147,9 +145,11 @@ async function initKakaoMap() {
                     }
 
                     const selectElement = document.getElementById("size_type");
+                    selectElement.innerHTML = '';
                     for(let i=0; i<modelinfo.length; i++) {
                         const newSizeType = document.createElement("option");
-                        const txt = modelinfo[i].size_m2 + " m²";
+                        let size = modelinfo[i].size_m2;
+                        let txt = (Number.isInteger(size) ? size : size.toFixed(1)) + " m²";
                         if(modelinfo[i].type.length > 0)
                             txt += ", type " + modelinfo[i].type;
                         newSizeType.value = modelinfo[i].size_m2 + "," + modelinfo[i].type;
@@ -237,9 +237,13 @@ async function initKakaoMap() {
     }
 
     searchBtn.addEventListener('click', () => {
-        const query = searchInput.value.trim();
-        if (!query) return alert('검색어를 입력해주세요.');
-        ps.keywordSearch(query, placesSearchCB);
+        const aptName = searchInput.value.trim();
+        if (!aptName) 
+            return alert('검색어를 입력해주세요.');
+
+        searchAptName = aptName;
+
+        ps.keywordSearch(aptName, placesSearchCB);
     });
 
     searchInput.addEventListener('keydown', e => {

@@ -1505,11 +1505,11 @@ export class Editor {
     }
 
     _handleMouseMoveSelect2(event, snap) {
-        if(this.action == Action.NONE) {
+        // if(this.action == Action.NONE) {
             this._bindRect(snap);
-        } else if(this.action == Action.CLICKED) {
+        // } else if(this.action == Action.CLICKED) {
             
-        }
+        // }
     }
 
     _handleMouseHovering(snap) {
