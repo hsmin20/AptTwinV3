@@ -19,6 +19,8 @@ if (!$conn) {
 // JS에서 보낸 데이터 받기
 $input = json_decode(file_get_contents("php://input"), true);
 $aptName = trim($input['apt_name'] ?? '');
+$size_m2 = trim($input['size_m2'] ?? '');
+$type = trim($input['type'] ?? '');
 
 if (!$aptName) {
     echo json_encode(["exists" => false]);
@@ -26,8 +28,8 @@ if (!$aptName) {
 }
 
 // 단일 조회 (complex_name과 정확 매칭)
-$sql = "SELECT model_id, model_json, size_m2, type FROM [APT_TWIN].[dbo].[ModelHouses] WHERE complex_name = ?";
-$params = [$aptName];
+$sql = "SELECT model_id, model_json, size_m2, type FROM [APT_TWIN].[dbo].[ModelHouses] WHERE complex_name = ? and size_m2 = ? and type = ?";
+$params = [$aptName, $size_m2, $type];
 $stmt = sqlsrv_query($conn, $sql, $params);
 if ($stmt === false) {
     echo json_encode(["error" => "쿼리 실패"]);

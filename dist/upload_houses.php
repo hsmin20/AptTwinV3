@@ -11,6 +11,7 @@ if (!$data) {
 }
 
 $house_id = $data['house_id'] ?? null;
+// $house_size = $data['house_size'] ?? null;
 $house_name = $data['nickName'] ?? '';
 $model_json = $data['data'] ?? '';
 $comment = $data['comment2'] ?? '';

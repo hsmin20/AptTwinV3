@@ -37,12 +37,32 @@ async function initKakaoMap() {
     let markers = [];
     let modelCache = {}; // 단일 조회용 캐시
 
-    async function fetchModelCache(aptName) {
+    async function checkAptData(aptName) {
         try {
-            const res = await fetch('./check_model.php', {
+            const res = await fetch('./check_apt.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ apt_name: aptName })
+            });
+            const data = await res.json();
+            // const cache = {};
+            // if (data.exists) {
+            //     cache = { model_id: data.model_id, model_json: data.model_json, size_m2: data.size_m2, type: data.type };
+            // }
+            return data;
+        } catch (err) {
+            console.error(err);
+            alert('모델 캐시 로드 중 오류 발생');
+            return {};
+        }
+    }
+
+    async function fetchAptData(aptName, sizem2, atype) {
+        try {
+            const res = await fetch('./get_aptmodel.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ apt_name: aptName, size_m2: sizem2, type: atype })
             });
             const data = await res.json();
             const cache = {};
@@ -120,14 +140,22 @@ async function initKakaoMap() {
                     let aptName = place.place_name.trim();
                     if (aptName.endsWith("아파트")) aptName = aptName.slice(0, -3);
 
-                    modelCache = await fetchModelCache(aptName);
-                    const modelData = modelCache[aptName];
-                    if (!modelData) {
+                    const modelinfo = await checkAptData(aptName);
+                    if (modelinfo.length == 0) {
                         alert(`"${aptName}"은(는) 아직 모델이 준비 중입니다.`);
                         return;
                     }
 
-                    // console.log(modelData.size_m2 + ', ' + modelData.type);
+                    const selectElement = document.getElementById("size_type");
+                    for(let i=0; i<modelinfo.length; i++) {
+                        const newSizeType = document.createElement("option");
+                        const txt = modelinfo[i].size_m2 + " m²";
+                        if(modelinfo[i].type.length > 0)
+                            txt += ", type " + modelinfo[i].type;
+                        newSizeType.value = modelinfo[i].size_m2 + "," + modelinfo[i].type;
+                        newSizeType.textContent = txt;
+                        selectElement.appendChild(newSizeType);
+                    }
 
                     const modal = document.getElementById('uploadModal');
                     const overlay = document.getElementById('modalOverlay');
@@ -147,9 +175,19 @@ async function initKakaoMap() {
 
                         const houseName = document.getElementById('house_name').value;
                         const comment = document.getElementById('comment').value;
+                        const selectedSize = document.getElementById('size_type').value;
+                        const sizeArray = selectedSize.split(",");
+                        const size_m2 = sizeArray[0];
+                        const type = sizeArray[1];
+
+                        modelCache = await fetchAptData(aptName, size_m2, type);
+                        modelData = modelCache[aptName];
+                        
+                        // console.log(modelData.size_m2 + ', ' + modelData.type);
 
                         const payload = {
                             house_id: null,
+                            // house_size: houseSize,
                             nickName: houseName,
                             data: modelData.model_json,
                             comment2: comment,
@@ -165,7 +203,7 @@ async function initKakaoMap() {
                             });
 
                             const newHouseId = await res.text();
-                            alert(`업로드 완료: ${newHouseId}`);
+                            // alert(`업로드 완료: ${newHouseId}`);
                             modal.style.display = 'none';
                             overlay.style.display = 'none';
 
