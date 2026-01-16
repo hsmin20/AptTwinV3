@@ -2993,7 +2993,7 @@ export class Editor {
             const y1 = this.poy < this.cury ? this.poy : this.cury;
             const y2 = this.poy < this.cury ? this.cury : this.poy;
 
-            var floor = new Floor( { x: x1, y: y1 }, { x: x2, y: y2 }, this.mode-3 );
+            var floor = new Floor( { x: x1, y: y1 }, { x: x2, y: y2 }, this.mode-4 );
             this.arFloors.push(floor);
             this._computeFloors();
 
