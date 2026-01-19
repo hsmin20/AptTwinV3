@@ -124,6 +124,8 @@ function handleButtonClick(editor) {
     sb2.onclick = function() { editor.mode = Mode.SELECT_FLOOR; }
     var dwb = document.getElementById("drawwall");
     dwb.onclick = function() { editor.mode = Mode.DRAW_WALL; }
+    var dwb2 = document.getElementById("drawwall2");
+    dwb2.onclick = function() { editor.mode = Mode.DRAW_WALL2; }
     var dfb = document.getElementById("drawfloor");
     dfb.onclick = function() { editor.mode = Mode.DRAW_FLOOR; }
     var dfb2 = document.getElementById("drawfloor2");

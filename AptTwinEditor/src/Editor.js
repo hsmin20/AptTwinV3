@@ -529,7 +529,9 @@ export class Editor {
         group.children.push( mesh );
         mesh.parent = group;
 
-        const ceilingTexture  = textureHelper.get('Ceiling', repeatX, repeatY);
+        let ceilingTexture  = textureHelper.get('Ceiling', repeatX, repeatY);
+        if(element.type == ObjectType.FLOOR3) // Bathroom
+            ceilingTexture = textureHelper.get('Tile', repeatX, repeatY);
 
         mesh = new THREE.Mesh( new THREE.PlaneGeometry(width, height), new THREE.MeshStandardMaterial({ map: ceilingTexture, side: THREE.FrontSide }) );
         mesh.name = "new_mesh_1_" + i;
@@ -584,7 +586,7 @@ export class Editor {
 
         const xpos = element.x;
         const zpos = element.z;
-        const angle = element.angle - 180;
+        const angle = (element.angle - 180) * -1;
 
         this.roomBuilder.addKitchenSink(null, 'KitchenSink', width, length, height, xpos, zpos, angle);
     }

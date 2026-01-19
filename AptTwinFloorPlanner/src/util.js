@@ -133,10 +133,12 @@ export class Util {
 
     static intersection(arWalls, snap, range = Infinity, except = ['']) {
         // ORANGE LINES 90° NEAR SEGMENT
-        let bestEqPoint = {};
+        let bestEqPoint1 = {};
+        let bestEqPoint2 = {};
         let equation = {};
 
-        bestEqPoint.distance = range;
+        bestEqPoint1.distance = range;
+        bestEqPoint2.distance = range;
 
         Util.intersectionOff();
 
@@ -148,6 +150,8 @@ export class Util {
             fill: "none"
         });
 
+        let bDist1 = false;
+        let bDist2 = false;
         for (let index = 0; index < arWalls.length; index++) {
             if (except.indexOf(arWalls[index]) === -1) {
                 let x1 = arWalls[index].start.x;
@@ -187,45 +191,74 @@ export class Util {
                 equation.A = equation.C;
                 equation.B = equation.D;
                 var eq = qSVG.nearPointOnEquation(equation, snap);
-                if (eq.distance < bestEqPoint.distance) {
-                    this._setBestEqPoint(bestEqPoint, eq.distance, index, eq.x, eq.y, x1, y1, x2, y2, 1);
+                if (eq.distance < bestEqPoint1.distance) {
+                    this._setBestEqPoint(bestEqPoint1, eq.distance, index, eq.x, eq.y, x1, y1, x2, y2, 1);
+                    bDist1 = true;
                 }
                 equation.A = equation.E;
                 equation.B = equation.F;
                 eq = qSVG.nearPointOnEquation(equation, snap);
-                if (eq.distance < bestEqPoint.distance) {
-                    this._setBestEqPoint(bestEqPoint, eq.distance, index, eq.x, eq.y, x1, y1, x2, y2, 1);
+                if (eq.distance < bestEqPoint1.distance) {
+                    this._setBestEqPoint(bestEqPoint1, eq.distance, index, eq.x, eq.y, x1, y1, x2, y2, 1);
+                    bDist1 = true;
                 }
                 equation.A = equation.G;
                 equation.B = equation.H;
                 eq = qSVG.nearPointOnEquation(equation, snap);
-                if (eq.distance < bestEqPoint.distance) {
-                    this._setBestEqPoint(bestEqPoint, eq.distance, index, eq.x, eq.y, x1, y1, x2, y2, 2);
+                if (eq.distance < bestEqPoint2.distance) {
+                    this._setBestEqPoint(bestEqPoint2, eq.distance, index, eq.x, eq.y, x1, y1, x2, y2, 2);
+                    bDist2 = true;
                 }
                 equation.A = equation.I;
                 equation.B = equation.J;
                 eq = qSVG.nearPointOnEquation(equation, snap);
-                if (eq.distance < bestEqPoint.distance) {
-                    this._setBestEqPoint(bestEqPoint, eq.distance, index, eq.x, eq.y, x1, y1, x2, y2, 2);
+                if (eq.distance < bestEqPoint2.distance) {
+                    this._setBestEqPoint(bestEqPoint2, eq.distance, index, eq.x, eq.y, x1, y1, x2, y2, 2);
+                    bDist2 = true;
                 }
             }
         }
 
-        if (bestEqPoint.distance < range) {
-            if (bestEqPoint.way === 2) {
-                var path = "M" + bestEqPoint.x1 + "," + bestEqPoint.y1 + " L" + bestEqPoint.x2 + "," + bestEqPoint.y2 + " L" + bestEqPoint.x + "," + bestEqPoint.y;
+        if (bDist1 || bDist2) {
+            var bestx = 0;
+            var besty = 0;
+            var bestwall = null;
+            var bestdistance = -1;
+            if (bDist2 && !bDist1) {
+                var path = "M" + bestEqPoint2.x1 + "," + bestEqPoint2.y1 + " L" + bestEqPoint2.x2 + "," + bestEqPoint2.y2 + " L" + bestEqPoint2.x + "," + bestEqPoint2.y;
                 this.lineIntersectionP.setAttribute('d',  path);
                 this.lineIntersectionP.setAttribute("stroke", "#d7ac57");
-            } else {
-                var path = "M" + bestEqPoint.x2 + "," + bestEqPoint.y2 + " L" + bestEqPoint.x1 + "," + bestEqPoint.y1 + " L" + bestEqPoint.x + "," + bestEqPoint.y;
+                bestx = bestEqPoint2.x;
+                besty = bestEqPoint2.y;
+                bestwall = arWalls[bestEqPoint2.node];
+                bestdistance = bestEqPoint2.distance;
+            } 
+            
+            if (bDist1 && !bDist2) {
+                var path = "M" + bestEqPoint1.x2 + "," + bestEqPoint1.y2 + " L" + bestEqPoint1.x1 + "," + bestEqPoint1.y1 + " L" + bestEqPoint1.x + "," + bestEqPoint1.y;
                 this.lineIntersectionP.setAttribute('d', path);
                 this.lineIntersectionP.setAttribute("stroke", "#d7ac57");
+                bestx = bestEqPoint1.x;
+                besty = bestEqPoint1.y;
+                bestwall = arWalls[bestEqPoint1.node];
+                bestdistance = bestEqPoint1.distance;
+            }
+
+            if (bDist1 && bDist2) {
+                var path = "M" + bestEqPoint1.x2 + "," + bestEqPoint1.y2 + " L" + bestEqPoint1.x1 + "," + bestEqPoint1.y1 + " L" + bestEqPoint1.x + "," + bestEqPoint1.y;
+                path += "M" + bestEqPoint2.x1 + "," + bestEqPoint2.y1 + " L" + bestEqPoint2.x2 + "," + bestEqPoint2.y2 + " L" + bestEqPoint2.x + "," + bestEqPoint2.y;
+                this.lineIntersectionP.setAttribute('d', path);
+                this.lineIntersectionP.setAttribute("stroke", "#d7ac57");
+                bestx = bestEqPoint2.x;
+                besty = bestEqPoint1.y;
+                bestwall = arWalls[bestEqPoint1.node];
+                bestdistance = bestEqPoint1.distance;
             }
             return ({
-                x: bestEqPoint.x,
-                y: bestEqPoint.y,
-                wall: arWalls[bestEqPoint.node],
-                distance: bestEqPoint.distance
+                x: bestx,
+                y: besty,
+                wall: bestwall,
+                distance: bestdistance
             });
         } else {
             return null;

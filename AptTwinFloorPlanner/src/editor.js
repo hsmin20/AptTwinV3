@@ -10,9 +10,10 @@ import { Light, Light2 } from './light.js';
 import { Bathtub, Toilet, Bathsink, Kitchensink } from './bathobjects.js';
 
 const Action = { NONE: 0, CLICKED: 1, MOVE: 2 };
-export const Mode = { SELECT: 0, SELECT_FLOOR: 1, DRAW_WALL: 2, BIND: 3, EDIT: 4, CUT: 5, DRAW_FLOOR: 6, DRAW_FLOOR2: 7, DRAW_FLOOR3: 8, DRAW_FLOOR4: 9,
-                        DRAW_FLOOR5: 10, ADD_DOOR: 11, ADD_DOOR2: 12, ADD_WINDOW: 13, ADD_WINDOW2: 14, OBJECT: 15, EDIT_DOOR: 16, EDIT_WINDOW: 17, EDIT_FLOOR: 18,
-                        ADD_BATHTUB: 19, ADD_TOILET: 20, ADD_BATHSINK: 21, ADD_KITCHENSINK: 22, ADD_LIGHT: 23, ADD_LIGHT2: 24 };
+export const Mode = { SELECT: 0, SELECT_FLOOR: 1, DRAW_WALL: 2, DRAW_WALL2: 3, BIND: 4, EDIT: 5, CUT: 6, DRAW_FLOOR: 7, DRAW_FLOOR2: 8, DRAW_FLOOR3: 9, 
+                        DRAW_FLOOR4: 10, DRAW_FLOOR5: 11, ADD_DOOR: 12, ADD_DOOR2: 13, ADD_WINDOW: 14, ADD_WINDOW2: 15, OBJECT: 16, EDIT_DOOR: 17,
+                        EDIT_WINDOW: 18, EDIT_FLOOR: 19, ADD_BATHTUB: 20, ADD_TOILET: 21, ADD_BATHSINK: 22, ADD_KITCHENSINK: 23, ADD_LIGHT: 24,
+                        ADD_LIGHT2: 25 };
 const Binder = { NODE: 0, SEGMENT: 1, RECTNODE: 2, OBJECT: 3, NONE: 4 };
 const Magnetic = { NONE: 0, HOR: 1, VER: 2 };
 const Drag = { OFF: 0, ON: 1 };
@@ -1096,8 +1097,6 @@ export class Editor {
 
         this.binder.wall = floor;
 
-        this._createTempRect();
-
         this.mode = Mode.EDIT_FLOOR;
         this.binder.type = Binder.RECTNODE;
     }
@@ -1152,12 +1151,24 @@ export class Editor {
                     this._mouseDownFloorNode();
                 }
             }
-        } else if (this.mode == Mode.DRAW_WALL || (this.mode >= Mode.DRAW_FLOOR && this.mode <= Mode.DRAW_FLOOR5)) {
+        } else if (this.mode == Mode.DRAW_WALL || this.mode == Mode.DRAW_WALL2) {
             if (this.action == Action.NONE) {
                 const snap = this.calcul_snap(event, this.grid_snap);
                 this.pox = snap.x;
                 this.poy = snap.y;
                 this.wallStartConstruc = Util.nearWall(this.arWalls, snap, 12);
+                if (this.wallStartConstruc != null) { // TO SNAP SEGMENT TO FINALIZE X2Y2
+                    this.pox = this.wallStartConstruc.x;
+                    this.poy = this.wallStartConstruc.y;
+                }
+            }
+            this.action = Action.CLICKED;
+        }  else if (this.mode >= Mode.DRAW_FLOOR && this.mode <= Mode.DRAW_FLOOR5) {
+            if (this.action == Action.NONE) {
+                const snap = this.calcul_snap(event, this.grid_snap);
+                this.pox = snap.x;
+                this.poy = snap.y;
+                this.wallStartConstruc = Util._nearVertice(this.arWalls, snap, 12);
                 if (this.wallStartConstruc != null) { // TO SNAP SEGMENT TO FINALIZE X2Y2
                     this.pox = this.wallStartConstruc.x;
                     this.poy = this.wallStartConstruc.y;
@@ -1865,7 +1876,7 @@ export class Editor {
             var wall = wallSelect.wall;
             if (this.binder == null) {
                 if(this.mode == Mode.ADD_BATHTUB) {
-                    const width = 96; // 1.6m
+                    const width = 84; // 1.4m
                     const length = 36; // 0.6m;
                     this.binder = new Bathtub({x:wallSelect.x, y:wallSelect.y}, 0, 0, width, length);
                 } else if(this.mode == Mode.ADD_TOILET) {
@@ -1957,11 +1968,11 @@ export class Editor {
     _handleMouseMoveAddLight(snap) {
         if (this.binder == null) {
             if(this.mode == Mode.ADD_LIGHT) {
-                const radius = 18; // 0.3m
+                const radius = 12; // 0.2m
                 this.binder = new Light({x:snap.x, y:snap.y}, radius);
             } else if(this.mode == Mode.ADD_LIGHT2) {
-                const width = 54; // 0.9m
-                const length = 54; // 0.9m
+                const width = 48; // 0.8m
+                const length = 48; // 0.8m
                 this.binder = new Light2({x:snap.x, y:snap.y}, width, length);
             }
 
@@ -2429,11 +2440,11 @@ export class Editor {
             this._handleMouseMoveSelect2(event, snap);
         }
 
-        if (this.mode == Mode.DRAW_WALL || (this.mode >= Mode.DRAW_FLOOR && this.mode <= Mode.DRAW_FLOOR5)) {
+        if ((this.mode == Mode.DRAW_WALL ||  this.mode == Mode.DRAW_WALL2) || (this.mode >= Mode.DRAW_FLOOR && this.mode <= Mode.DRAW_FLOOR5)) {
             if(this.action == Action.NONE) {
                 this._handleMouseHovering(snap);
             } else if(this.action == Action.CLICKED) {
-                if(this.mode == Mode.DRAW_WALL) {
+                if(this.mode == Mode.DRAW_WALL ||  this.mode == Mode.DRAW_WALL2) {
                     this._handleMouseMoveDrawWall(snap);
                 } else {
                     this._handleMouseMoveDrawFloor(snap);
@@ -2851,12 +2862,14 @@ export class Editor {
     }
 
     _createTempRect() {
+        const startX = this.pox < this.curx ? this.pox : this.curx;
+        const startY = this.poy < this.cury ? this.poy : this.cury;
         this.rectconstruc = qSVG.create("boxBind", "rect", {
             id: "rect_construc",
-            x: this.pox,
-            y: this.poy,
-            width: this.curx - this.pox,
-            height: this.cury - this.poy,
+            x: startX, //this.pox,
+            y: startY, //this.poy,
+            width: Math.abs(this.curx - this.pox),
+            height: Math.abs(this.cury - this.poy),
             "fill": "#dce5f3ff",
             "fill-opacity": 0.9,
             "stroke": "transparent",
@@ -2867,10 +2880,10 @@ export class Editor {
 
         this.recttemp = qSVG.create("boxBind", "rect", {
             id: "recttemp",
-            x: this.pox,
-            y: this.poy,
-            width: this.curx - this.pox,
-            height: this.cury - this.poy,
+            x: startX, //this.pox,
+            y: startY, //this.poy,
+            width: Math.abs(this.curx - this.pox),
+            height: Math.abs(this.cury - this.poy),
             "fill": "#dce5f3ff",
             "fill-opacity": 0.9,
             "stroke": "transparent",
@@ -2880,12 +2893,15 @@ export class Editor {
     }
 
     _handleTempRect(snap) {
+        const startX = this.pox < this.curx ? this.pox : this.curx;
+        const startY = this.poy < this.cury ? this.poy : this.cury;
+
         var recttemp = document.getElementById('recttemp');
         if(recttemp != null) {
-            recttemp.setAttribute( 'width', this.curx - this.pox );
-            recttemp.setAttribute( 'height', this.cury - this.poy );
-            // recttemp.setAttribute( 'x', this.pox );
-            // recttemp.setAttribute( 'y', this.poy );
+            recttemp.setAttribute( 'width', Math.abs(this.curx - this.pox) );
+            recttemp.setAttribute( 'height', Math.abs(this.cury - this.poy) );
+            recttemp.setAttribute( 'x', startX );
+            recttemp.setAttribute( 'y', startY );
         }
 
         var helpConstrucEnd = Util.intersection(this.arWalls, snap, 10);
@@ -2908,10 +2924,10 @@ export class Editor {
 
         var rectconstruc = document.getElementById('rect_construc');
         if(rectconstruc != null) {
-            // rectconstruc.setAttribute('x', this.pox);
-            // rectconstruc.setAttribute('y', this.poy);
-            rectconstruc.setAttribute( 'width', this.curx - this.pox );
-            rectconstruc.setAttribute( 'height', this.cury - this.poy );
+            rectconstruc.setAttribute('x', startX);
+            rectconstruc.setAttribute('y', startY);
+            rectconstruc.setAttribute( 'width', Math.abs(this.curx - this.pox) );
+            rectconstruc.setAttribute( 'height', Math.abs(this.cury - this.poy) );
         }
     }
 
@@ -2925,6 +2941,8 @@ export class Editor {
         
         if (this.lineconstruc != null && check_size > 0.1) {
             var sizeWall = Thickness.WALL;
+            if(this.mode == Mode.DRAW_WALL2)
+                sizeWall = Thickness.INNERWALL;
 
             var startPos = { x: this.pox, y: this.poy };
             var endPos = { x: this.curx, y: this.cury };
@@ -2993,7 +3011,7 @@ export class Editor {
             const y1 = this.poy < this.cury ? this.poy : this.cury;
             const y2 = this.poy < this.cury ? this.cury : this.poy;
 
-            var floor = new Floor( { x: x1, y: y1 }, { x: x2, y: y2 }, this.mode-4 );
+            var floor = new Floor( { x: x1, y: y1 }, { x: x2, y: y2 }, this.mode-5 );
             this.arFloors.push(floor);
             this._computeFloors();
 
@@ -3284,7 +3302,7 @@ export class Editor {
             this.action = Action.NONE;
         }
 
-        if (this.mode == Mode.DRAW_WALL) {
+        if (this.mode == Mode.DRAW_WALL ||  this.mode == Mode.DRAW_WALL2) {
             this._handleMouseUpDrawWall(event);
         }
 
