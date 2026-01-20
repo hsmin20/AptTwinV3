@@ -203,6 +203,8 @@ export class Editor {
             this.binder.update();
             document.getElementById("doorWindowWidthVal").textContent = (sliderValue / METER).toFixed(2);
         }
+
+        this.saveState();
     }
 
     changeHeight() {
@@ -239,6 +241,8 @@ export class Editor {
             this.binder.update();
             document.getElementById("doorWindowHeightVal").textContent = (sliderValue / METER).toFixed(2);
         }
+
+        this.saveState();
     }
 
     deleteSome() {
@@ -253,6 +257,8 @@ export class Editor {
         } else if(this.mode == Mode.EDIT_OBJECT) {
             this.deleteObject();
         }
+
+        this.saveState();
     }
 
     deleteWall() {
@@ -279,8 +285,6 @@ export class Editor {
 
             this._showBothWallSizes();
             this.mode = Mode.SELECT;
-
-            this.saveState();
         }
     }
 
@@ -301,7 +305,7 @@ export class Editor {
 
                 this.mode = Mode.SELECT;
 
-                this.saveState();
+                document.getElementById('select').checked = true;
             }
         }
     }
@@ -323,8 +327,6 @@ export class Editor {
             
             this._showBothWallSizes();
             this.mode = Mode.SELECT;
-
-            this.saveState();
         }
     }
 
@@ -345,8 +347,6 @@ export class Editor {
             
             this._showBothWallSizes();
             this.mode = Mode.SELECT;
-
-            this.saveState();
         }
     }
 
@@ -366,8 +366,6 @@ export class Editor {
             delete this.binder;
             
             this.mode = Mode.SELECT;
-
-            this.saveState();
         }
     }
 
@@ -1182,11 +1180,15 @@ export class Editor {
                 delete this.binder;
 
                 this.mode = Mode.SELECT;
+
+                document.getElementById('select').checked = true;
             }
         } else if (this.mode == Mode.EDIT_DOOR || this.mode == Mode.EDIT_WINDOW) {
             this.action = Action.CLICKED;
 
             this.mode = Mode.SELECT;
+
+            document.getElementById('select').checked = true;
 
             this.saveState();
         }
@@ -3126,6 +3128,9 @@ export class Editor {
             // this.binder.graph.remove();
             delete this.binder;
 
+            this.mode = Mode.SELECT;
+            document.getElementById('select').checked = true;
+
             this.saveState();
         }
     }
@@ -3140,6 +3145,9 @@ export class Editor {
             // this.binder.graph.remove();
             delete this.binder;
 
+            this.mode = Mode.SELECT;
+            document.getElementById('select').checked = true;
+
             this.saveState();
         }
     }
@@ -3148,8 +3156,9 @@ export class Editor {
         this.action = Action.NONE;
         // construc = 0; // CONSTRUC 0 TO FREE BINDER GROUP NODE WALL MOVING
         if (this.binder != null) {
-            // fonc_button('select_mode');
             this.mode = Mode.SELECT;
+            document.getElementById('select').checked = true;
+
             Util.intersectionOff();
 
             if (this.binder.type == Binder.NODE) {
@@ -3191,6 +3200,8 @@ export class Editor {
         if (this.binder != null) {
             this.mode = Mode.SELECT;
 
+            document.getElementById('select').checked = true;
+
             var floor = this.binder.wall;
         }
     }
@@ -3208,8 +3219,6 @@ export class Editor {
             delete this.binder;
             this._computeWalls();
         }
-        
-        // this.mode = Mode.SELECT;
     }
 
     _showOuterArrows() {
