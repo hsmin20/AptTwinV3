@@ -60,7 +60,7 @@ export class Player {
         this.setScene( loader.parse( data.scene ) );
 
         if(!this.mobile) {
-            this.camera.position.set(5.2, 1.5, -4.2);
+            this.camera.position.set(5.2, 1.5, -5.2);
             this.camera.lookAt(new THREE.Vector3(0, 1.2, 0));
         }
 

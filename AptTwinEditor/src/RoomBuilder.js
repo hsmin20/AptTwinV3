@@ -174,7 +174,7 @@ export class RoomBuilder {
         this.editor.objectChanged(group);
     }
 
-    addLightLamp(parent, lighttype, xpos, zpos, width, length) {
+    addLightLamp(parent, lighttype, xpos, ypos, zpos, width, length) {
          // Add a group first
         const group = new THREE.Group();
 		group.name = 'Light';
@@ -188,7 +188,7 @@ export class RoomBuilder {
         const texture = textureHelper.get(lighttype, 1, 1);
         let color = '#e4f1f6';
 
-        const y_pos = 2.28;
+        const y_pos = ypos;
         const name = lighttype + '_new';
 
         let light_new;

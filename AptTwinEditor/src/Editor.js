@@ -598,6 +598,7 @@ export class Editor {
         const length = element.thick;
 
         const xpos = element.x;
+        const ypos = HEIGHT - 0.02;
         const zpos = element.z;
         // const angle = element.angle - 180;
 
@@ -607,7 +608,7 @@ export class Editor {
         if(type == ObjectType.LIGHT)
             lightType = 'Light3';
 
-        this.roomBuilder.addLightLamp(null, lightType, xpos, zpos, width, length);
+        this.roomBuilder.addLightLamp(null, lightType, xpos, ypos, zpos, width, length);
     }
 
     constructFrom2DJSON( json ) {
