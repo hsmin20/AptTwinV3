@@ -1,4 +1,8 @@
 # root
 node_modules/
 dist/*.txt
+dist/apttwinfloorplanner.js
+dist/apttwineditorall.js
+dist/aptinteriorall.js
+dist/aptplayer.js
 .vscode/*
