@@ -287,7 +287,7 @@ export class MenubarEdit {
         options.add( new UIHorizontalRule() );
 
          // DB id
-        const DBidSubmenuTitle = new UIRow().setTextContent( 'Connect DB id' ).addClass( 'option' ).addClass( 'submenu-title' );
+        const DBidSubmenuTitle = new UIRow().setTextContent( 'Connect HA entity_id' ).addClass( 'option' ).addClass( 'submenu-title' );
         DBidSubmenuTitle.onMouseOver( function () {
             const { top, right } = DBidSubmenuTitle.dom.getBoundingClientRect();
             const { paddingTop } = getComputedStyle( this.dom );

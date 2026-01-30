@@ -5,6 +5,11 @@ import { textureHelper } from '../../src_common/TextureHelper.js';
 
 const Y_AXIS_VECTOR = new THREE.Vector3(0, 1, 0);
 
+const CLOSED = 0;
+const OPENED = 2;
+const OPENING = 1;
+const CLOSING = 3;
+
 function rotateAroundWorldAxis(obj, point, axis, angle) {
 	var q = new THREE.Quaternion();
 	q.setFromAxisAngle(axis, angle);
@@ -26,7 +31,11 @@ class Light {
     }
 
     update(state) {
-        this.light.visible = !this.light.visible;
+        const LIGHT_ON_ILLUMINANCE = 600; // check later
+        if(state > LIGHT_ON_ILLUMINANCE)
+            this.light.visible = true;
+        else
+            this.light.visible = false;
     }
 }
 
@@ -37,7 +46,7 @@ class Door {
         const parameters = geometry.parameters;
         this.width = parameters.width;
 
-        this.state = 0; // 0 is closed
+        this.state = CLOSED;
         this.pivotPos = new THREE.Vector3();
 
         this.pivotDir = object.userData.pivotDir;
@@ -61,19 +70,19 @@ class Door {
     }
 
     click() {
-        if(this.state == 1 || this.state == 3)
+        if(this.state == OPENING || this.state == CLOSING)
             return;
 
         this.rotated = 0;
-        if(this.state == 0) {
+        if(this.state == CLOSED) {
             let xoffset = this.hingex * this.width/2;
             if(this.pivotDir == "left")
                 xoffset *= -1;
 
             this.pivotPos = new THREE.Vector3(this.object.position.x+xoffset, this.object.position.y, 0);
-            this.state = 1; // 1 is HouseObject
+            this.state = OPENING;
         }
-        if(this.state == 2) {
+        if(this.state == OPENED) {
             let offset = -1;
             if(this.ccw)
                 offset = 1;
@@ -82,7 +91,7 @@ class Door {
             let zoffset = this.hingex * this.width/2 * -offset;
 
             this.pivotPos = new THREE.Vector3(this.object.position.x+xoffset, this.object.position.y, 0);
-            this.state = 3; // 3 is closing
+            this.state = CLOSING;
         }
     }
 
@@ -95,13 +104,13 @@ class Door {
             this.rotated += angle;
 
             if(Math.abs(this.rotated) >=90)
-                this.state = 2; // 2 is opened
-		} else if(this.state == 3) {
+                this.state = OPENED;
+		} else if(this.state == CLOSING) {
             this.rotateAroundAxis(this.pivotPos, -angle);
             this.rotated += angle;
 
             if(Math.abs(this.rotated) >=90)
-                this.state = 0;
+                this.state = CLOSED;
             
         }
 	}
@@ -112,7 +121,10 @@ class Door {
 	}
 
     update(state) {
-        this.click();
+        if(state == 'off' && this.state == OPENED)
+            this.click();
+        if(state == 'on' && this.state == CLOSED)
+            this.click();
     }
 }
 
@@ -123,25 +135,25 @@ class Window {
         const parameters = geometry.parameters;
         this.width = parameters.width;
 
-        this.state = 0; // 0 is closed
+        this.state = CLOSED;
         this.moved = 0;
         this.openDir = object.userData.openDir;
     }
 
     click() {
-        if(this.state == 1 || this.state == 3)
+        if(this.state == OPENING || this.state == CLOSING)
             return;
 
         this.moved = 0;
-        if(this.state == 0) {
-            this.state = 1; // 1 is HouseObject
-        } else if(this.state == 2) {
-            this.state = 3; // 3 is closing
+        if(this.state == CLOSED) {
+            this.state = OPENING;
+        } else if(this.state == OPENED) {
+            this.state = CLOSING; // 3 is closing
         }
     }
 
     run(timeElapsed) {
-        if(this.state == 1) {
+        if(this.state == OPENING) {
             if(this.openDir == "=>") {
                 this.object.position.x = Number(this.object.position.x) + 0.02;
             } else if(this.openDir == "<=")
@@ -149,9 +161,9 @@ class Window {
 
             this.moved +=  0.02;
             if(this.moved >= this.width) {
-                this.state = 2; // 2 is opened
+                this.state = OPENED; // 2 is opened
             }
-        } else if(this.state == 3) {
+        } else if(this.state == CLOSING) {
             if(this.openDir == "=>")
                 this.object.position.x -= 0.02;
             else if(this.openDir == "<=")
@@ -159,13 +171,16 @@ class Window {
 
             this.moved += 0.02;
             if(this.moved >= this.width) {
-                this.state = 0;
+                this.state = CLOSED;
             }
         }
 	}
 
     update(state) {
-        this.click();
+        if(state == 'off' && this.state == OPENED)
+            this.click();
+        if(state == 'on' && this.state == CLOSED)
+            this.click();
     }
 }
 
@@ -334,6 +349,32 @@ class MovingObject {
 	}
 }
 
+class Multimap {
+    constructor() {
+        // The underlying data store is a Map where keys map to an array of values
+        this.map = new Map();
+    }
+
+    // Associates the specified value with the specified key
+    set(key, value) {
+        if (!this.map.has(key)) {
+            this.map.set(key, []);
+        }
+        this.map.get(key).push(value);
+    }
+
+    // Returns a reference to the array of values associated with the given key
+    get(key) {
+        // Return an empty array if the key is not found, to prevent errors
+        return this.map.get(key) || [];
+    }
+
+    // Checks if the multimap contains the specified key
+    has(key) {
+        return this.map.has(key);
+    }
+}
+
 export class EntityManager {
     constructor(scene) {
         this.scene = scene;
@@ -343,7 +384,7 @@ export class EntityManager {
         this.arAnimObj = [];
         this.mapClickable = new Map();
 
-        this.mapUpdateble = new Map();
+        this.mapUpdatable = new Multimap();
 
         this.build();
     }
@@ -364,7 +405,7 @@ export class EntityManager {
 
                     const DBid = object.userData.DBid;
                     if(DBid != undefined) {
-                        scope.mapUpdateble.set('door'+DBid, door);
+                        scope.mapUpdatable.set(DBid, door);
                     }
                 } else if(type == 'window') {
                     let window = new Window(object);
@@ -374,14 +415,14 @@ export class EntityManager {
 
                     const DBid = object.userData.DBid;
                     if(DBid != undefined) {
-                        scope.mapUpdateble.set('window'+DBid, window);
+                        scope.mapUpdatable.set(DBid, window);
                     }
                 } else if(type == 'light') {
                     let light = new Light(object);
 
                     const DBid = object.userData.DBid;
                     if(DBid != undefined) {
-                        scope.mapUpdateble.set('light'+DBid, light);
+                        scope.mapUpdatable.set(DBid, light);
                     }
                 } else if(type == 'drawer') {
                     let drawer = new Drawer(object);
@@ -398,7 +439,7 @@ export class EntityManager {
 
                 const DBid = object.userData.DBid;
                 if(DBid != undefined) {
-                    scope.mapUpdateble.set('util'+DBid, flame);
+                    scope.mapUpdatable.set(DBid, flame);
                 }
             }
 
@@ -412,7 +453,7 @@ export class EntityManager {
 
                 const DBid = object.userData.DBid;
                 if(DBid != undefined) {
-                    scope.mapUpdateble.set('util'+DBid, tv);
+                    scope.mapUpdatable.set(DBid, tv);
                 }
             }
 
@@ -431,7 +472,7 @@ export class EntityManager {
 
                 const DBid = object.userData.DBid;
                 if(DBid != undefined) {
-                    scope.mapUpdateble.set('util'+DBid, washingMachine);
+                    scope.mapUpdatable.set(DBid, washingMachine);
                 }
             }
 
@@ -443,7 +484,7 @@ export class EntityManager {
 
                     const DBid = object.userData.DBid;
                     if(DBid != undefined) {
-                        scope.mapUpdateble.set('moving'+DBid, movable);
+                        scope.mapUpdatable.set(DBid, movable);
                     }
                 }
             }
@@ -454,7 +495,7 @@ export class EntityManager {
 
                 const DBid = object.userData.DBid;
                 if(DBid != undefined) {
-                    scope.mapUpdateble.set('moving'+DBid, movable);
+                    scope.mapUpdatable.set(DBid, movable);
                 }
             }
         });
@@ -490,49 +531,62 @@ export class EntityManager {
     }
 
     update(data) {
-        const MAX_NUM2 = 20;
-        const MAX_NUM = 10;
-        const HALF_NUM = 5;
-        for(let i=1; i<=MAX_NUM2; i++) {
-            const id = 'light'+ i;
-            const val = data[id];
-            const obj = this.mapUpdateble.get(id);
-            if(obj != undefined) {
-                obj.update(val);
+        for (const item of data) {
+            const entity_id = item.entity_id;
+            const state = item.state;
+
+            const objs = this.mapUpdatable.get(entity_id);
+            for(let i=0; i<objs.length; i++) {
+                const obj = objs[i];
+                obj.update(state);
             }
         }
-        for(let i=1; i<=MAX_NUM; i++) {
-            const id = 'door' + i;
-            const val = data[id];
-            const obj = this.mapUpdateble.get(id);
-            if(obj != undefined)
-                obj.update(val);
-        }
-        for(let i=1; i<=MAX_NUM; i++) {
-            const id = 'window' + i;
-            const val = data[id];
-            const obj = this.mapUpdateble.get(id);
-            if(obj != undefined)
-                obj.update(val);
-        }
-        for(let i=1; i<=MAX_NUM; i++) {
-            const id = 'util' + i;
-            const val = data[id];
-            const obj = this.mapUpdateble.get(id);
-            if(obj != undefined)
-                obj.update(val);
-        }
-        for(let i=1; i<=HALF_NUM; i++) {
-            const idx = 'moving' + i + 'x';
-            const valx = data[idx];
-            const idz = 'moving' + i + 'z';
-            const valz = data[idz];
-            const idry = 'moving' + i + 'ry';
-            const valry = data[idry];
-            const objid = 'moving' + i;
-            const obj = this.mapUpdateble.get(objid);
-            if(obj != undefined)
-                obj.update(valx, valz, valry);
-        }
     }
+
+    // update(data) {
+    //     const MAX_NUM2 = 20;
+    //     const MAX_NUM = 10;
+    //     const HALF_NUM = 5;
+    //     for(let i=1; i<=MAX_NUM2; i++) {
+    //         const id = 'light'+ i;
+    //         const val = data[id];
+    //         const obj = this.mapUpdatable.get(id);
+    //         if(obj != undefined) {
+    //             obj.update(val);
+    //         }
+    //     }
+    //     for(let i=1; i<=MAX_NUM; i++) {
+    //         const id = 'door' + i;
+    //         const val = data[id];
+    //         const obj = this.mapUpdatable.get(id);
+    //         if(obj != undefined)
+    //             obj.update(val);
+    //     }
+    //     for(let i=1; i<=MAX_NUM; i++) {
+    //         const id = 'window' + i;
+    //         const val = data[id];
+    //         const obj = this.mapUpdatable.get(id);
+    //         if(obj != undefined)
+    //             obj.update(val);
+    //     }
+    //     for(let i=1; i<=MAX_NUM; i++) {
+    //         const id = 'util' + i;
+    //         const val = data[id];
+    //         const obj = this.mapUpdatable.get(id);
+    //         if(obj != undefined)
+    //             obj.update(val);
+    //     }
+    //     for(let i=1; i<=HALF_NUM; i++) {
+    //         const idx = 'moving' + i + 'x';
+    //         const valx = data[idx];
+    //         const idz = 'moving' + i + 'z';
+    //         const valz = data[idz];
+    //         const idry = 'moving' + i + 'ry';
+    //         const valry = data[idry];
+    //         const objid = 'moving' + i;
+    //         const obj = this.mapUpdatable.get(objid);
+    //         if(obj != undefined)
+    //             obj.update(valx, valz, valry);
+    //     }
+    // }
 }
