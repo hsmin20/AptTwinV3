@@ -94,34 +94,10 @@ if(isSample|| house_id != -1) {
 
 let g_intervalId;
 
-// async function fetchDataAndUpdateScene() {
-//     const urlParams = new URL(location.href).searchParams;
-//     let house_id = urlParams.get('house_id');
-//     if(house_id == undefined) {
-//         house_id = 47; // admin model state
-//         // console.log('No House ID exists');
-//         // return;
-//     }
-
-//     try {
-//         const response = await fetch('./process.php?tblname=HouseState&house_id=' + house_id);
-//         if (!response.ok) {
-//             throw new Error(`HTTP error! status: ${response.status}`);
-//         }
-//         const data = await response.json();
-//         player.updateScene(data);
-
-//     } catch (error) {
-//         console.error('Error fetching data:', error);
-//         // Handle the error appropriately, e.g., display an error message or retry the request
-//     }
-// }
-
 async function fetchDataFromHAAndUpdateScene() {
     try {
-        const api_url = 'http://dahantech.iptime.org:8123/api/states';
-        const access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkZTZiNGQ4NTRmMWM0ZmJjOTc4OTM2ZmNjN2UzZjIyYSIsImlhdCI6MTc2OTY2MjA0MywiZXhwIjoyMDg1MDIyMDQzfQ.6sZjJJLz84b_DggjMYv24qNRO-H_3_cUnTU_beJ8EW4'; 
-
+        const api_url = 'http://112.223.164.246:8123/api/states';
+        const access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzN2FiMWM3OGNiZmU0ODdiOGM4YzAxYWQyMzdlOGMxYyIsImlhdCI6MTc3MDAwMDM4MywiZXhwIjoyMDg1MzYwMzgzfQ.gefk9bTB5DhVzFg4x5hMi_Qn4zKnSXTUMTBXN0wCRpo'
         const response = await fetch(api_url, {
             headers: {
                 "Authorization": `Bearer ${access_token}`,

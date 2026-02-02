@@ -34,9 +34,8 @@ function createAssignDialog(devices) {
 
 async function assign(uuid, device_cls) {
     try {
-        const api_url = 'http://dahantech.iptime.org:8123/api/states';
-        const access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkZTZiNGQ4NTRmMWM0ZmJjOTc4OTM2ZmNjN2UzZjIyYSIsImlhdCI6MTc2OTY2MjA0MywiZXhwIjoyMDg1MDIyMDQzfQ.6sZjJJLz84b_DggjMYv24qNRO-H_3_cUnTU_beJ8EW4'; 
-
+        const api_url = 'http://112.223.164.246:8123/api/states';
+        const access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzN2FiMWM3OGNiZmU0ODdiOGM4YzAxYWQyMzdlOGMxYyIsImlhdCI6MTc3MDAwMDM4MywiZXhwIjoyMDg1MzYwMzgzfQ.gefk9bTB5DhVzFg4x5hMi_Qn4zKnSXTUMTBXN0wCRpo'
         const response = await fetch(api_url, {
             headers: {
                 "Authorization": `Bearer ${access_token}`,

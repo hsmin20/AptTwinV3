@@ -31,7 +31,7 @@ class Light {
     }
 
     update(state) {
-        const LIGHT_ON_ILLUMINANCE = 600; // check later
+        const LIGHT_ON_ILLUMINANCE = 400; // check later
         if(state > LIGHT_ON_ILLUMINANCE)
             this.light.visible = true;
         else
@@ -542,51 +542,4 @@ export class EntityManager {
             }
         }
     }
-
-    // update(data) {
-    //     const MAX_NUM2 = 20;
-    //     const MAX_NUM = 10;
-    //     const HALF_NUM = 5;
-    //     for(let i=1; i<=MAX_NUM2; i++) {
-    //         const id = 'light'+ i;
-    //         const val = data[id];
-    //         const obj = this.mapUpdatable.get(id);
-    //         if(obj != undefined) {
-    //             obj.update(val);
-    //         }
-    //     }
-    //     for(let i=1; i<=MAX_NUM; i++) {
-    //         const id = 'door' + i;
-    //         const val = data[id];
-    //         const obj = this.mapUpdatable.get(id);
-    //         if(obj != undefined)
-    //             obj.update(val);
-    //     }
-    //     for(let i=1; i<=MAX_NUM; i++) {
-    //         const id = 'window' + i;
-    //         const val = data[id];
-    //         const obj = this.mapUpdatable.get(id);
-    //         if(obj != undefined)
-    //             obj.update(val);
-    //     }
-    //     for(let i=1; i<=MAX_NUM; i++) {
-    //         const id = 'util' + i;
-    //         const val = data[id];
-    //         const obj = this.mapUpdatable.get(id);
-    //         if(obj != undefined)
-    //             obj.update(val);
-    //     }
-    //     for(let i=1; i<=HALF_NUM; i++) {
-    //         const idx = 'moving' + i + 'x';
-    //         const valx = data[idx];
-    //         const idz = 'moving' + i + 'z';
-    //         const valz = data[idz];
-    //         const idry = 'moving' + i + 'ry';
-    //         const valry = data[idry];
-    //         const objid = 'moving' + i;
-    //         const obj = this.mapUpdatable.get(objid);
-    //         if(obj != undefined)
-    //             obj.update(valx, valz, valry);
-    //     }
-    // }
 }
