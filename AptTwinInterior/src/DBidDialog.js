@@ -326,7 +326,8 @@ export function showDBidConnection( editor, type ) {
             const map = new Map([
                 ['doors', 'opening'],
                 ['windows', 'opening'],
-                ['lights', 'illuminance']
+                ['lights', 'illuminance'],
+                ['utils', 'power']
             ]);
 
             assign(btn.value, map.get(type));
