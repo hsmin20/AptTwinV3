@@ -257,7 +257,7 @@ class TV extends THREE.Mesh {
     }
 
     update(state) {
-        if(state) {
+        if(state > 80) {
             this.position.z = this.depth / 2.0 + 0.001;
             this.video.play();
         } else {
