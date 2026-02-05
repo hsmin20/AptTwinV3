@@ -1,0 +1,164 @@
+body.project-page {
+  background-color: #f8f9fb;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.project-header {
+  background: linear-gradient(90deg, #f5f1e6, #f0e8d8); /* 따뜻한 베이지 */
+  padding: 20px 30px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-content {
+  text-align: center;
+}
+
+.main-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #5a4b3b; /* 따뜻한 브라운 */
+  margin: 0;
+  line-height: 1.2;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    text-align: left;
+}
+th {
+    background-color: #f5f5f5;
+}
+
+.card-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* Adds space between the divs */
+}
+
+/* 개별 카드 */
+.project-card {
+    background: #fff;
+    border: 1px solid #e4e4e4;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.25s ease;
+    overflow: hidden;
+    cursor: pointer;
+}
+.project-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+}
+
+.new-project-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f3f6fa;
+  border: 2px dashed #a7b7c9;
+  color: #6a7b8c;
+  transition: all 0.25s ease;
+  height: 100px; /* 카드 높이 직접 조절 가능 */
+  cursor: pointer;
+}
+
+.new-project-card:hover {
+  background: #e8f0ff;
+  border-color: #5a4b3b;
+  color:#5a4b3b;
+  transform: translateY(-3px);
+}
+
+.new-project-card .plus-sign {
+  font-size: 60px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.new-project-card .new-text {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.edit-btn {
+  margin: 0 16px 16px 16px;
+  padding: 6px 10px;
+  font-size: 13px;
+  background-color: #f5f1e6;
+  color: #5a4b3b;
+  border: 1px solid #d8c9a7;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-btn:hover {
+  background-color: #e7b969;
+  color: #3e352a;
+}
+
+.delete-btn {
+  margin: 0 16px 16px 16px;
+  padding: 6px 10px;
+  font-size: 13px;
+  background-color: #f5f1e6;
+  color: #5a4b3b;
+  border: 1px solid #d8c9a7;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+  background-color: #e9ddc9;
+  color: #3e352a;
+}
+
+/* 이미지 */
+.thumbnail-container {
+  position: relative; /* Essential for positioning the large image relative to the thumbnail */
+  display: inline-block;
+  cursor: pointer; /* Makes it clear it's interactive */
+}
+
+.thumbnail {
+  width: 60px; /* Adjust size as needed */
+  height: auto;
+}
+
+.large-image-preview {
+  display: none; /* Hide the large image container by default */
+  position: absolute;
+  top: 0; /* Adjust positioning as desired */
+  left: 0px; /* Position it next to the thumbnail, adjust as needed */
+  z-index: 10; /* Ensure it appears on top of other elements */
+  border: 1px solid #ccc;
+  padding: 5px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Show the large image container when hovering over the parent container */
+.thumbnail-container:hover .large-image-preview {
+  display: block;
+}
+
+.original-image {
+  width: auto; /* Adjust large image size as needed */
+  height: auto;
+}

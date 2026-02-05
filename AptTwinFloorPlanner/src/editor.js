@@ -509,7 +509,7 @@ export class Editor {
         return realWallsArray;
     }
 
-    export() {
+    export2DCoords() {
         // Get center to correct all the coordinates
         var minX = -1, minY = -1, maxX = -1, maxY = -1;
         for (var i = 0; i < this.arWalls.length; i++) {
@@ -614,6 +614,12 @@ export class Editor {
 
         let data = JSON.stringify(elementArray);
 
+        return data;
+    }
+
+    export() {
+        const data = this.export2DCoords();
+
         const blob = new Blob([JSON.stringify(data, null, 2)], {
             type: 'application/json',
         });
@@ -637,6 +643,13 @@ export class Editor {
                 scope.storage.set( scope.toJson() );
             }, 100 );
         }, 1000 );
+    }
+
+    transferToEditor() {
+        const data = this.export2DCoords();
+        localStorage.setItem("2dCoordsData", data);
+
+        location.href = 'editor.html?fromFloorplanner=true';
     }
 
     onSuccessStorage() {

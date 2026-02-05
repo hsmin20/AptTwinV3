@@ -211,6 +211,10 @@ function handleButtonClick(editor) {
     var savestateBtn = document.getElementById('savestate');
     savestateBtn.onclick = savestateFunc;
 
+    var transferToEditorFunc = editor.transferToEditor.bind(editor);
+    var transferToEditorBtn = document.getElementById('transerToEditor');
+    transferToEditorBtn.onclick = transferToEditorFunc;
+
     var leftPanel = document.getElementById('panel');
     leftPanel.addEventListener('mousemove', handleMouseInLeftPanel);
 }

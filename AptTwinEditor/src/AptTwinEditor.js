@@ -10,6 +10,9 @@ if(model_id == undefined)
 let house_id = urlParams.get('house_id');
 if(house_id == undefined)
     house_id = -1;
+let fromFloorplanner = urlParams.get('fromFloorplanner');
+if(fromFloorplanner == undefined)
+    fromFloorplanner = 'false';
 
 const editor = new Editor('Apartment');
 
@@ -63,6 +66,7 @@ function onWindowResize() {
 
 window.addEventListener( 'resize', onWindowResize );
 
+let initialized = false;
 if(model_id != -1 || house_id != -1) {
     editor.storage.init(function() {});
     try {
@@ -82,9 +86,22 @@ if(model_id != -1 || house_id != -1) {
 
         editor.clear();
         editor.fromJSON( data );
+
+        initialized = true;
     } catch (error) {
         console.error('Error fetching data:', error);
     }
-} else {
+}
+
+if(fromFloorplanner == 'true') {
+    editor.storage.init(function() {});
+    let data = localStorage.getItem("2dCoordsData");
+    editor.clear();
+    editor.constructFrom2DJSON( data );
+
+    initialized = true;
+}
+
+if(initialized == false) {
     editor.storage.init(onSuccessStorage);
 }

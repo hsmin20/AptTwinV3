@@ -1,4 +1,6 @@
 <?php
+    // These functions are for older Editor-oriented upload functions.
+    
     function uploadModelHouseData($complexName, $size, $type, $companyName, $address, $data, $comment) {
         include("mssql_connect.php");
 

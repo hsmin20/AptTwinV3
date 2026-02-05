@@ -54,12 +54,14 @@ export class Storage {
     }
 
     clear() {
-        const transaction = database.transaction( [ 'states' ], 'readwrite' );
-        const objectStore = transaction.objectStore( 'states' );
-        const request = objectStore.clear();
+        if(database != null) {
+            const transaction = database.transaction( [ 'states' ], 'readwrite' );
+            const objectStore = transaction.objectStore( 'states' );
+            const request = objectStore.clear();
 
-        request.onsuccess = function () {
-            console.log( '[' + /\d\d\:\d\d\:\d\d/.exec( new Date() )[ 0 ] + ']', 'Cleared IndexedDB.' );
-        };
+            request.onsuccess = function () {
+                console.log( '[' + /\d\d\:\d\d\:\d\d/.exec( new Date() )[ 0 ] + ']', 'Cleared IndexedDB.' );
+            };
+        }
     }
 }

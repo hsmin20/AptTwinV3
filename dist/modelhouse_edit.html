@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Local Projects | APT Twin</title>
+  <link rel="stylesheet" href="./css/modelhouse_project.css" />
+</head>
+<body class="project-page">
+  <header class="project-header">
+    <div class="header-content">
+      <!-- 홈 아이콘 -->
+<a href="./index.html" class="home-icon" title="홈으로 이동">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" width="36" height="36">
+    <path d="M9 20L24 8L39 20V38C39 39.1046 38.1046 40 37 40H11C9.89543 40 9 39.1046 9 38V20Z" 
+          stroke="#b49a77" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M19 40V26H29V40" stroke="#b49a77" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</a>
+
+      <!-- 중앙 제목 -->
+      <h1 class="main-title">Model Houses 수정</h1>
+    </div>
+  </header>
+        <table id="item-table">
+            <thead>
+                <tr>
+                <th>항목</th>
+                <th>내용</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>이미지</td>
+                    <td>
+                        <div class="thumbnail-container">
+                            <img class="thumbnail" id="thumbnail" src="" alt="thumbnail" />
+                            <span class="large-image-preview">
+                            <img id="image" src="" alt="original" class="original-image">
+                            </span>
+                        </div>
+                        <div>
+                        <form action="upload_image.php" method="post" enctype="multipart/form-data">
+                            <input type="file" name="imageFile" id="imageFile" accept="image/png, image/jpeg" />
+                            <input type="hidden" id="model_id" name="model_id" value="" />
+                            <input type="submit" value="Upload Image" name="submit">
+                        </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>이름</td>
+                    <td>
+                        <input type="text" id="name" value="loading..."/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>주소</td>
+                    <td>
+                        <input type="text" id="address" value="loading..."/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>면적(m<sup>2</sup>)</td>
+                    <td>
+                        <input type="text" id="area" value="loading..."/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>타입</td>
+                    <td>
+                        <input type="text" id="type" value="loading..."/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>건설사</td>
+                    <td>
+                        <input type="text" id="companyName" value="loading..."/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>비고</td>
+                    <td>
+                        <input type="text" id="comment" value="loading..."/>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="card-container">
+        <div class="project-card new-project-card" id="editOK">
+            <div class="plus-sign">OK</div>
+            <p class="new-text">O</p>
+        </div>
+        <div class="project-card new-project-card" id="editCancel">
+            <div class="plus-sign">Cancel</div>
+            <p class="new-text">x</p>
+        </div>
+        </div>
+
+        <footer id="footer">
+    <p>© 2025 APT Twin</p>
+  </footer>
+
+  <script src="./main_js/checkLogin.js"></script>
+  <script src="./main_js/modelhouse_edit.js"></script>
+</body>
+</html>
