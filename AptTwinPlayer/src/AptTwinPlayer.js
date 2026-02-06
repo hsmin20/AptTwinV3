@@ -96,8 +96,8 @@ let g_intervalId;
 
 async function fetchDataFromHAAndUpdateScene() {
     try {
-        const api_url = 'http://112.223.164.246:8123/api/states';
-        const access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzN2FiMWM3OGNiZmU0ODdiOGM4YzAxYWQyMzdlOGMxYyIsImlhdCI6MTc3MDAwMDM4MywiZXhwIjoyMDg1MzYwMzgzfQ.gefk9bTB5DhVzFg4x5hMi_Qn4zKnSXTUMTBXN0wCRpo'
+        const api_url = player.scene.userData.url;
+        const access_token = player.scene.userData.token;
         const response = await fetch(api_url, {
             headers: {
                 "Authorization": `Bearer ${access_token}`,

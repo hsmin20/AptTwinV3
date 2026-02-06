@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { saveState } from "./AptTwinInterior";
 
 function createAssignDialog(devices) {
@@ -32,10 +33,10 @@ function createAssignDialog(devices) {
     return _html + assignHtml + _html2;
 }
 
-async function assign(uuid, device_cls) {
+async function assign(url, token, uuid, device_cls) {
     try {
-        const api_url = 'http://112.223.164.246:8123/api/states';
-        const access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzN2FiMWM3OGNiZmU0ODdiOGM4YzAxYWQyMzdlOGMxYyIsImlhdCI6MTc3MDAwMDM4MywiZXhwIjoyMDg1MzYwMzgzfQ.gefk9bTB5DhVzFg4x5hMi_Qn4zKnSXTUMTBXN0wCRpo'
+        const api_url = url;
+        const access_token = token;
         const response = await fetch(api_url, {
             headers: {
                 "Authorization": `Bearer ${access_token}`,
@@ -48,8 +49,6 @@ async function assign(uuid, device_cls) {
         }
 
         const data = await response.json();
-
-        // console.log(JSON.stringify(data, null, 2));
 
         const filtered = [];
         for (const item of data) {
@@ -310,6 +309,60 @@ function createDialog(editor, type) {
     }
 }
 
+export function setDBConnection( editor ) {
+    let _html = `
+        <dialog id="DBConnectionInfoDialog">
+            <form id="DBinfoForm">
+                <p>REST API base URL : <br>
+                <input type="text" id="baseURL" name="baseURL" value="BASEURL" size="50"></p>
+                <p>Bearer Token : <br>
+                <input type="text" id="bearerToken" name="bearerToken" value="BEARERTOKEN" size="200"></p>                
+                <div class="clearfix"></div>
+                <div style="padding:6px;">
+                <p>
+                <button value="cancel" formmethod="dialog">Cancel</button>
+                <button id="confirmBtn" value="default">Apply</button>
+                </p>
+                </div>
+            </form>
+        </dialog>
+    `
+
+    const oldUrl = editor.scene.userData.url;
+    const oldToken = editor.scene.userData.token;
+
+    _html = _html.replace('BASEURL', oldUrl);
+    _html = _html.replace('BEARERTOKEN', oldToken);
+
+    const dom = new DOMParser().parseFromString(_html, 'text/html');
+    const dialog = dom.querySelector("dialog");
+    document.body.appendChild(dialog)
+
+    const dBConnectionInfoDialog = document.getElementById("DBConnectionInfoDialog");
+
+    const confirmBtn = dBConnectionInfoDialog.querySelector("#confirmBtn");
+
+    // "Cancel" button closes the dialog without submitting because of [formmethod="dialog"], triggering a close event.
+    dBConnectionInfoDialog.addEventListener("close", (e) => {
+        document.body.removeChild(dialog)
+    });
+
+    // Prevent the "confirm" button from the default behavior of submitting the form, and close the dialog with the `close()` method, which triggers the "close" event.
+    confirmBtn.addEventListener("click", (event) => {
+        event.preventDefault(); // We don't want to submit this fake form
+
+        const url = document.getElementById("baseURL").value;
+        const token = document.getElementById("bearerToken").value;
+
+        editor.scene.userData.url = url;
+        editor.scene.userData.token = token;
+
+        document.body.removeChild(dialog)
+    });
+
+    dBConnectionInfoDialog.showModal();
+}
+
 export function showDBidConnection( editor, type ) {
     const _html = createDialog(editor, type);
 
@@ -321,6 +374,10 @@ export function showDBidConnection( editor, type ) {
     const confirmBtn = dBidConnectionDialog.querySelector("#confirmBtn");
 
     const assigBtns = dBidConnectionDialog.querySelectorAll("#assignBtn");
+
+    const url = editor.scene.userData.url;
+    const token = editor.scene.userData.tocken;
+
     assigBtns.forEach(btn => {
         btn.addEventListener("click", () => {
             const map = new Map([
@@ -330,7 +387,7 @@ export function showDBidConnection( editor, type ) {
                 ['utils', 'power']
             ]);
 
-            assign(btn.value, map.get(type));
+            assign(url, token, btn.value, map.get(type));
         });
     });
 

@@ -348,7 +348,7 @@ export class Editor {
 	}
 
     keyDown( event ) {
-		switch ( event.key.toLowerCase() ) {
+		switch ( event.key ) {
 			case 'delete':
 				const object = this.selected;
 				if ( object === null ) return;
@@ -361,6 +361,7 @@ export class Editor {
 
 				break;
 			case 'z':
+            case 'Z':
 				if ( event.ctrlKey ) {
 					event.preventDefault(); // Prevent browser specific hotkeys
 					this.undo();
@@ -368,6 +369,7 @@ export class Editor {
 
 				break;
             case 'y':
+            case 'Y':
 				if ( event.ctrlKey ) {
 					event.preventDefault(); // Prevent browser specific hotkeys
 					this.redo();

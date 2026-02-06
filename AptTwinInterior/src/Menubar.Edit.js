@@ -24,7 +24,7 @@ import { RobotVacuum } from './interior/RobotVacuum.js';
 import { Dog } from './interior/Dog.js';
 import { Cat } from './interior/Cat.js';
 
-import { showDBidConnection } from './DBidDialog.js';
+import { setDBConnection, showDBidConnection } from './DBidDialog.js';
 
 export class MenubarEdit {
     constructor( editor ) {
@@ -304,7 +304,19 @@ export class MenubarEdit {
         const DBidSubmenu = new UIPanel().setPosition( 'fixed' ).addClass( 'options' ).setDisplay( 'none' );
         DBidSubmenuTitle.add( DBidSubmenu );
 
-        // Door DB id
+        // DB info
+        option = new UIRow();
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'HA Info' );
+        option.onClick( function () {
+            setDBConnection(editorscope);
+        } );
+        DBidSubmenu.add( option );
+
+        DBidSubmenu.add( new UIHorizontalRule() );
+
+        // Light DB id
         option = new UIRow();
         option = new UIRow();
         option.setClass( 'option' );
@@ -314,6 +326,7 @@ export class MenubarEdit {
         } );
         DBidSubmenu.add( option );
 
+        // Door DB id
         option = new UIRow();
         option = new UIRow();
         option.setClass( 'option' );
@@ -323,6 +336,7 @@ export class MenubarEdit {
         } );
         DBidSubmenu.add( option );
 
+        // Window DB id
         option = new UIRow();
         option.setClass( 'option' );
         option.setTextContent( 'Windows' );
@@ -331,6 +345,7 @@ export class MenubarEdit {
         } );
         DBidSubmenu.add( option );
 
+        // Util DB id
         option = new UIRow();
         option.setClass( 'option' );
         option.setTextContent( 'Utils' );
@@ -339,6 +354,7 @@ export class MenubarEdit {
         } );
         DBidSubmenu.add( option );
 
+        // Pet DB id
         option = new UIRow();
         option.setClass( 'option' );
         option.setTextContent( 'Pets' );
