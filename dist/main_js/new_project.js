@@ -92,8 +92,8 @@ async function initKakaoMap() {
             const isBlocked = blockWords.some(word => name.includes(word));
             const isAptCategory = place.category_group_code === 'APT';
             const isAptName = name.includes('아파트') && name.includes(searchAptName);
-
-            if(name == '다한테크' || name == '울산구치소')
+            console.log(name);
+            if(name == '다한테크' || name == '서울구치소삼거리')
                 return true;
 
             return !isBlocked && (isAptCategory || isAptName);
