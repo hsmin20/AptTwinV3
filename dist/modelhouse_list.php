@@ -38,8 +38,6 @@ if ($stmt === false) {
 
 $projects = [];
 while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-    $updated = $row['updated_at'] instanceof DateTime ? $row['updated_at']->format('Y-m-d H:i:s') : null;
-
     // 이미지가 있으면 Base64로 변환
     $imageData = $row['model_image'] ? 'data:image/jpeg;base64,' . base64_encode($row['model_image']) : null;
 

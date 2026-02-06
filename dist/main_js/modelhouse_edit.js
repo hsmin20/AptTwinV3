@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const loginData = await loginRes.json();
 
         if (!loginData.logged_in) {
-        projectContainer.innerHTML = `<p class="no-login">로그인이 필요합니다.</p>`;
-        return;
+            projectContainer.innerHTML = `<p class="no-login">로그인이 필요합니다.</p>`;
+            return;
         }
 
         const userid = loginData.userid;
@@ -59,11 +59,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             fetch(url);
 
-            window.location = './/modelhouse_list.html'; //document.referrer;
+            window.location = './modelhouse_list.html'; //document.referrer;
         });
 
         document.getElementById("editCancel").addEventListener("click", () => {
-            history.back();
+            window.location = './modelhouse_list.html';
         });
 
     } catch (err) {
