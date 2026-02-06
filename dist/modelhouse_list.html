@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Local Projects | APT Twin</title>
+  <title>모델 하우스 | APT Twin</title>
   <link rel="stylesheet" href="./css/modelhouse_project.css" />
 </head>
 <body class="project-page">
@@ -22,33 +22,34 @@
       <h1 class="main-title">Model Houses</h1>
     </div>
   </header>
+  
+    <main class="project-container" id="projectContainer">
+        <table id="item-table">
+            <thead>
+                <tr>
+                <th>id</th>
+                <th>이미지</th>
+                <th>이름</th>
+                <th>주소</th>
+                <th>면적(m<sup>2</sup>)</th>
+                <th>타입</th>
+                <th>건설사</th>
+                <th>비고</th>
+                <th>수정/삭제</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                <td colspan="2">로딩중...</td>
+                </tr>
+            </tbody>
+        </table>
 
-    <table id="item-table">
-        <thead>
-            <tr>
-            <th>id</th>
-            <th>이미지</th>
-            <th>이름</th>
-            <th>주소</th>
-            <th>면적(m<sup>2</sup>)</th>
-            <th>타입</th>
-            <th>건설사</th>
-            <th>비고</th>
-            <th>수정/삭제</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-            <td colspan="2">로딩중...</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="project-card new-project-card" id="newModelHouse">
-        <div class="plus-sign">+</div>
-        <p class="new-text">FloorPlanner를 이용하여 새 모델 만들기 </p>
-    </div>
-
+        <div class="project-card new-project-card" id="newModelHouse">
+            <div class="plus-sign">+</div>
+            <p class="new-text">FloorPlanner를 이용하여 새 모델 만들기 </p>
+        </div>
+    </main>
   <footer id="footer">
     <p>© 2025 APT Twin</p>
   </footer>

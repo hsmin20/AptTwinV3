@@ -29,6 +29,15 @@ body.project-page {
   line-height: 1.2;
 }
 
+.sub-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #8b7d6b; /* 메인 타이틀보다 살짝 연한 브라운 */
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -93,6 +102,24 @@ th {
   margin-top: 10px;
   font-size: 18px;
   font-weight: 600;
+}
+
+.project-header {
+  position: relative;
+}
+
+.project-header .home-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  text-decoration: none;
+  font-size: 22px;
+  color: #5a4b3b; /* 베이지톤 */
+}
+
+.project-header .home-icon:hover {
+  opacity: 0.8;
 }
 
 .edit-btn {

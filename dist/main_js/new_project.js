@@ -93,7 +93,7 @@ async function initKakaoMap() {
             const isAptCategory = place.category_group_code === 'APT';
             const isAptName = name.includes('아파트') && name.includes(searchAptName);
 
-            if(name == '다한테크')
+            if(name == '다한테크' || name == '울산구치소')
                 return true;
 
             return !isBlocked && (isAptCategory || isAptName);
