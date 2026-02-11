@@ -376,7 +376,7 @@ export function showDBidConnection( editor, type ) {
     const assigBtns = dBidConnectionDialog.querySelectorAll("#assignBtn");
 
     const url = editor.scene.userData.url;
-    const token = editor.scene.userData.tocken;
+    const token = editor.scene.userData.token;
 
     assigBtns.forEach(btn => {
         btn.addEventListener("click", () => {
