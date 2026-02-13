@@ -384,7 +384,8 @@ export function showDBidConnection( editor, type ) {
                 ['doors', 'opening'],
                 ['windows', 'opening'],
                 ['lights', 'illuminance'],
-                ['utils', 'power']
+                ['utils', 'power'],
+                ['pets', 'motion']
             ]);
 
             assign(url, token, btn.value, map.get(type));

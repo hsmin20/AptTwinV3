@@ -38,13 +38,13 @@ body {font-family: 'Roboto', sans-serif;overflow:hidden}
 .input-radio{
     display: inline-block;
     margin-right: 20px;
-    margin-top: 20px;
+    margin-top: 12px;
 }
 input[type=radio] {
     display: none;
 }
 input[type=radio] + label {
-    padding: 10px;
+    padding: 6px;
     border-radius: 10px;
     border: 1px solid #ddd;
 }

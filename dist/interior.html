@@ -7,18 +7,6 @@
 		<link rel="manifest" href="manifest.json">
 	</head>
 	<body>
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                const loginStatus = document.getElementById("loginStatus");
-                const loginBtn = document.getElementById("loginBtn");
-                const userId = localStorage.getItem("userid");
-
-                if (userId == undefined) {
-                    window.location.href = "./member/login.html";
-                }
-            });
-        </script>
-
 		<link rel="stylesheet" href="css/interior.css">
 
         <script src="aptinteriorall.js"></script>

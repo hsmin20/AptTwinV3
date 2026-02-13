@@ -534,6 +534,8 @@ export class EntityManager {
         for (const item of data) {
             const entity_id = item.entity_id;
             const state = item.state;
+            if(state == 'unknown')
+                continue;
 
             const objs = this.mapUpdatable.get(entity_id);
             for(let i=0; i<objs.length; i++) {
