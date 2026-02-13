@@ -386,6 +386,8 @@ export class EntityManager {
 
         this.mapUpdatable = new Multimap();
 
+        this.mapMovable = new Map();
+
         this.build();
     }
 
@@ -484,7 +486,7 @@ export class EntityManager {
 
                     const DBid = object.userData.DBid;
                     if(DBid != undefined) {
-                        scope.mapUpdatable.set(DBid, movable);
+                        scope.mapMovable.set(DBid, movable);
                     }
                 }
             }
@@ -495,7 +497,7 @@ export class EntityManager {
 
                 const DBid = object.userData.DBid;
                 if(DBid != undefined) {
-                    scope.mapUpdatable.set(DBid, movable);
+                    scope.mapMovable.set(DBid, movable);
                 }
             }
         });
@@ -542,6 +544,10 @@ export class EntityManager {
                 const obj = objs[i];
                 obj.update(state);
             }
+        }
+
+        for (const entity of this.mapMovable) {
+            
         }
     }
 }

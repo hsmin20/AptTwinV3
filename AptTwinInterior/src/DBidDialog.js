@@ -35,7 +35,7 @@ function createAssignDialog(devices) {
 
 async function assign(url, token, uuid, device_cls) {
     try {
-        const api_url = url;
+        const api_url = url + "/api/states";
         const access_token = token;
         const response = await fetch(api_url, {
             headers: {

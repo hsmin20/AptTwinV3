@@ -96,7 +96,7 @@ let g_intervalId;
 
 async function fetchDataFromHAAndUpdateScene() {
     try {
-        const api_url = player.scene.userData.url;
+        const api_url = player.scene.userData.url + "/api/states";
         const access_token = player.scene.userData.token;
         const response = await fetch(api_url, {
             headers: {
