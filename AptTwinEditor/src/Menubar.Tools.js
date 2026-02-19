@@ -33,10 +33,18 @@ export class MenubarTools {
                 return;
             }
 
+            const urlParams = new URLSearchParams(window.location.search);
+            const model_id = urlParams.get('model_id');
+
+            let url = './upload_model.php?tblname=ModelHouses';
+            if(model_id != undefined) {
+                url = './update_modeldata.php?model_id=' + model_id; 
+            }
+
             let data = editor.toJSON2();
 
             try {
-                const response = await fetch('./upload_model.php?tblname=ModelHouses', {
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: {
                     'Accept': 'application/json',

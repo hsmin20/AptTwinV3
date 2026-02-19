@@ -533,11 +533,17 @@ export class EntityManager {
     }
 
     update(data) {
+        let last_position_name = null;
         for (const item of data) {
             const entity_id = item.entity_id;
             const state = item.state;
+            const dev_class = item.attributes.device_class;
             if(state == 'unknown')
                 continue;
+
+            if(dev_class == 'motion' && state == 'on') {
+                last_position_name = entity_id.substring(entity_id.indexOf('-') + 1);
+            }
 
             const objs = this.mapUpdatable.get(entity_id);
             for(let i=0; i<objs.length; i++) {
@@ -546,8 +552,22 @@ export class EntityManager {
             }
         }
 
-        for (const entity of this.mapMovable) {
-            
+        if(last_position_name != null) {
+            let posx = 0;
+            let posz = 0;
+            let roty = Math.random() * 360;
+            const target_name = last_position_name + '_floor';
+            // get the floor of the same name of last_position
+            this.scene.children.forEach(function (child) {
+                if(child.name === target_name) {
+                    posx = child.position.x;
+                    posz = child.position.z;
+                }
+            });
+
+            for (const obj of this.mapMovable) {
+                obj.update(posx, posz, roty);
+            }
         }
     }
 }

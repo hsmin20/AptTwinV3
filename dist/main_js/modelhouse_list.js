@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <td>${p.type}</td>
                     <td>${p.company_name}</td>
                     <td>${p.comment}</td>
+                    <td>${p.updated_at}</td>
                     <td>
                         <button class="edit-btn" model_id="${p.model_id}">수정</button>
                         <button class="delete-btn" model_id="${p.model_id}">삭제</button>

@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 comment: pcomment,
             };
             const queryString = new URLSearchParams(params).toString();
-            const baseurl = './update_model.php?';
+            const baseurl = './update_modelinfo.php?';
 
             const url = `${baseurl}${queryString}`;
 

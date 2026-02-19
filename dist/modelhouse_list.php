@@ -27,7 +27,7 @@ if ($conn === false) {
 }
 
 // ModelHouses
-$sql = "SELECT model_id, complex_name, address, size_m2, type, company_name, comment, model_image FROM ModelHouses ORDER BY complex_name";
+$sql = "SELECT model_id, complex_name, address, size_m2, type, company_name, comment, updated_at, model_image FROM ModelHouses ORDER BY complex_name";
 
 $stmt = sqlsrv_query($conn, $sql);
 
@@ -40,6 +40,7 @@ $projects = [];
 while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
     // 이미지가 있으면 Base64로 변환
     $imageData = $row['model_image'] ? 'data:image/jpeg;base64,' . base64_encode($row['model_image']) : null;
+    $updated_at = $row['updated_at']->format('Y-m-d H:i:s');
 
     $projects[] = [
         "model_id" => $row['model_id'],
@@ -49,6 +50,7 @@ while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
         "type" => $row['type'],
         "company_name" => $row['company_name'],
         "comment" => $row['comment'],
+        "updated_at" => $updated_at,
         "image" => $imageData
     ];
 }

@@ -1,31 +1,11 @@
 <?php
     // These functions are for older Editor-oriented upload functions.
-    
     function uploadModelHouseData($complexName, $size, $type, $companyName, $address, $data, $comment) {
         include("mssql_connect.php");
 
         $conn = sqlsrv_connect($host, $connectionInfo);
 
-        $query = "select model_id from ModelHouses where complex_name='$complexName' and size_m2='$size' and type='$type'";
-
-		$result = sqlsrv_query($conn, $query);
-
-        if($result === false) {
-            $error_msg = sqlsrv_errors();
-            die( print_r( $error_msg(), true) );
-        }
-
-        $row = sqlsrv_fetch_array($result, SQLSRV_FETCH_NUMERIC);
-        $model_id = $row[0];
-
-        sqlsrv_free_stmt( $result);
-
-        $query = "";
-        if($model_id != null) {
-            $query = "UPDATE ModelHouses Set company_name='$companyName', address='$address', model_json='$data', updated_at=GetDate(), comment='$comment' where model_id='$model_id'";
-        } else {
-           $query = "INSERT INTO ModelHouses (complex_name, size_m2, type, company_name, address, model_json, comment) VALUES ('$complexName', '$size', '$type', '$companyName', '$address', '$data', '$comment')";
-        }
+        $query = "INSERT INTO ModelHouses (complex_name, size_m2, type, company_name, address, model_json, comment) VALUES ('$complexName', '$size', '$type', '$companyName', '$address', '$data', '$comment')";
 
 		$result = sqlsrv_query($conn, $query);
 
