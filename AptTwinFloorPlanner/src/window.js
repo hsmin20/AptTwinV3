@@ -1,9 +1,11 @@
 import { ObjectType, HouseObject } from './houseobject.js';
 
+
 export class Window extends HouseObject {
-    constructor(pos, angle, size, thick) {
+    constructor(pos, angle, size, thick, height) {
         super(pos, angle, size, thick);
 
+        this.window_height = height;
         this.type = ObjectType.WINDOW;
 
         this.create();
@@ -41,6 +43,7 @@ export class Window extends HouseObject {
             angle: this.angle,
             size: this.size,
             thick: this.thick,
+            window_height: this.window_height,
             type: this.type
         }
 
@@ -49,9 +52,10 @@ export class Window extends HouseObject {
 }
 
 export class Window2 extends HouseObject {
-    constructor(pos, angle, size, thick) {
+    constructor(pos, angle, size, thick, height) {
         super(pos, angle, size, thick);
 
+        this.window_height = height;
         this.type = ObjectType.WINDOW2;
 
         this.create();
@@ -91,6 +95,7 @@ export class Window2 extends HouseObject {
             angle: this.angle,
             size: this.size,
             thick: this.thick,
+            window_height: this.window_height,
             type: this.type
         }
 

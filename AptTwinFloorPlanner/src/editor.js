@@ -25,6 +25,8 @@ const Side = { UP: 0, DOWN: 1 };
 const BIND_CIRCLE_DISTANCE = 8;
 const RADIUS_CIRCLE_BINDER = 8;
 
+const WALL_HEIGHT = 2.3 * METER;
+
 let timeoutID;
 
 export let g_factor = 1;
@@ -213,33 +215,39 @@ export class Editor {
         let sliderValue = heightSlider.value;
         let objTarget = this.binder.obj;
 
-        if(objTarget.type < ObjectType.BATHTUB) {
-            let wallBindArray = this._rayCastingWalls( {x:objTarget.x, y:objTarget.y} );
-            if (wallBindArray.length < 1) {
-                alert('No Wall binded');
-                return;
-            }
+        if(objTarget.type == ObjectType.WINDOW || objTarget.type == ObjectType.WINDOW2) {
+            // if type is Window
+            objTarget.window_height = sliderValue;
+            document.getElementById("doorWindowHeightVal").textContent = (sliderValue / METER).toFixed(2);
+        } else {
+            if(objTarget.type < ObjectType.BATHTUB) {
+                let wallBindArray = this._rayCastingWalls( {x:objTarget.x, y:objTarget.y} );
+                if (wallBindArray.length < 1) {
+                    alert('No Wall binded');
+                    return;
+                }
 
-            let wallBind = wallBindArray[wallBindArray.length - 1];
-            
-            let limits = Util.limitObj(wallBind.equations.base, sliderValue, { x:objTarget.x, y:objTarget.y} );
-            if (qSVG.btwn(limits[1].x, wallBind.start.x, wallBind.end.x) && qSVG.btwn(limits[1].y, wallBind.start.y, wallBind.end.y) &&
-                    qSVG.btwn(limits[0].x, wallBind.start.x, wallBind.end.x) && qSVG.btwn(limits[0].y, wallBind.start.y, wallBind.end.y)) {
+                let wallBind = wallBindArray[wallBindArray.length - 1];
+                
+                let limits = Util.limitObj(wallBind.equations.base, sliderValue, { x:objTarget.x, y:objTarget.y} );
+                if (qSVG.btwn(limits[1].x, wallBind.start.x, wallBind.end.x) && qSVG.btwn(limits[1].y, wallBind.start.y, wallBind.end.y) &&
+                        qSVG.btwn(limits[0].x, wallBind.start.x, wallBind.end.x) && qSVG.btwn(limits[0].y, wallBind.start.y, wallBind.end.y)) {
+                    objTarget.thick = sliderValue;
+                    objTarget.limit = limits;
+                    objTarget.update();
+                    this.binder.thick = sliderValue;
+                    this.binder.limit = limits;
+                    this.binder.update();
+                    document.getElementById("doorWindowHeightVal").textContent = (sliderValue / METER).toFixed(2);
+                }
+                this._showInsideSize(wallBind);
+            } else {
                 objTarget.thick = sliderValue;
-                objTarget.limit = limits;
                 objTarget.update();
                 this.binder.thick = sliderValue;
-                this.binder.limit = limits;
                 this.binder.update();
                 document.getElementById("doorWindowHeightVal").textContent = (sliderValue / METER).toFixed(2);
             }
-            this._showInsideSize(wallBind);
-        } else {
-            objTarget.thick = sliderValue;
-            objTarget.update();
-            this.binder.thick = sliderValue;
-            this.binder.update();
-            document.getElementById("doorWindowHeightVal").textContent = (sliderValue / METER).toFixed(2);
         }
 
         this.saveState();
@@ -394,8 +402,6 @@ export class Editor {
 
         return ret_arr;
     }
-
-    
 
     // Assuming wall has only 1 door or window
     splitWall(wall, containedObjArray) {
@@ -591,8 +597,9 @@ export class Editor {
             const angle = window.angle;
             const size = window.size / METER;
             const thick = window.thick / METER;
+            const height = window.window_height / METER;
 
-            var arCoords = {  'type': type, 'x': x, 'z': z, 'angle': angle, 'size': size, 'thick': thick };
+            var arCoords = {  'type': type, 'x': x, 'z': z, 'angle': angle, 'size': size, 'thick': thick, 'height': height };
 
             elementArray.push(arCoords);
         }
@@ -741,11 +748,11 @@ export class Editor {
                 door.update();
                 this.arDoors.push(door);
             } else if(element.type == ObjectType.WINDOW) {
-                let window = new Window(element.pos, element.angle, element.size, element.thick);
+                let window = new Window(element.pos, element.angle, element.size, element.thick, element.window_height);
                 window.update();
                 this.arWindows.push(window);
             } else if(element.type == ObjectType.WINDOW2) {
-                let window = new Window2(element.pos, element.angle, element.size, element.thick);
+                let window = new Window2(element.pos, element.angle, element.size, element.thick, element.window_height);
                 window.update();
                 this.arWindows.push(window);
             } else if(element.type == ObjectType.BATHTUB) {
@@ -1263,8 +1270,11 @@ export class Editor {
                 }
                 var thickObj = wallList.length > 0 ? wallList.thick : objTarget.thick;
                 var sizeObj = objTarget.size;
+                var heightObj = objTarget.height;
+                if(heightObj == undefined)
+                    heightObj = -1;
 
-                this.binder = new Socle({x: objTarget.x, y: objTarget.y }, objTarget.angle, sizeObj, thickObj, objTarget.type);
+                this.binder = new Socle({x: objTarget.x, y: objTarget.y }, objTarget.angle, sizeObj, thickObj, objTarget.type, heightObj);
                 this.binder.update();
 
                 this.binder.oldXY = { x: objTarget.x, y: objTarget.y }; // FOR OBJECT MENU
@@ -1817,10 +1827,10 @@ export class Editor {
                     this.binder = new Door2({x:wallSelect.x, y:wallSelect.y}, 0, 0, door_width, Hinge.NORMAL, wall.thick);
                 } else if(this.mode == Mode.ADD_WINDOW) {
                     const window_width = 120; // 2m
-                    this.binder = new Window({x:wallSelect.x, y:wallSelect.y}, 0, window_width, wall.thick);
+                    this.binder = new Window({x:wallSelect.x, y:wallSelect.y}, 0, window_width, wall.thick, WALL_HEIGHT);
                 } else if(this.mode == Mode.ADD_WINDOW2) {
                     const window_width2 = 180; // 3m
-                    this.binder = new Window2({x:wallSelect.x, y:wallSelect.y}, 0, window_width2, wall.thick);
+                    this.binder = new Window2({x:wallSelect.x, y:wallSelect.y}, 0, window_width2, wall.thick, WALL_HEIGHT);
                 }
 
                 var angleWall = qSVG.angleDeg(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
@@ -3190,6 +3200,16 @@ export class Editor {
                 document.getElementById('doorWindowWidthScale').textContent = resizeLimitMin + "-" + resizeLimitMax;
                 document.getElementById("doorWindowWidth").value = this.binder.obj.size;
                 document.getElementById("doorWindowWidthVal").textContent = (this.binder.obj.size / METER).toFixed(2);
+
+                if (this.binder.prototype == ObjectType.WINDOW || this.binder.prototype == ObjectType.WINDOW2) {
+                    const resizeLimitMin = 0;
+                    const resizeLimitMax = WALL_HEIGHT / METER;
+                    document.getElementById('doorWindowHeight').setAttribute('min', 0);
+                    document.getElementById('doorWindowHeight').setAttribute('max', WALL_HEIGHT);
+                    document.getElementById('doorWindowHeightScale').textContent = resizeLimitMin + "-" + resizeLimitMax;
+                    document.getElementById("doorWindowHeight").value = this.binder.obj.window_height;
+                    document.getElementById("doorWindowHeightVal").textContent = (this.binder.obj.window_height / METER).toFixed(2);
+                }
 
                 if(this.binder.prototype == ObjectType.DOOR || this.binder.prototype == ObjectType.DOOR2)
                     this.mode = Mode.EDIT_DOOR;

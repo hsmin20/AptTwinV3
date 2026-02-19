@@ -237,6 +237,29 @@ export class Editor {
         return mesh;
     }
 
+    _createWallPlane2(x1, z1, x2, z2, index, height) {
+        let whichSide = THREE.FrontSide;
+
+        let dx = x2 - x1;
+        let dz = z2 - z1;
+        let rotY = Math.atan2(dz, dx) * -1;
+
+        const width = Math.sqrt(Math.pow(dx, 2) + Math.pow(dz, 2));
+
+        const repeatX = Math.round(width * 2);
+        const repeatY = Math.round(height * 2);
+        const wallTexture  = textureHelper.get('Wallpaper1', repeatX, repeatY);
+
+        let mesh = new THREE.Mesh( new THREE.PlaneGeometry(width, height), new THREE.MeshStandardMaterial({ map: wallTexture, side: whichSide }) );
+        mesh.name = "new_mesh_" + index;
+        mesh.position.x = x1 + dx / 2.0;
+        mesh.position.y = -(HEIGHT - height) / 2.0;
+        mesh.position.z = z1 + dz / 2.0;
+        mesh.rotation.y = rotY;
+
+        return mesh;
+    }
+
     constructWallFrom2DJSON(element, i) {
         const group = new THREE.Group();
         group.name = "newWallGroup_" + i;
@@ -333,7 +356,8 @@ export class Editor {
         const z = element.z;
         const angle = element.angle;
         const width = element.size;
-        const thick = element.thick; // not used
+        const thick = element.thick;
+        const height = element.height;
 
         group.position.x = x;
         group.position.y = HEIGHT / 2.0;
@@ -344,7 +368,7 @@ export class Editor {
         const frameTexture = textureHelper.get('Black', 1, 1);
 
         const depth = 0.1;
-        const leftWindow = new THREE.Mesh( new THREE.BoxGeometry(width/2.0, HEIGHT, depth), [  
+        const leftWindow = new THREE.Mesh( new THREE.BoxGeometry(width/2.0, height, depth), [  
             new THREE.MeshStandardMaterial(  ), new THREE.MeshStandardMaterial({ map: frameTexture}), new THREE.MeshStandardMaterial(),
             new THREE.MeshStandardMaterial( { map: frameTexture} ), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
@@ -352,6 +376,7 @@ export class Editor {
         ] );
         leftWindow.name = "Window_left";
         leftWindow.position.x = -(width / 4.0);
+        leftWindow.position.y = (HEIGHT - height) / 2.0;
         leftWindow.position.z = -(depth / 2.0);
 
         var obj = new THREE.Object3D();
@@ -367,7 +392,7 @@ export class Editor {
         group.children.push( leftWindow );
         leftWindow.parent = group;
 
-        const rightWindow = new THREE.Mesh( new THREE.BoxGeometry(width/2.0, HEIGHT, depth), [  
+        const rightWindow = new THREE.Mesh( new THREE.BoxGeometry(width/2.0, height, depth), [  
             new THREE.MeshStandardMaterial( { map: frameTexture} ), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
             new THREE.MeshStandardMaterial( { map: frameTexture} ), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
@@ -375,6 +400,7 @@ export class Editor {
         ] );
         rightWindow.name = "Window_right";
         rightWindow.position.x = width / 4.0;
+        rightWindow.position.y = (HEIGHT - height) / 2.0;
         rightWindow.position.z = depth / 2.0;
 
         var obj2 = new THREE.Object3D();
@@ -389,6 +415,26 @@ export class Editor {
         
         group.children.push( rightWindow );
         rightWindow.parent = group;
+
+        if(height != HEIGHT) {
+            // Window height is smaller than wall height so make a bottom wall
+            const wall_height = HEIGHT - height;
+
+            let posArray = [];
+            posArray.push({ x: -width / 2.0, z: -thick / 2.0 });
+            posArray.push({ x: -width / 2.0, z: thick / 2.0 });
+            posArray.push({ x: width / 2.0, z: thick / 2.0 });
+            posArray.push({ x: width / 2.0, z: -thick / 2.0 });
+
+            for(let k=0; k<posArray.length; k++) {
+                const pos1 = posArray[k];
+                const pos2 = posArray[(k + 1) % posArray.length];
+
+                let mesh = this._createWallPlane2(pos1.x, pos1.z, pos2.x, pos2.z, i, wall_height);
+                group.children.push( mesh );
+                mesh.parent = group;
+            }
+        }
     }
 
     constructWindow2From2DJSON(element, i) {
@@ -402,6 +448,7 @@ export class Editor {
         const angle = element.angle;
         const width = element.size;
         const thick = element.thick; // not used
+        const height = element.height;
 
         group.position.x = x;
         group.position.y = HEIGHT / 2.0;
@@ -414,7 +461,7 @@ export class Editor {
         const depth = 0.1;
 
         // Left Window 2
-        const leftWindow2 = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, HEIGHT, depth), [  
+        const leftWindow2 = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, height, depth), [  
             new THREE.MeshStandardMaterial(  ), new THREE.MeshStandardMaterial({ map: frameTexture}), new THREE.MeshStandardMaterial(),
             new THREE.MeshStandardMaterial( { map: frameTexture} ), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
@@ -422,6 +469,7 @@ export class Editor {
         ] );
         leftWindow2.name = "Window_left2";
         leftWindow2.position.x = -(width * 3 / 8.0);
+        leftWindow2.position.y = (HEIGHT - height) / 2.0;
         leftWindow2.position.z = -(depth / 2.0);
 
         var obj = new THREE.Object3D();
@@ -438,7 +486,7 @@ export class Editor {
         leftWindow2.parent = group;
 
         // Left Window 1
-        const leftWindow = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, HEIGHT, depth), [  
+        const leftWindow = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, height, depth), [  
             new THREE.MeshStandardMaterial(  ), new THREE.MeshStandardMaterial({ map: frameTexture}), new THREE.MeshStandardMaterial(),
             new THREE.MeshStandardMaterial( { map: frameTexture} ), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
@@ -446,13 +494,14 @@ export class Editor {
         ] );
         leftWindow.name = "Window_left2";
         leftWindow.position.x = -(width / 8.0);
+        leftWindow.position.y = (HEIGHT - height) / 2.0;
         leftWindow.position.z = depth / 2.0;
 
         group.children.push( leftWindow );
         leftWindow.parent = group;
 
         // Right Window 1
-        const rightWindow = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, HEIGHT, depth), [  
+        const rightWindow = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, height, depth), [  
             new THREE.MeshStandardMaterial( { map: frameTexture} ), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
             new THREE.MeshStandardMaterial( { map: frameTexture} ), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
@@ -460,13 +509,14 @@ export class Editor {
         ] );
         rightWindow.name = "Window_right";
         rightWindow.position.x = width / 8.0;
+        rightWindow.position.y = (HEIGHT - height) / 2.0;
         rightWindow.position.z = depth / 2.0;
 
         group.children.push( rightWindow );
         rightWindow.parent = group;
 
         // Right Window 2
-        const rightWindow2 = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, HEIGHT, depth), [  
+        const rightWindow2 = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, height, depth), [  
             new THREE.MeshStandardMaterial( { map: frameTexture} ), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
             new THREE.MeshStandardMaterial( { map: frameTexture} ), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
@@ -474,6 +524,7 @@ export class Editor {
         ] );
         rightWindow2.name = "Window_right";
         rightWindow2.position.x = width * 3 / 8.0;
+        rightWindow2.position.y = (HEIGHT - height) / 2.0;
         rightWindow2.position.z = -(depth / 2.0);
 
         var obj2 = new THREE.Object3D();
@@ -488,6 +539,26 @@ export class Editor {
         
         group.children.push( rightWindow2 );
         rightWindow2.parent = group;
+
+        if(height != HEIGHT) {
+            // Window height is smaller than wall height so make a bottom wall
+            const wall_height = HEIGHT - height;
+
+            let posArray = [];
+            posArray.push({ x: -width / 2.0, z: -thick / 2.0 });
+            posArray.push({ x: -width / 2.0, z: thick / 2.0 });
+            posArray.push({ x: width / 2.0, z: thick / 2.0 });
+            posArray.push({ x: width / 2.0, z: -thick / 2.0 });
+
+            for(let k=0; k<posArray.length; k++) {
+                const pos1 = posArray[k];
+                const pos2 = posArray[(k + 1) % posArray.length];
+
+                let mesh = this._createWallPlane2(pos1.x, pos1.z, pos2.x, pos2.z, i, wall_height);
+                group.children.push( mesh );
+                mesh.parent = group;
+            }
+        }
     }
 
     constructFloorFrom2DJSON(element, i) {
