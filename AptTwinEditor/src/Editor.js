@@ -434,6 +434,24 @@ export class Editor {
                 group.children.push( mesh );
                 mesh.parent = group;
             }
+
+            // Finally, we need to make a roof for this wall
+            let whichSide = THREE.FrontSide;
+            let rotX = Math.PI / 2.0 * -1;
+
+            const repeatX = Math.round(width * 2);
+            const repeatY = Math.round(thick * 2);
+            const wallTexture  = textureHelper.get('Wallpaper1', repeatX, repeatY);
+
+            let roof = new THREE.Mesh( new THREE.PlaneGeometry(width, thick), new THREE.MeshStandardMaterial({ map: wallTexture, side: whichSide }) );
+            roof.name = "new_mesh_roof";
+            roof.position.x = 0;
+            roof.position.y = -height + (HEIGHT / 2.0);
+            roof.position.z = 0;
+            roof.rotation.x = rotX;
+
+            group.children.push( roof );
+            roof.parent = group;
         }
     }
 
@@ -558,6 +576,24 @@ export class Editor {
                 group.children.push( mesh );
                 mesh.parent = group;
             }
+
+            // Finally, we need to make a roof for this wall
+            let whichSide = THREE.FrontSide;
+            let rotX = Math.PI / 2.0 * -1;
+
+            const repeatX = Math.round(width * 2);
+            const repeatY = Math.round(thick * 2);
+            const wallTexture  = textureHelper.get('Wallpaper1', repeatX, repeatY);
+
+            let roof = new THREE.Mesh( new THREE.PlaneGeometry(width, thick), new THREE.MeshStandardMaterial({ map: wallTexture, side: whichSide }) );
+            roof.name = "new_mesh_roof";
+            roof.position.x = 0;
+            roof.position.y = -height + (HEIGHT / 2.0);
+            roof.position.z = 0;
+            roof.rotation.x = rotX;
+
+            group.children.push( roof );
+            roof.parent = group;
         }
     }
 

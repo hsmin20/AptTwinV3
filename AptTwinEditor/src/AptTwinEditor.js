@@ -7,9 +7,9 @@ const urlParams = new URL(location.href).searchParams;
 let model_id = urlParams.get('model_id');
 if(model_id == undefined)
     model_id = -1;
-let house_id = urlParams.get('house_id');
-if(house_id == undefined)
-    house_id = -1;
+// let house_id = urlParams.get('house_id');
+// if(house_id == undefined)
+//     house_id = -1;
 let fromFloorplanner = urlParams.get('fromFloorplanner');
 if(fromFloorplanner == undefined)
     fromFloorplanner = 'false';
@@ -67,31 +67,6 @@ function onWindowResize() {
 window.addEventListener( 'resize', onWindowResize );
 
 let initialized = false;
-if(model_id != -1 || house_id != -1) {
-    editor.storage.init(function() {});
-    try {
-        let targetURL = "";
-        if(house_id != -1) { // House has precedence
-            targetURL = './download_model.php?tblname=Houses&house_id=' + house_id;
-        } else {
-            targetURL = './download_model.php?tblname=ModelHouses&model_id=' + model_id;
-        }
-
-        const response = await fetch(targetURL);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        editor.clear();
-        editor.fromJSON( data );
-
-        initialized = true;
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-}
 
 if(fromFloorplanner == 'true') {
     editor.storage.init(function() {});
@@ -100,6 +75,27 @@ if(fromFloorplanner == 'true') {
     editor.constructFrom2DJSON( data );
 
     initialized = true;
+} else {
+    if(model_id != -1) {
+        editor.storage.init(function() {});
+        try {
+            const targetURL = './download_model.php?model_id=' + model_id;
+
+            const response = await fetch(targetURL);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            editor.clear();
+            editor.fromJSON( data );
+
+            initialized = true;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
 }
 
 if(initialized == false) {

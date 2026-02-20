@@ -86,8 +86,6 @@ export class Editor {
         this.zoom = 9;
 
         this.storage = new Storage();
-        var onSuccessFunc = this.onSuccessStorage.bind(this);
-        this.storage.init(onSuccessFunc);
 
         let mouseupFunc = this._MOUSEUP.bind(this);
         document.querySelector('#floorplanner').addEventListener("mouseup", mouseupFunc);
@@ -656,7 +654,39 @@ export class Editor {
         const data = this.export2DCoords();
         localStorage.setItem("2dCoordsData", data);
 
-        location.href = 'editor.html?fromFloorplanner=true';
+        let url = 'editor.html?fromFloorplanner=true';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const model_id = urlParams.get('model_id');
+        if(model_id != undefined) {
+            url = 'editor.html?fromFloorplanner=true&model_id=' + model_id;
+        }
+
+        location.href = url;
+    }
+
+    async registerInDB() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const model_id = urlParams.get('model_id');
+
+        if(model_id == undefined) {
+            alert('This plan does not have a model id yet');
+            return;
+        }
+
+        const data = this.toJson();
+        const response = await fetch(`./upload_floorplan.php?model_id=${model_id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            alert(`HTTP error! status: ${response.error}`);
+            throw new Error(`HTTP error! status: ${response.error}`);
+        } else {
+            alert('Uploading OK');
+        }
     }
 
     onSuccessStorage() {
@@ -726,10 +756,15 @@ export class Editor {
         a.remove();
     }
 
-    async fromJson ( json ) {
+    async fromJson ( json, parsed=false ) {
 		this.empty();
 
-        const elementArray = JSON.parse(json);
+        let elementArray = null;
+        if(parsed)
+            elementArray = json;
+        else
+            elementArray = JSON.parse(json);
+        
         for(let i=0; i<elementArray.length; i++) {
             let element = elementArray[i];
 

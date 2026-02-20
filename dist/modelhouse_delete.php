@@ -10,17 +10,20 @@ if (!isset($_SESSION['userid'])) {
 $model_id = $_GET['model_id'];
 
 // DB 연결 정보
-$serverName = "1.220.107.66";
-$connectionOptions = array(
-    "Database" => "APT_TWIN",
-    "Uid" => "db_user",
-    "PWD" => "dahan_2845@tech",
-    "CharacterSet" => "UTF-8",
-    "TrustServerCertificate" => "True"
-);
+// $serverName = "1.220.107.66";
+// $connectionOptions = array(
+//     "Database" => "APT_TWIN",
+//     "Uid" => "db_user",
+//     "PWD" => "dahan_2845@tech",
+//     "CharacterSet" => "UTF-8",
+//     "TrustServerCertificate" => "True"
+// );
+
+include("mssql_connect.php");
 
 // DB 연결
-$conn = sqlsrv_connect($serverName, $connectionOptions);
+$conn = sqlsrv_connect($host, $connectionInfo);
+
 if ($conn === false) {
     echo json_encode(["error" => "DB connection failed"]);
     die(print_r(sqlsrv_errors(), true));

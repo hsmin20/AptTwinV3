@@ -21,25 +21,15 @@ export class MenubarTools {
         // Upload
         let option = new UIRow().setTextContent( 'Upload to DB' ).setClass( 'option' );
         option.onClick( async () => {
-            const obj = editor.scene;
-            const complexName = obj.userData.complexName;
-            const size = obj.userData.size;
-            // const type = obj.userData.type;
-            // const companyName = obj.userData.companyName;
-            // const address = obj.userData.address;
-            // const comment = obj.userData.comment;
-            if(complexName == undefined || size == undefined) {
-                alert('단지 이름과 평형은 필수입니다.');
-                return;
-            }
-
             const urlParams = new URLSearchParams(window.location.search);
             const model_id = urlParams.get('model_id');
 
-            let url = './upload_model.php?tblname=ModelHouses';
-            if(model_id != undefined) {
-                url = './update_modeldata.php?model_id=' + model_id; 
+            if(model_id == undefined) {
+                alert('No model id! cannot upload!');
+                return;
             }
+            
+            const url = './update_modeldata.php?model_id=' + model_id; 
 
             let data = editor.toJSON2();
 

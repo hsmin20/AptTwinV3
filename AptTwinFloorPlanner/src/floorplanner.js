@@ -215,6 +215,10 @@ function handleButtonClick(editor) {
     var transferToEditorBtn = document.getElementById('transerToEditor');
     transferToEditorBtn.onclick = transferToEditorFunc;
 
+    var registerFunc = editor.registerInDB.bind(editor);
+    var registerInDBBtn = document.getElementById('register');
+    registerInDBBtn.onclick = registerFunc;
+
     var leftPanel = document.getElementById('panel');
     leftPanel.addEventListener('mousemove', handleMouseInLeftPanel);
 }
@@ -225,5 +229,27 @@ createGroups(svg);
 document.body.appendChild(svg);
 
 const editor = new Editor();
+
+const urlParams = new URLSearchParams(window.location.search);
+const model_id = urlParams.get('model_id');
+if(model_id != undefined) {
+    editor.storage.init(function() {});
+    try {
+        const response = await fetch(`./download_floorplan.php?model_id=${model_id}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        editor.fromJson( data, true );
+    } catch (error) {
+        alert('Error fetching data -> '+ error);
+        console.error('Error fetching data:', error);
+    }
+} else {
+    var onSuccessFunc = editor.onSuccessStorage.bind(editor);
+    editor.storage.init(onSuccessFunc);
+}
 
 handleButtonClick(editor);
