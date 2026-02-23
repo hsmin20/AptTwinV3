@@ -18,17 +18,8 @@ export class MenubarTools {
         options.setClass( 'options' );
         this.container.add( options );
 
-        // Additional Information
-        let option = new UIRow().setTextContent( 'Additional Info' ).setClass( 'option' );
-        option.onClick( async () => {
-            this.addAdditionalInfo();
-        } );
-        options.add( option );
-
-        options.add( new UIHorizontalRule() );
-
         // Upload
-        option = new UIRow().setTextContent( 'Upload to DB' ).setClass( 'option' );
+        let option = new UIRow().setTextContent( 'Upload to DB' ).setClass( 'option' );
         option.onClick( async () => {
             let data = editor.toJSON2();
             const userId = localStorage.getItem("userid");
@@ -111,71 +102,5 @@ export class MenubarTools {
             window.location.href = './player.html';
         } );
         options.add( option );
-    }
-
-    addAdditionalInfo() {
-        let _html = `
-            <dialog id="addAdditionalInfoDialog">
-                <form>
-                    <p>
-                    <label>
-                        <h1>Add Additional Information</h1>
-                        <p>Name(별명) : <input type="text" id="nickName" name="nickName" value="NICKNAME"> </p>
-                        <p>비고(참고) : <input type="text" id="comment2" name="comment2" value="COMMENT2"> </p>
-                    </label>
-                    </p>
-                    <div>
-                    <button value="cancel" formmethod="dialog">Cancel</button>
-                    <button id="confirmBtn" value="default">Add</button>
-                    </div>
-                </form>
-            </dialog>
-    `
-
-        const nickName = this.editor.scene.userData.nickName;
-        if(nickName == undefined)
-            _html = _html.replace('NICKNAME', '');
-        else
-            _html = _html.replace('NICKNAME', nickName);
-        const comment2 = this.editor.scene.userData.comment2;
-        if(comment2 == undefined)
-             _html = _html.replace('COMMENT2', '');
-        else
-            _html = _html.replace('COMMENT2', comment2);
-
-        const dom = new DOMParser().parseFromString(_html, 'text/html');
-        const dialog = dom.querySelector("dialog");
-        document.body.appendChild(dialog)
-
-        const addAdditionalInfoDialog = document.getElementById("addAdditionalInfoDialog");
-        const confirmBtn = addAdditionalInfoDialog.querySelector("#confirmBtn");
-
-        // "Cancel" button closes the dialog without submitting because of [formmethod="dialog"], triggering a close event.
-        addAdditionalInfoDialog.addEventListener("close", (e) => {
-            document.body.removeChild(dialog)
-        });
-
-        // Prevent the "confirm" button from the default behavior of submitting the form, and close the dialog with the `close()` method, which triggers the "close" event.
-        confirmBtn.addEventListener("click", (event) => {
-            event.preventDefault(); // We don't want to submit this fake form
-
-            const nickName = document.getElementById("nickName").value;
-            const comment2 = document.getElementById("comment2").value;
-            document.body.removeChild(dialog)
-            
-            // temporary obj for userData
-            var obj = new THREE.Object3D();
-            obj.userData.nickName = nickName;
-            obj.userData.comment2 = comment2;
-
-            const userData = obj.userData;
-            const object = this.editor.scene;
-
-            if ( JSON.stringify( object.userData ) != JSON.stringify( userData ) ) {
-                this.editor.execute( new SetValueCommand( this.editor, object, 'userData', userData ) );
-            }
-        });
-
-        addAdditionalInfoDialog.showModal();
     }
 }

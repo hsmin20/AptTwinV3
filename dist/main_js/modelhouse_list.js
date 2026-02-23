@@ -124,7 +124,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 window.location.reload();
 
-
                 document.body.removeChild(dialog)
             });
 
@@ -144,7 +143,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             btn.addEventListener("click", (e) => {
                 e.stopPropagation();
                 const model_id = btn.getAttribute("model_id");
-                window.location.href = `./floorplanner.html?model_id=${model_id}`;
+                window.location.href = `./floorplanner.html?fromdb=true&model_id=${model_id}`;
             });
         });
 

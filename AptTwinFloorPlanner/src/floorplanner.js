@@ -230,9 +230,14 @@ document.body.appendChild(svg);
 
 const editor = new Editor();
 
+var onSuccessFunc = editor.onSuccessStorage.bind(editor);
+
 const urlParams = new URLSearchParams(window.location.search);
+let fromdb = urlParams.get('fromdb');
+if(fromdb == undefined)
+    fromdb = false;
 const model_id = urlParams.get('model_id');
-if(model_id != undefined) {
+if(fromdb && model_id != undefined) {
     editor.storage.init(function() {});
     try {
         const response = await fetch(`./download_floorplan.php?model_id=${model_id}`);
@@ -243,12 +248,15 @@ if(model_id != undefined) {
         const data = await response.json();
 
         editor.fromJson( data, true );
+
+        let currentURL = window.location.href.split('?')[0];;
+        window.location.href = currentURL + '?model_id=' + model_id;
     } catch (error) {
-        alert('Error fetching data -> '+ error);
+        // alert('Error fetching data -> '+ error);
         console.error('Error fetching data:', error);
+        editor.storage.init(onSuccessFunc);
     }
 } else {
-    var onSuccessFunc = editor.onSuccessStorage.bind(editor);
     editor.storage.init(onSuccessFunc);
 }
 
