@@ -268,6 +268,8 @@ class TV extends THREE.Mesh {
 }
 
 class WashingMachine extends THREE.Mesh {
+    ANGLE = Math.PI * 2 / 36;
+
     constructor(type, width, height, depth) {
         // Create Cylinder for animation
         const radius = (width / 2.0) - 0.1;
@@ -289,18 +291,20 @@ class WashingMachine extends THREE.Mesh {
         }
 
         this.running = false;
-        this.angle = Math.PI * 2 / 36;
     }
 
     update(state) {
-        this.running = !this.running;
-        if(this.running) {
+        let num = Number(state);
+        if(num > 10 && !this.running) {
+            this.running = true;
             if(this.type == 0) {
                 this.position.z = this.depth / 2.0;
             } else {
                 this.position.y = this.height;
             }
-        } else {
+        } 
+        if(num < 10 && this.running) {
+            this.running = false;
             if(this.type == 0) {
                 this.position.z = 0.0;
             } else {
@@ -311,10 +315,10 @@ class WashingMachine extends THREE.Mesh {
 
     run(timeElapsed) {
         if(this.running) {
-            this.rotation.y += this.angle;
+            this.rotation.y += this.ANGLE;
 
-            if(this.angle > Math.PI)
-                this.angle = 0;
+            if(this.rotation.y > Math.PI)
+                this.rotation.y = 0;
         }
     }
 }
@@ -482,7 +486,7 @@ export class EntityManager {
                 const it = object.userData.interiorType;
                 if(it == 'Cat' || it == 'Dog') {
                     const movable = new MovingObject(object);
-                    object.add(movable);
+                    // object.add(movable);
 
                     const DBid = object.userData.DBid;
                     if(DBid != undefined) {
@@ -493,7 +497,7 @@ export class EntityManager {
 
             if(object.userData?.interiorType == 'RobotVacuum') {
                 const movable = new MovingVaccuum(object);
-                object.add(movable);
+                // object.add(movable);
 
                 const DBid = object.userData.DBid;
                 if(DBid != undefined) {
@@ -542,7 +546,8 @@ export class EntityManager {
                 continue;
 
             if(dev_class == 'motion' && state == 'on') {
-                last_position_name = entity_id.substring(entity_id.indexOf('-') + 1);
+                const index = entity_id.indexOf('.') + 1;
+                last_position_name = entity_id.substring(index);
             }
 
             const objs = this.mapUpdatable.get(entity_id);
@@ -558,16 +563,20 @@ export class EntityManager {
             let roty = Math.random() * 360;
             const target_name = last_position_name + '_floor';
             // get the floor of the same name of last_position
-            this.scene.children.forEach(function (child) {
+            this.scene.traverse(function (child) {
                 if(child.name === target_name) {
-                    posx = child.position.x;
-                    posz = child.position.z;
+                    const worldPosition = new THREE.Vector3();
+                    child.getWorldPosition(worldPosition);
+                    posx = worldPosition.x;
+                    posz = worldPosition.z;
                 }
             });
 
-            for (const obj of this.mapMovable) {
+            for (const obj of this.mapMovable.values()) {
                 obj.update(posx, posz, roty);
             }
+
+            last_position_name = null;
         }
     }
 }
