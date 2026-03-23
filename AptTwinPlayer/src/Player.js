@@ -4,7 +4,7 @@ import { FreeLookControl } from './Controls';
 import { Storage as _Storage } from '../../src_common/Storage.js';
 import { textureHelper } from '../../src_common/TextureHelper.js';
 
-import { saveState } from './AptTwinPlayer.js';
+import { HAWebSocket, HARestAPI } from './Updater.js';
 
 export class Player {
 	constructor() {
@@ -39,6 +39,9 @@ export class Player {
 
 		// this.renderer.autoClear = false; // For HUD, uncomment this. This could be located in render loop to toggle
         // this.renderer.localClippingEnabled = true;
+
+        this.webSockerUpdater = new HAWebSocket(this);
+        this.restUpdater = new HARestAPI(this);
 
         this.updating = false;
         
@@ -294,7 +297,17 @@ export class Player {
         this.renderer.setSize(this.dom.offsetWidth, this.dom.offsetHeight);
 	}
 
+    // Home Assistant REST data
     updateScene(data) {       
-        this.entityManager.update(data); 
+        this.entityManager.updateScene(data); 
+    }
+
+    // Home Assistant WebSocket data
+    updateEntity(data) {
+        const entity_id = data.entity_id;
+        const dev_class = data.new_state.attributes.device_class;
+        const new_state = data.new_state.state;
+
+        this.entityManager.updateEntity(entity_id, dev_class, new_state);
     }
 }

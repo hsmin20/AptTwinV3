@@ -92,41 +92,6 @@ if(isSample|| house_id != -1) {
     player.storage.init(onSuccessStorage);
 }
 
-let g_intervalId;
-
-async function fetchDataFromHAAndUpdateScene() {
-    try {
-        const api_url = player.scene.userData.url + "/api/states";
-        const access_token = player.scene.userData.token;
-        const response = await fetch(api_url, {
-            headers: {
-                "Authorization": `Bearer ${access_token}`,
-                "Content-Type": "application/json"
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
-
-        player.updateScene(data);
-
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        // Handle the error appropriately, e.g., display an error message or retry the request
-    }
-}
-
-export function startDataUpdates(intervalMs) {
-    g_intervalId = setInterval(fetchDataFromHAAndUpdateScene, intervalMs);
-}
-
-export function stopDataUpdates() {
-    clearInterval(g_intervalId);
-}
-
 export function changeView() {
     player.changeView();
 }

@@ -110,14 +110,15 @@ class MenubarUpdate {
         title.textContent = 'Update';
 
         title.addEventListener( 'click', function () {
-            player.updating = !player.updating;
-            if(player.updating) {
-                startDataUpdates(10000);
-                alert('House update started')
-            } else {
-                stopDataUpdates();
-                alert('House update stopped')
-            }
+            // player.updating = !player.updating;
+            // if(player.updating) {
+            //     startDataUpdates(10000);
+            //     alert('House update started')
+            // } else {
+            //     stopDataUpdates();
+            //     alert('House update stopped')
+            // }
+            player.restUpdater.fetchDataFromHAAndUpdateScene();
         } );
         this.dom.appendChild( title );
     }

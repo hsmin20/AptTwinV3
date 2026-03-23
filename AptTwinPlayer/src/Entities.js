@@ -536,7 +536,7 @@ export class EntityManager {
         }
     }
 
-    update(data) {
+    updateScene(data) {
         let last_position_name = null;
         for (const item of data) {
             const entity_id = item.entity_id;
@@ -577,6 +577,37 @@ export class EntityManager {
             }
 
             last_position_name = null;
+        }
+    }
+
+    updateEntity(entity_id, dev_class, state) {
+        const objs = this.mapUpdatable.get(entity_id);
+        for(let i=0; i<objs.length; i++) {
+            const obj = objs[i];
+            obj.update(state);
+        }
+
+        if(dev_class == 'motion' && state == 'on') {
+            const index = entity_id.indexOf('.') + 1;
+            let last_position_name = entity_id.substring(index);
+
+            let posx = 0;
+            let posz = 0;
+            let roty = Math.random() * 360;
+            const target_name = last_position_name + '_floor';
+            // get the floor of the same name of last_position
+            this.scene.traverse(function (child) {
+                if(child.name === target_name) {
+                    const worldPosition = new THREE.Vector3();
+                    child.getWorldPosition(worldPosition);
+                    posx = worldPosition.x;
+                    posz = worldPosition.z;
+                }
+            });
+
+            for (const obj of this.mapMovable.values()) {
+                obj.update(posx, posz, roty);
+            }
         }
     }
 }
