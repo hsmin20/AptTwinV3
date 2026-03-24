@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { EntityManager } from './Entities';
-import { FreeLookControl } from './Controls';
+import { OrbitalControl, FreeLookControl } from './Controls';
 import { Storage as _Storage } from '../../src_common/Storage.js';
 import { textureHelper } from '../../src_common/TextureHelper.js';
 
@@ -279,15 +279,27 @@ export class Player {
         return false
     }
 
-    changeView() {
-        this.control.gravity = !this.control.gravity;
+    changeView(style) {
+        // this.control.gravity = !this.control.gravity;
 
-        const curPos = this.camera.position;
-        const BIRDEYEVIEW_HEIGHT = 15;
+        // const curPos = this.camera.position;
+        // const BIRDEYEVIEW_HEIGHT = 15;
 
-        if(!this.control.gravity) {
-            this.camera.position.set(curPos.x, BIRDEYEVIEW_HEIGHT, curPos.z);
-            this.camera.lookAt(this.scene.position);
+        // if(!this.control.gravity) {
+        //     this.camera.position.set(curPos.x, BIRDEYEVIEW_HEIGHT, curPos.z);
+        //     this.camera.lookAt(this.scene.position);
+        // }
+
+        if(style == 1) {
+			this.control.dispose();
+            this.control = new OrbitalControl(this, this.camera, this.renderer );
+        } else if(style == 0) {
+            this.control.dispose();
+            this.control = new FreeLookControl(this, this.camera, this.scene);
+            if(!this.mobile) {
+                this.camera.position.set(5.2, 1.5, -5.2);
+                this.camera.lookAt(new THREE.Vector3(0, 1.2, 0));
+            }
         }
     }
 

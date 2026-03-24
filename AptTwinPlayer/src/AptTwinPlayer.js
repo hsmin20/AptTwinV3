@@ -92,6 +92,6 @@ if(isSample|| house_id != -1) {
     player.storage.init(onSuccessStorage);
 }
 
-export function changeView() {
-    player.changeView();
+export function changeView(style) {
+    player.changeView(style);
 }

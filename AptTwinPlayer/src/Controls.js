@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 
 var keyDownFunc;
@@ -7,6 +7,51 @@ var keyUpFunc;
 var moveFunc;
 var clickFunc;
 var dlbClickFunc;
+
+export class OrbitalControl {
+   
+    constructor(player, camera, renderer) {
+        this.player = player;
+
+        this.init(camera, renderer);
+    }
+
+    onMouseClick(event) {
+        event.preventDefault();
+    
+        this.player.setRaycasterPosDir();
+        this.player.handleMouseClick();
+    }
+
+    onDblclick(event) {
+        event.preventDefault();
+    }
+
+    init(camera, renderer) {
+        this.controls = new OrbitControls(camera, renderer.domElement);
+        this.controls.maxPolarAngle = Math.PI / 2 - 0.01;
+    
+        clickFunc = this.onMouseClick.bind(this);
+        dlbClickFunc = this.onDblclick.bind(this);
+        // keyDownFunc = this.onKeyDown.bind(this);
+        
+        document.addEventListener('click', clickFunc);
+        document.addEventListener('dblclick', dlbClickFunc);
+        // document.addEventListener('keydown', keyDownFunc);
+    }
+
+    dispose() {
+        document.removeEventListener('click', clickFunc);
+        document.removeEventListener('dblclick', dlbClickFunc);
+        // document.removeEventListener('keydown', keyDownFunc);
+
+        this.controls.dispose();
+    }
+
+    run(delta) {
+        this.controls.update();
+    }
+}
 
 export class FreeLookControl {
     WALKING_SPEED = 50.0; // m/s

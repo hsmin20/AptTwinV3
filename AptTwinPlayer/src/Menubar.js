@@ -125,15 +125,19 @@ class MenubarUpdate {
 }
 
 class MenubarView {
+    viewStyle = 0;
+
     constructor(player) {
         this.dom = document.createElement( 'div' );
         this.dom.className = 'menu';
 
+        var scope = this;
         const title = document.createElement( 'div' );
         title.className = 'title';
         title.textContent = 'View';
         title.addEventListener( 'click', function () {
-            changeView();
+            scope.viewStyle == 0 ? scope.viewStyle = 1 : scope.viewStyle = 0;
+            changeView(scope.viewStyle);
         } );
         this.dom.appendChild( title );
     }
