@@ -362,5 +362,14 @@ export class MenubarEdit {
             showDBidConnection(editorscope, 'pets');
         } );
         DBidSubmenu.add( option );
+
+        // Floor id
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Floors' );
+        option.onClick( function () {
+            showDBidConnection(editorscope, 'floors');
+        } );
+        DBidSubmenu.add( option );
     }
 }

@@ -237,6 +237,38 @@ function createUtils(editor) {
     return _html;
 }
 
+function createFloors(editor) {
+    let floorArray = [];
+    const scene = editor.scene;
+    scene.traverse(function(object) {
+        if (object.name.includes('floor')) {
+            floorArray.push(object);
+        }
+    });
+
+    let _html = `<p><label>
+                <h2>Add a DB id for Floors</h2>
+                `;
+
+    for(let i=0; i<floorArray.length; i++) {
+        const floor = floorArray[i];
+        const name = floor.name;
+        const uuid = floor.uuid;
+        const dbid = floor.userData.DBid;
+
+        const __html = `<p>` + name + `
+        <input type="text" id="` + uuid + `" name="` + name + `" value="` + dbid + `" size="40">
+        <button  id="assignBtn" value="` + uuid + `" type="button">Assign</button></p> 
+        `;
+
+        _html += __html;
+    }
+
+    _html += `</label></p>`;
+
+    return _html;
+}
+
 function createPets(editor) {
     let petArray = [];
     const scene = editor.scene;
@@ -302,6 +334,9 @@ function createDialog(editor, type) {
         return _html + windowsHtml + _html2;
     } else if(type == 'utils') {
         let utilsHtml = createUtils(editor);
+        return _html + utilsHtml + _html2;
+    } else if(type == 'floors') {
+        let utilsHtml = createFloors(editor);
         return _html + utilsHtml + _html2;
     } else if(type == 'pets') {
         let petsHtml = createPets(editor);
@@ -385,7 +420,7 @@ export function showDBidConnection( editor, type ) {
                 ['windows', 'opening'],
                 ['lights', 'illuminance'],
                 ['utils', 'power'],
-                ['pets', 'motion']
+                ['floors', 'motion']
             ]);
 
             assign(url, token, btn.value, map.get(type));

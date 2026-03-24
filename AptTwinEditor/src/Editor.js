@@ -628,7 +628,7 @@ export class Editor {
             floorTexture = textureHelper.get('Concrete', repeatX, repeatY);
 
         let mesh = new THREE.Mesh( new THREE.PlaneGeometry(width, height), new THREE.MeshStandardMaterial({ map: floorTexture, side: THREE.BackSide }) );
-        mesh.name = "new_mesh_1_" + i;
+        mesh.name = "floor_" + i;
         mesh.position.x = x1 + dx / 2.0;
         mesh.position.y = 0;
         mesh.position.z = z1 + dz / 2.0;
@@ -641,7 +641,7 @@ export class Editor {
             ceilingTexture = textureHelper.get('Tile', repeatX, repeatY);
 
         mesh = new THREE.Mesh( new THREE.PlaneGeometry(width, height), new THREE.MeshStandardMaterial({ map: ceilingTexture, side: THREE.FrontSide }) );
-        mesh.name = "new_mesh_1_" + i;
+        mesh.name = "ceiling_" + i;
         mesh.position.x = x1 + dx / 2.0;
         mesh.position.y = HEIGHT;
         mesh.position.z = z1 + dz / 2.0;
