@@ -7,6 +7,7 @@ import { Selector } from './Selector.js';
 import { RemoveObjectCommand } from '../../src_common/commands/RemoveObjectCommand.js';
 import { AddGroupCommand } from '../../src_common/commands/AddGroupCommand.js';
 import { SetValueCommand } from '../../src_common/commands/SetValueCommand.js';
+import { AddObjectCommand } from '../../src_common/commands/AddObjectCommand.js';
 
 import { saveState } from './AptTwinEditor.js';
 
@@ -213,75 +214,43 @@ export class Editor {
 		};
 	}
 
-    
-    _createWallPlane(x1, z1, x2, z2, index) {
-        let whichSide = THREE.FrontSide;
+    constructExtrudeWall(x1, z1, x2, z2, x3, z3, x4, z4, index, height) {
+        const minX = Math.min(x1, x2, x3, x4);
+        const maxX = Math.max(x1, x2, x3, x4);
+        const minZ = Math.min(z1, z2, z3, z4);
+        const maxZ = Math.max(z1, z2, z3, z4);
 
-        let dx = x2 - x1;
-        let dz = z2 - z1;
-        let rotY = Math.atan2(dz, dx) * -1;
+        const shape = new THREE.Shape();
+        shape.moveTo( x1, -1 * z1 );
+        shape.lineTo( x2, -1 * z2 ); 
+        shape.lineTo( x3, -1 * z3 );
+        shape.lineTo( x4, -1 * z4 );
+        shape.lineTo( x1, -1 * z1 );
+        
+        const geometry = new THREE.ExtrudeGeometry( shape, { depth:height, bevelEnabled:false} );
+        // geometry.rotateX(-Math.PI / 2);
 
-        const width = Math.sqrt(Math.pow(dx, 2) + Math.pow(dz, 2));
-
-        const repeatX = Math.round(width * 2);
-        const repeatY = Math.round(HEIGHT * 2);
-        const wallTexture  = textureHelper.get('Wallpaper1', repeatX, repeatY);
-
-        let mesh = new THREE.Mesh( new THREE.PlaneGeometry(width, HEIGHT), new THREE.MeshStandardMaterial({ map: wallTexture, side: whichSide }) );
-        mesh.name = "new_mesh_" + index;
-        mesh.position.x = x1 + dx / 2.0;
-        mesh.position.y = HEIGHT / 2.0;
-        mesh.position.z = z1 + dz / 2.0;
-        mesh.rotation.y = rotY;
-
-        return mesh;
-    }
-
-    _createWallPlane2(x1, z1, x2, z2, index, height) {
-        let whichSide = THREE.FrontSide;
-
-        let dx = x2 - x1;
-        let dz = z2 - z1;
-        let rotY = Math.atan2(dz, dx) * -1;
-
-        const width = Math.sqrt(Math.pow(dx, 2) + Math.pow(dz, 2));
-
+        let dx = maxX - minX;
+        let dz = maxZ - minZ;
+        const width = Math.max(dx, dz);
         const repeatX = Math.round(width * 2);
         const repeatY = Math.round(height * 2);
         const wallTexture  = textureHelper.get('Wallpaper1', repeatX, repeatY);
+        const material =  new THREE.MeshStandardMaterial({ map: wallTexture, side: THREE.FrontSide });
+        const mesh = new THREE.Mesh( geometry, material ) ;
 
-        let mesh = new THREE.Mesh( new THREE.PlaneGeometry(width, height), new THREE.MeshStandardMaterial({ map: wallTexture, side: whichSide }) );
-        mesh.name = "new_mesh_" + index;
-        mesh.position.x = x1 + dx / 2.0;
-        mesh.position.y = -(HEIGHT - height) / 2.0;
-        mesh.position.z = z1 + dz / 2.0;
-        mesh.rotation.y = rotY;
+        mesh.rotateX(-Math.PI / 2);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        mesh.name = "Wall_" + index;
 
         return mesh;
     }
 
-    constructWallFrom2DJSON(element, i) {
-        const group = new THREE.Group();
-        group.name = "newWallGroup_" + i;
-
-        this.execute( new AddGroupCommand( this, group ) );
-
-        let posArray = [];
-        posArray.push({ x: element.x1, z: element.z1 });
-        posArray.push({ x: element.x2, z: element.z2 });
-        posArray.push({ x: element.x3, z: element.z3 });
-        posArray.push({ x: element.x4, z: element.z4 });
-
-        for(let k=0; k<posArray.length; k++) {
-            const pos1 = posArray[k];
-            const pos2 = posArray[(k + 1) % posArray.length];
-
-            let mesh = this._createWallPlane(pos1.x, pos1.z, pos2.x, pos2.z, i);
-            group.children.push( mesh );
-            mesh.parent = group;
-        }
-
-        this.objectChanged(group);
+    constructWallFrom2DJSON(x1, z1, x2, z2, x3, z3, x4, z4, index, height=HEIGHT) {
+        const wall = this.constructExtrudeWall(x1, z1, x2, z2, x3, z3, x4, z4, index, height);
+        this.execute( new AddObjectCommand( this, wall ) );
+        this.objectChanged(wall);
     }
 
     constructDoorFrom2DJSON(element, i) {
@@ -420,38 +389,10 @@ export class Editor {
             // Window height is smaller than wall height so make a bottom wall
             const wall_height = HEIGHT - height;
 
-            let posArray = [];
-            posArray.push({ x: -width / 2.0, z: -thick / 2.0 });
-            posArray.push({ x: -width / 2.0, z: thick / 2.0 });
-            posArray.push({ x: width / 2.0, z: thick / 2.0 });
-            posArray.push({ x: width / 2.0, z: -thick / 2.0 });
-
-            for(let k=0; k<posArray.length; k++) {
-                const pos1 = posArray[k];
-                const pos2 = posArray[(k + 1) % posArray.length];
-
-                let mesh = this._createWallPlane2(pos1.x, pos1.z, pos2.x, pos2.z, i, wall_height);
-                group.children.push( mesh );
-                mesh.parent = group;
-            }
-
-            // Finally, we need to make a roof for this wall
-            let whichSide = THREE.FrontSide;
-            let rotX = Math.PI / 2.0 * -1;
-
-            const repeatX = Math.round(width * 2);
-            const repeatY = Math.round(thick * 2);
-            const wallTexture  = textureHelper.get('Wallpaper1', repeatX, repeatY);
-
-            let roof = new THREE.Mesh( new THREE.PlaneGeometry(width, thick), new THREE.MeshStandardMaterial({ map: wallTexture, side: whichSide }) );
-            roof.name = "new_mesh_roof";
-            roof.position.x = 0;
-            roof.position.y = -height + (HEIGHT / 2.0);
-            roof.position.z = 0;
-            roof.rotation.x = rotX;
-
-            group.children.push( roof );
-            roof.parent = group;
+            const wall = this.constructExtrudeWall(-width / 2.0, -thick / 2.0, -width / 2.0, thick / 2.0, width / 2.0, thick / 2.0, width / 2.0, -thick / 2.0, i, wall_height); 
+            wall.position.y -= HEIGHT / 2.0;
+            group.children.push( wall );
+            wall.parent = group;
         }
     }
 
@@ -562,38 +503,10 @@ export class Editor {
             // Window height is smaller than wall height so make a bottom wall
             const wall_height = HEIGHT - height;
 
-            let posArray = [];
-            posArray.push({ x: -width / 2.0, z: -thick / 2.0 });
-            posArray.push({ x: -width / 2.0, z: thick / 2.0 });
-            posArray.push({ x: width / 2.0, z: thick / 2.0 });
-            posArray.push({ x: width / 2.0, z: -thick / 2.0 });
-
-            for(let k=0; k<posArray.length; k++) {
-                const pos1 = posArray[k];
-                const pos2 = posArray[(k + 1) % posArray.length];
-
-                let mesh = this._createWallPlane2(pos1.x, pos1.z, pos2.x, pos2.z, i, wall_height);
-                group.children.push( mesh );
-                mesh.parent = group;
-            }
-
-            // Finally, we need to make a roof for this wall
-            let whichSide = THREE.FrontSide;
-            let rotX = Math.PI / 2.0 * -1;
-
-            const repeatX = Math.round(width * 2);
-            const repeatY = Math.round(thick * 2);
-            const wallTexture  = textureHelper.get('Wallpaper1', repeatX, repeatY);
-
-            let roof = new THREE.Mesh( new THREE.PlaneGeometry(width, thick), new THREE.MeshStandardMaterial({ map: wallTexture, side: whichSide }) );
-            roof.name = "new_mesh_roof";
-            roof.position.x = 0;
-            roof.position.y = -height + (HEIGHT / 2.0);
-            roof.position.z = 0;
-            roof.rotation.x = rotX;
-
-            group.children.push( roof );
-            roof.parent = group;
+            const wall = this.constructExtrudeWall(-width / 2.0, -thick / 2.0, -width / 2.0, thick / 2.0, width / 2.0, thick / 2.0, width / 2.0, -thick / 2.0, i, wall_height); 
+            wall.position.y -= HEIGHT / 2.0;
+            group.children.push( wall );
+            wall.parent = group;
         }
     }
 
@@ -728,7 +641,7 @@ export class Editor {
             // console.log('{' + element.x1 + ':' + element.z1 + ',' + element.x2 + ':' + element.z2 + ',' + element.x3 + ':' + element.z3 + ',' + element.x4 + ':' + element.z4);
             const type = element.type;
             if(type == ObjectType.WALL) {
-                this.constructWallFrom2DJSON(element, i);
+               this.constructWallFrom2DJSON(element.x1, element.z1, element.x2, element.z2, element.x3, element.z3, element.x4, element.z4, i);
             } else if(type == ObjectType.DOOR || type == ObjectType.DOOR2) {
                 this.constructDoorFrom2DJSON(element, i);
             } else if(type == ObjectType.WINDOW) {
@@ -749,6 +662,8 @@ export class Editor {
                 this.constructLightFrom2DJSON(element, i);
             }
         }
+
+        saveState();
     }
 	
 	replaceImageToFilepath(textures, images) {

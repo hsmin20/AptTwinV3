@@ -67,6 +67,26 @@ class Door {
         this.pivotPos = new THREE.Vector3(this.object.position.x+xoffset, this.object.position.y, 0);
 
         this.rotated = 0;
+
+        this.buildPhysicsBody(this.object.position, this.object.quaternion, parameters);
+    }
+
+    buildPhysicsBody(pos, quat, parameters) {
+        let transform = new Ammo.btTransform();
+        transform.setIdentity();
+        transform.setOrigin( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
+        transform.setRotation( new Ammo.btQuaternion( quat.x, quat.y, quat.z, quat.w ) );
+        let motionState = new Ammo.btDefaultMotionState( transform );
+
+        let colShape = new Ammo.btBoxShape( new Ammo.btVector3( parameters.x * 0.5, parameters.y * 0.5, parameters.z * 0.5 ) );
+        colShape.setMargin( 0.05 );
+
+        let localInertia = new Ammo.btVector3( 0, 0, 0 );
+        colShape.calculateLocalInertia( mass, localInertia );
+
+        let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, colShape, localInertia );
+        this.body = new Ammo.btRigidBody( rbInfo );
+
     }
 
     click() {
@@ -383,6 +403,8 @@ export class EntityManager {
     constructor(scene) {
         this.scene = scene;
 
+        this.arRigidBodies = [];
+
         this.arGroup = [];
         this.arAnimEntity = [];
         this.arAnimObj = [];
@@ -391,6 +413,8 @@ export class EntityManager {
         this.mapUpdatable = new Multimap();
 
         this.mapMovable = new Map();
+
+        this.tmpTrans = new Ammo.btTransform();
 
         this.build();
     }
@@ -607,6 +631,21 @@ export class EntityManager {
 
             for (const obj of this.mapMovable.values()) {
                 obj.update(posx, posz, roty);
+            }
+        }
+    }
+
+    updateRigidBodies() {
+        for(let i=0; i<this.arRigidBodies.length; i++) {
+            let rigidBody = this.arRigidBodies[ i ];
+            let objAmmo = rigidBody.physicsBody;
+            let ms = objAmmo.getMotionState();
+            if ( ms ) {
+                ms.getWorldTransform( tmpTrans );
+                let p = tmpTrans.getOrigin();
+                let q = tmpTrans.getRotation();
+                rigidBody.position.set( p.x(), p.y(), p.z() );
+                rigidBody.quaternion.set( q.x(), q.y(), q.z(), q.w() );
             }
         }
     }

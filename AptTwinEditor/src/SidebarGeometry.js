@@ -7,6 +7,7 @@ import { ConeGeometryPanel } from './ConeGeometryPanel.js';
 import { CylinderGeometryPanel } from './CylinderGeometryPanel.js';
 import { PlaneGeometryPanel } from './PlaneGeometryPanel.js';
 import { CircleGeometryPanel } from './CircleGeometryPanel.js';
+import { ExtrudeGeometryPanel } from './ExtrudeGeometryPanel.js';
 
 export class SidebarGeometry {
     constructor( editor ) {
@@ -61,6 +62,8 @@ export class SidebarGeometry {
                     this.geometryPanel = new PlaneGeometryPanel( this.editor );
                 } else if(geometry.type == 'CircleGeometry') {
                     this.geometryPanel = new CircleGeometryPanel( this.editor );
+                } else if(geometry.type == 'ExtrudeGeometry') {
+                    this.geometryPanel = new ExtrudeGeometryPanel( this.editor );
                 }
 
 				this.parameters.add( this.geometryPanel.container );

@@ -1,12 +1,12 @@
 import { Command } from '../Command.js';
 
 export class AddObjectCommand extends Command {
-	constructor( editor, object, parent ) {
+	constructor( editor, object, parent=null ) {
 		super( editor );
 		this.type = 'AddObjectCommand';
 
 		this.object = object;
-        this.parent = parent;
+        this.parent = parent != null ? parent : editor.scene;
 		this.name = 'AddObject' + ': ' + object.name;
 	}
 

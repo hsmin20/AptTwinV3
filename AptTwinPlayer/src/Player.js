@@ -21,13 +21,15 @@ export class Player {
 		this.camera_world_pos = new THREE.Vector3();
         this.camera_world_dir = new THREE.Vector3();
 
-		this.prevTime = performance.now();
+		this.timer = new THREE.Timer();
 
         this.mobile = true;
         try{ document.createEvent("TouchEvent"); }
 		catch(e) { this.mobile = false; }
 
         this.storage = new _Storage();
+
+        this.setupPhysicsWorld();
 
 		this.raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(), 0, 2.0);
 
@@ -164,6 +166,16 @@ export class Player {
         // saveState();
 	}
 
+    setupPhysicsWorld() {
+        let collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
+        let dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
+        let overlappingPairCache = new Ammo.btDbvtBroadphase();
+        let solver = new Ammo.btSequentialImpulseConstraintSolver();
+
+        this.physicsWorld = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+        this.physicsWorld.setGravity(new Ammo.btVector3(0, -9.8, 0));
+    }
+
 	render(delta=0) {
 		// Normal Scene
         this.renderer.setViewport( 0, 0, this.dom.offsetWidth, this.dom.offsetHeight );
@@ -190,17 +202,25 @@ export class Player {
 	animate() {
 		requestAnimationFrame(this.animate.bind(this));
 
-		const time = performance.now();
-        const delta = (time - this.prevTime) / 1000;
+		this.timer.update();
+        let deltaTime = this.timer.getDelta();
 
         this.control.run(delta);
 
         this.entityManager.run(delta);
 
-		this.render(delta);
+        this.updatePhysics(delta);
 
-		this.prevTime = time;
+		this.render(delta);
 	}
+
+    updatePhysics(delta){
+        // Step world
+        this.physicsWorld.stepSimulation(delta, 10);
+
+        // Update rigid bodies
+        this.entityManager.updateRigidBodies();
+    }
 
 	addCrosshair() {
         const cameraMin = 0.00025;
