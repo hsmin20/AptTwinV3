@@ -8,7 +8,8 @@ npm install three --save-dev
 // Install WebPack Dev-server
 npm install webpack webpack-cli webpack-dev-server webpack-merge ts-loader --save-dev
 
-
+// Install Cannon-es (Physics Engine)
+npm install cannon-es --save-dev
 
 ------------------------------------------------------------------------------------------------------------------
 // starts server at 8080 port

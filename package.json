@@ -8,6 +8,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "cannon-es": "^0.20.0",
     "three": "^0.179.1",
     "ts-loader": "^9.5.4",
     "webpack": "^5.101.3",

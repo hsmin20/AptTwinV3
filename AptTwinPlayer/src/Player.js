@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
 import { EntityManager } from './Entities';
 import { OrbitalControl, FreeLookControl } from './Controls';
 import { Storage as _Storage } from '../../src_common/Storage.js';
@@ -15,7 +16,7 @@ export class Player {
 
         this.Y_UNIT_VECTOR = new THREE.Vector3(0, 1, 0);
 
-        this.camera = new THREE.PerspectiveCamera( 50, 1, 0.1, 1000 );
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000 );
         this.scene = new THREE.Scene();
 
 		this.camera_world_pos = new THREE.Vector3();
@@ -30,6 +31,7 @@ export class Player {
         this.storage = new _Storage();
 
         this.setupPhysicsWorld();
+        this.createPlayerBody();
 
 		this.raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(), 0, 2.0);
 
@@ -167,20 +169,25 @@ export class Player {
 	}
 
     setupPhysicsWorld() {
-        let collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
-        let dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
-        let overlappingPairCache = new Ammo.btDbvtBroadphase();
-        let solver = new Ammo.btSequentialImpulseConstraintSolver();
+        this.cannonWorld = new CANNON.World();
+		this.cannonWorld.gravity.set(0, -20, 0);
 
-        this.physicsWorld = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-        this.physicsWorld.setGravity(new Ammo.btVector3(0, -9.8, 0));
+        // Are these needed?
+        this.cannonWorld.broadphase = new CANNON.NaiveBroadphase();
+        this.cannonWorld.solver.iterations = 10;
     }
 
-	render(delta=0) {
-		// Normal Scene
-        this.renderer.setViewport( 0, 0, this.dom.offsetWidth, this.dom.offsetHeight );
-        this.renderer.render(this.scene, this.camera);
-	}
+    createPlayerBody() {
+        const playerShape = new CANNON.Sphere(0.5);
+        const playerMat = new CANNON.Material('player');
+        this.playerBody  = new CANNON.Body({ mass: 70, material: playerMat });
+        this.playerBody.addShape(playerShape);
+        this.playerBody.position.set(-5, 2, 5);
+        this.playerBody.linearDamping = 0.9;
+        this.playerBody.angularDamping = 1;
+        this.playerBody.fixedRotation = true;
+        this.cannonWorld.addBody(this.playerBody);
+    }
 
 	setRaycasterPosDir() {
 		this.camera.getWorldPosition(this.camera_world_pos);
@@ -192,6 +199,22 @@ export class Player {
 		this.entityManager.handleMouseClick(this.raycaster);
 	}
 
+    handleSelectedObj() {
+		var intersects = this.entityManager.intersectObjects(this.raycaster);
+        if (intersects.length > 0) {
+            let obj = intersects[0].object;
+            if(obj != null && obj.userData.info !== undefined) {
+				if(obj.userData.info != 'clickable') {
+                    this.crosshair.visible = true;
+                    this.handMesh.visible = false;
+				} else {
+                    this.crosshair.visible = false;
+                    this.handMesh.visible = true;
+                }
+            }
+        }
+    }
+
 	initLight() {
 		// ambient light
 		var ambientLight = new THREE.AmbientLight (0xFFFFFF, 1)
@@ -199,38 +222,46 @@ export class Player {
 		this.scene.add(ambientLight)
 	}
 
+    movePlayer(yawpitch) {
+        // Camera follows player body
+        this.camera.position.set(
+            this.playerBody.position.x,
+            this.playerBody.position.y,
+            this.playerBody.position.z
+        );
+        this.camera.rotation.order = 'YXZ';
+        this.camera.rotation.y = yawpitch[0];
+        this.camera.rotation.x = yawpitch[1];
+        this.camera.rotation.z = 0;
+    }
+
 	animate() {
 		requestAnimationFrame(this.animate.bind(this));
 
 		this.timer.update();
-        let deltaTime = this.timer.getDelta();
+        let delta = this.timer.getDelta();
 
-        this.control.run(delta);
+        this.cannonWorld.step(delta);
+
+        const yawpitch = this.control.run(delta);
+        if(yawpitch != null)
+            this.movePlayer(yawpitch);
 
         this.entityManager.run(delta);
 
-        this.updatePhysics(delta);
-
-		this.render(delta);
+		this.renderer.setViewport( 0, 0, this.dom.offsetWidth, this.dom.offsetHeight );
+        this.renderer.render(this.scene, this.camera);
 	}
 
-    updatePhysics(delta){
-        // Step world
-        this.physicsWorld.stepSimulation(delta, 10);
-
-        // Update rigid bodies
-        this.entityManager.updateRigidBodies();
-    }
-
 	addCrosshair() {
-        const cameraMin = 0.00025;
+        const cameraMin = 0.0005;
         const cursorSize = 1;
         const cursorThickness = 1.5;
         const cursorGeometry = new THREE.RingGeometry(
             cursorSize * cameraMin,
             cursorSize * cameraMin * cursorThickness,
         );
-        const cursorMaterial = new THREE.MeshBasicMaterial({ color: "white" });
+        const cursorMaterial = new THREE.MeshBasicMaterial({ color: "green" });
         this.crosshair = new THREE.Mesh(cursorGeometry, cursorMaterial);
 
 		this.crosshair.position.z = -0.1;
@@ -252,7 +283,8 @@ export class Player {
 	}
 
 	initControl() {
-    	this.control = new FreeLookControl(this, this.camera, this.scene);
+    	this.control = new FreeLookControl(this, this.playerBody);
+        this.scene.add(this.camera);
 	}
 
     detectCollison() {
@@ -300,16 +332,6 @@ export class Player {
     }
 
     changeView(style) {
-        // this.control.gravity = !this.control.gravity;
-
-        // const curPos = this.camera.position;
-        // const BIRDEYEVIEW_HEIGHT = 15;
-
-        // if(!this.control.gravity) {
-        //     this.camera.position.set(curPos.x, BIRDEYEVIEW_HEIGHT, curPos.z);
-        //     this.camera.lookAt(this.scene.position);
-        // }
-
         if(style == 1) {
 			this.control.dispose();
             this.control = new OrbitalControl(this, this.camera, this.renderer );
