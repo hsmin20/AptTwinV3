@@ -32,25 +32,27 @@ export class Dog {
         const bodymaterial = new THREE.MeshBasicMaterial( {map: boydTexture} );
 
         const leg_height = 0.08;
-
         const body_radius = 0.08;
+        const head_radius = 0.05;
+
+        const height = leg_height + body_radius + head_radius;
+
         const body_length = 0.24;
         const bodygeometry = new THREE.CapsuleGeometry( body_radius, body_length, 8, 20 ); 
         const body = new THREE.Mesh( bodygeometry, bodymaterial );
         body.name = name + '_Body';
-        body.position.y = leg_height + body_radius;
+        body.position.y = leg_height + body_radius - height / 2.0;
         body.rotation.x = Math.PI / 2.0;
 
         group.add( body );
         body.parent = group;
         
         // Add a Head
-        const head_radius = 0.05;
         const head_length = 0.04;
 
         const head_group = new THREE.Group();
         head_group.name = name + '_headgroup';
-        head_group.position.y = leg_height + body_radius * 2.0 + head_radius;
+        head_group.position.y = leg_height + body_radius * 2.0 + head_radius - height / 2.0;
         head_group.position.z = body_length / 1.7;
         head_group.rotation.x = Math.PI / 2.3;
 
@@ -74,7 +76,7 @@ export class Dog {
         const nosematerial = new THREE.MeshBasicMaterial( {color:0x21130d} );
         const nose = new THREE.Mesh(new THREE.SphereGeometry(eye_radius * 2), nosematerial);
         nose.name = name + '_Nose';
-        nose.position.y = head_length + 0.02;
+        nose.position.y = head_length + 0.020;
 
         const earmaterial = new THREE.MeshBasicMaterial( {color: 0x873e23,side: THREE.DoubleSide} );
         const ear_width = 0.07;
@@ -117,7 +119,7 @@ export class Dog {
             const leg = new THREE.Mesh( new THREE.CapsuleGeometry( leg_radius, leg_height, 8, 20 ), bodymaterial );
             leg.name = name + "_leg" + i;
             leg.position.x = (i % 2 == 0) ? offset_x : -offset_x;
-            leg.position.y = leg_height / 2.0;
+            leg.position.y = leg_height / 2.0 - height / 2.0;
             leg.position.z = (i < 3) ? -offset_z : offset_z;
 
             group.children.push( leg );
@@ -130,12 +132,14 @@ export class Dog {
 
         const tail = new THREE.Mesh( new THREE.CapsuleGeometry( tail_radius, tail_length, 8, 20 ), bodymaterial );
         tail.name = name + "_tail";
-        tail.position.y = body_radius * 2;
+        tail.position.y = body_radius * 2 - height / 2.0;
         tail.position.z = -body_length;
         tail.rotation.x = Math.PI / 2.4;
 
         group.children.push(tail);
         tail.parent = group;
+
+        group.position.y =  height / 2.0;
 
         editor.objectChanged(group);
     }

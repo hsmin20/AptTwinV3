@@ -30,9 +30,10 @@ export class Desk {
 
         // 상판
         const panelHeight = 0.05;
+       
         const deskPanel = new THREE.Mesh(new THREE.BoxGeometry(width, panelHeight, depth), material);
         deskPanel.name = name + "_Panel";
-        deskPanel.position.y = height + panelHeight / 2;
+        deskPanel.position.y = height / 2;
         group.add(deskPanel);
 
         // 다리
@@ -45,9 +46,11 @@ export class Desk {
             leg.name = name + "_Leg" + (i + 1);
             leg.position.x = (i % 2 === 0) ? -offsetX : offsetX;
             leg.position.z = (i < 2) ? -offsetZ : offsetZ;
-            leg.position.y = height / 2;
+            leg.position.y = -panelHeight / 2;
             group.add(leg);
         }
+
+        group.position.y = (height + panelHeight) / 2;
 
         editor.objectChanged(group);
     }

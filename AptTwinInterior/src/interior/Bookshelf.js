@@ -39,7 +39,7 @@ export class Bookshelf {
             new THREE.MeshStandardMaterial({ map: panelTexture })
         );
         topPanel.name = name + "_TopPanel";
-        topPanel.position.set(0, height - panelDepth / 2, 0);
+        topPanel.position.set(0, (height - panelDepth) / 2, 0);
         group.add(topPanel);
 
         const bottomPanel = new THREE.Mesh(
@@ -47,7 +47,7 @@ export class Bookshelf {
             new THREE.MeshStandardMaterial({ map: panelTexture })
         );
         bottomPanel.name = name + "_BottomPanel";
-        bottomPanel.position.set(0, panelDepth / 2, 0);
+        bottomPanel.position.set(0, -(height - panelDepth) / 2, 0);
         group.add(bottomPanel);
 
         // Add Left & Right
@@ -56,7 +56,7 @@ export class Bookshelf {
             new THREE.MeshStandardMaterial({ map: panelTexture })
         );
         leftPanel.name = name + "_LeftPanel";
-        leftPanel.position.set(-(width - panelDepth) / 2, height / 2, 0);
+        leftPanel.position.set(-(width - panelDepth) / 2, 0, 0);
         group.add(leftPanel);
 
         const rightPanel = new THREE.Mesh(
@@ -64,7 +64,7 @@ export class Bookshelf {
             new THREE.MeshStandardMaterial({ map: panelTexture })
         );
         rightPanel.name = name + "_RightPanel";
-        rightPanel.position.set((width - panelDepth) / 2, height / 2, 0);
+        rightPanel.position.set((width - panelDepth) / 2, 0, 0);
         group.add(rightPanel);
 
         // Add Back
@@ -73,14 +73,14 @@ export class Bookshelf {
             new THREE.MeshStandardMaterial({ map: panelTexture })
         );
         backPanel.name = name + "_BackPanel";
-        backPanel.position.set(0, height / 2, -(depth - panelDepth) / 2);
+        backPanel.position.set(0, 0, -(depth - panelDepth) / 2);
         group.add(backPanel);
 
         // Add Layers
         const layer_width = width - (panelDepth * 2);
         const height_inside = height - (panelDepth * 2);
         const one_layer_height = height_inside / noOfLayers;
-        let cur_height = one_layer_height;
+        let cur_height = -(height / 2.0 - one_layer_height);
         for (let i = 1; i <= noOfLayers; i++) {
             const layer = new THREE.Mesh(
                 new THREE.BoxGeometry(layer_width, panelDepth, depth),
@@ -91,6 +91,8 @@ export class Bookshelf {
             group.add(layer);
             cur_height += one_layer_height;
         }
+
+        group.position.y = height / 2.0;
 
         editor.objectChanged(group);
     }

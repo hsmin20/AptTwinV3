@@ -40,26 +40,29 @@ export class Bed {
         else
             frameTexture = textureHelper.get('Wood', 4, 4);
 
-        // add a frame
         const frameheight = 0.2;
+        const headheight = 0.8;
+        const leg_length = 0.2;
+        const total_length = headheight + leg_length;
+
+        // add a frame
         const bedFrame = new THREE.Mesh( new THREE.BoxGeometry(width, frameheight, depth),
             new THREE.MeshStandardMaterial( { map: frameTexture} ) );
         bedFrame.name = name + "_Frame";
         bedFrame.position.x = 0.0;
-        bedFrame.position.y = frameheight / 2.0;
+        bedFrame.position.y = -(total_length - frameheight) / 2.0 + leg_length;
         bedFrame.position.z = 0.0;
 
         group.children.push( bedFrame );
         bedFrame.parent = group;
 
         // add a head
-        const headheight = 0.8;
         const headdepth = 0.05;
         const bedHead = new THREE.Mesh( new THREE.BoxGeometry(width, headheight, headdepth),
             new THREE.MeshStandardMaterial( { map: frameTexture} ) );
         bedHead.name = name + "_Head";
         bedHead.position.x = 0.0;
-        bedHead.position.y = headheight / 2.0;
+        bedHead.position.y = leg_length / 2.0;
         bedHead.position.z = (depth + headdepth) / 2.0 ;
 
         group.children.push( bedHead );
@@ -67,7 +70,6 @@ export class Bed {
 
         //  add 4 legs
         const radius = 0.02;
-        const leg_length = 0.2;
 
         const offset_x = width / 2.0 - radius;
         const offset_z = depth / 2.0 - radius;
@@ -76,7 +78,7 @@ export class Bed {
             const leg = new THREE.Mesh( new THREE.CylinderGeometry(radius, radius, leg_length), new THREE.MeshStandardMaterial( { map: frameTexture} ));
             leg.name = name + "_leg" + i;
             leg.position.x = (i % 2 == 0) ? offset_x : -offset_x;
-            leg.position.y = -leg_length / 2.0;
+            leg.position.y = -(total_length - leg_length) / 2.0;
             leg.position.z = (i < 3) ? -offset_z : offset_z;
 
             group.children.push( leg );
@@ -91,13 +93,13 @@ export class Bed {
             new THREE.MeshStandardMaterial( { map: mattressTexture} ) );
         mattress.name = name + "_mattress";
         mattress.position.x = 0.0;
-        mattress.position.y = frameheight + mattressheight / 2.0;
+        mattress.position.y = -(total_length - mattressheight) / 2.0 + frameheight + leg_length;
         mattress.position.z = 0.0;
 
         group.children.push( mattress );
         mattress.parent = group;
 
-        group.position.y = leg_length;
+        group.position.y =  total_length / 2;
 
         editor.objectChanged(group);
     }

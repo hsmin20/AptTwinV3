@@ -48,11 +48,13 @@ export class WashingMachine {
         ] );
         washingMachine.name = name + "_Body";
         washingMachine.position.x = 0.0;
-        washingMachine.position.y = height / 2.0;
+        washingMachine.position.y = 0.0;
         washingMachine.position.z = 0.0;
 
         group.children.push( washingMachine );
         washingMachine.parent = group;
+
+        group.position.y = height / 2.0;
 
         editor.objectChanged( group );
     }

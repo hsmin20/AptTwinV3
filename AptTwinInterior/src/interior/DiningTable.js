@@ -28,7 +28,7 @@ export class DiningTable {
         const tablePanel = new THREE.Mesh( new THREE.BoxGeometry(width, panelHeight, depth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
         tablePanel.name = name + "_Panel";
         tablePanel.position.x = 0.0;
-        tablePanel.position.y = height + (panelHeight / 2.0);
+        tablePanel.position.y = height / 2.0;
         tablePanel.position.z = 0.0;
 
         group.children.push( tablePanel );
@@ -44,12 +44,14 @@ export class DiningTable {
             const leg = new THREE.Mesh( new THREE.BoxGeometry(leg_width, height, leg_width), new THREE.MeshStandardMaterial( { map: legTexture} ));
             leg.name = name + "_leg" + i;
             leg.position.x = (i % 2 == 0) ? offset_x : -offset_x;
-            leg.position.y = height / 2.0;
+            leg.position.y = -panelHeight / 2.0;
             leg.position.z = (i < 3) ? -offset_z : offset_z;
 
             group.children.push( leg );
             leg.parent = group;
         }
+
+        group.position.y = (height + panelHeight) / 2.0;
 
         editor.objectChanged(group);
     }

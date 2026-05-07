@@ -38,8 +38,8 @@ export class Refrigerator {
         ] );
         fridgeBody.name = name + "_Body";
         fridgeBody.position.x = 0.0;
-        fridgeBody.position.y = height / 2.0;
-        fridgeBody.position.z = 0.0;
+        fridgeBody.position.y = 0.0;
+        fridgeBody.position.z = -doorDepth / 2.0;
 
         group.children.push( fridgeBody );
         fridgeBody.parent = group;
@@ -52,7 +52,7 @@ export class Refrigerator {
         doorGroup.name = name + "_DoorGroup";
         doorGroup.position.x = 0.0;
         doorGroup.position.y = 0.0;
-        doorGroup.position.z = (bodyDepth + doorDepth) / 2.0;
+        doorGroup.position.z = bodyDepth / 2.0;
 
         group.children.push( doorGroup );
         doorGroup.parent = group;
@@ -66,9 +66,9 @@ export class Refrigerator {
             ] );
             freezerDoor.name = name + "_FreezerDoor";
             freezerDoor.position.x = 0.0;
-            freezerDoor.position.y = height - (freezerHeight / 2.0);
-            freezerDoor.position.z = 0.0;
-            freezerDoor.userData.type = 'door';
+            freezerDoor.position.y = (height - freezerHeight) / 2.0;
+            freezerDoor.position.z = 0;
+            freezerDoor.userData.type = 'ref_door';
             freezerDoor.userData.pivotDir = 'right';
             freezerDoor.userData.openDir = 'inward';
 
@@ -79,13 +79,13 @@ export class Refrigerator {
             const fridgerDoor = new THREE.Mesh( new THREE.BoxGeometry(width, fridgeHeight, doorDepth), [  
                 new THREE.MeshStandardMaterial( { map: shinyTexture} ), new THREE.MeshStandardMaterial( { map: shinyTexture} ),
                 new THREE.MeshStandardMaterial( { map: shinyTexture} ), new THREE.MeshStandardMaterial( { map: shinyTexture} ),
-                new THREE.MeshStandardMaterial( { map: doorRTexture} ), new THREE.MeshStandardMaterial( { map: fridgeInside2Texture} )
+                new THREE.MeshStandardMaterial( { map: doorRTexture} ), new THREE.MeshStandardMaterial( { map: fridgeInsideTexture} )
             ] );
             fridgerDoor.name = name + "_FridgerDoor";
             fridgerDoor.position.x = 0.0;
-            fridgerDoor.position.y = fridgeHeight / 2.0;
-            fridgerDoor.position.z = 0.0;
-            fridgerDoor.userData.type = 'door';
+            fridgerDoor.position.y = -freezerHeight / 2.0;
+            fridgerDoor.position.z = 0;
+            fridgerDoor.userData.type = 'ref_door';
             fridgerDoor.userData.pivotDir = 'right';
             fridgerDoor.userData.openDir = 'inward';
 
@@ -96,12 +96,13 @@ export class Refrigerator {
             const leftDoor = new THREE.Mesh( new THREE.BoxGeometry(halfWidth, height, doorDepth), [  
                 new THREE.MeshStandardMaterial( { map: shinyTexture} ), new THREE.MeshStandardMaterial( { map: shinyTexture} ),
                 new THREE.MeshStandardMaterial( { map: shinyTexture} ), new THREE.MeshStandardMaterial( { map: shinyTexture} ),
-                new THREE.MeshStandardMaterial( { map: doorLTexture} ), new THREE.MeshStandardMaterial( { map: shinyTexture} )
+                new THREE.MeshStandardMaterial( { map: doorLTexture} ), new THREE.MeshStandardMaterial( { map: fridgeInside2Texture} )
             ] );
             leftDoor.name = name + "_LeftDoor";
             leftDoor.position.x = -halfWidth / 2.0;
-            leftDoor.position.y = height / 2.0;
+            leftDoor.position.y = 0.0;
             leftDoor.position.z = 0;
+            leftDoor.userData.type = 'ref_door';
             leftDoor.userData.pivotDir = 'left';
             leftDoor.userData.openDir = 'inward';
 
@@ -115,8 +116,9 @@ export class Refrigerator {
             ] );
             rightDoor.name = name + "_RightDoor";
             rightDoor.position.x = halfWidth / 2.0;
-            rightDoor.position.y = height / 2.0;
+            rightDoor.position.y = 0.0;
             rightDoor.position.z = 0;
+            rightDoor.userData.type = 'ref_door';
             rightDoor.userData.pivotDir = 'right';
             rightDoor.userData.openDir = 'inward';
 
@@ -133,9 +135,9 @@ export class Refrigerator {
             ] );
             leftTopDoor.name = name + "_LeftTopDoor";
             leftTopDoor.position.x = -halfWidth / 2.0;
-            leftTopDoor.position.y = height - (topHeight / 2.0);
+            leftTopDoor.position.y = (height - topHeight) / 2.0;
             leftTopDoor.position.z = 0;
-            leftTopDoor.userData.type = 'door';
+            leftTopDoor.userData.type = 'ref_door';
             leftTopDoor.userData.pivotDir = 'left';
             leftTopDoor.userData.openDir = 'inward';
 
@@ -146,13 +148,13 @@ export class Refrigerator {
             const leftBottomDoor = new THREE.Mesh( new THREE.BoxGeometry(halfWidth, bottomHeight, doorDepth), [  
                 new THREE.MeshStandardMaterial( { map: shinyTexture} ), new THREE.MeshStandardMaterial( { map: shinyTexture} ),
                 new THREE.MeshStandardMaterial( { map: shinyTexture} ), new THREE.MeshStandardMaterial( { map: shinyTexture} ),
-                new THREE.MeshStandardMaterial( { map: doorLTexture} ), new THREE.MeshStandardMaterial( { map: shinyTexture} )
+                new THREE.MeshStandardMaterial( { map: doorLTexture} ), new THREE.MeshStandardMaterial( { map: freezerInsideTexture} )
             ] );
             leftBottomDoor.name = name + "_LeftBottomDoor";
             leftBottomDoor.position.x = -halfWidth / 2.0;
-            leftBottomDoor.position.y = bottomHeight / 2.0;
+            leftBottomDoor.position.y = -topHeight / 2.0;
             leftBottomDoor.position.z = 0;
-            leftBottomDoor.userData.type = 'door';
+            leftBottomDoor.userData.type = 'ref_door';
             leftBottomDoor.userData.pivotDir = 'left';
             leftBottomDoor.userData.openDir = 'inward';
 
@@ -166,9 +168,9 @@ export class Refrigerator {
             ] );
             rightTopDoor.name = name + "_RightTopDoor";
             rightTopDoor.position.x = halfWidth / 2.0;
-            rightTopDoor.position.y = height - (topHeight / 2.0);
+            rightTopDoor.position.y = (height - topHeight) / 2.0;
             rightTopDoor.position.z = 0;
-            rightTopDoor.userData.type = 'door';
+            rightTopDoor.userData.type = 'ref_door';
             rightTopDoor.userData.pivotDir = 'right';
             rightTopDoor.userData.openDir = 'inward';
 
@@ -178,19 +180,21 @@ export class Refrigerator {
             const rightBottomDoor = new THREE.Mesh( new THREE.BoxGeometry(halfWidth, bottomHeight, doorDepth), [  
                 new THREE.MeshStandardMaterial( { map: shinyTexture} ), new THREE.MeshStandardMaterial( { map: shinyTexture} ),
                 new THREE.MeshStandardMaterial( { map: shinyTexture} ), new THREE.MeshStandardMaterial( { map: shinyTexture} ),
-                new THREE.MeshStandardMaterial( { map: doorRTexture} ), new THREE.MeshStandardMaterial( { map: shinyTexture} )
+                new THREE.MeshStandardMaterial( { map: doorRTexture} ), new THREE.MeshStandardMaterial( { map: freezerInsideTexture} )
             ] );
             rightBottomDoor.name = name + "_RightBottomDoor";
             rightBottomDoor.position.x = halfWidth / 2.0;
-            rightBottomDoor.position.y = bottomHeight / 2.0;
+            rightBottomDoor.position.y = -topHeight / 2.0;
             rightBottomDoor.position.z = 0;
-            rightBottomDoor.userData.type = 'door';
+            rightBottomDoor.userData.type = 'ref_door';
             rightBottomDoor.userData.pivotDir = 'right';
             rightBottomDoor.userData.openDir = 'inward';
 
             doorGroup.children.push( rightBottomDoor );
             rightBottomDoor.parent = doorGroup;
         }
+
+        group.position.y = height / 2.0;
 
         editor.objectChanged(group);
     }

@@ -22,13 +22,18 @@ export class Sofa {
         editor.execute( new AddGroupCommand( editor, group, parent ) );
 
         const frameTexture = textureHelper.get('Wood', 4, 4);
-        // Add a bottom
+
         const frameheight = 0.08;
+        const cushion_height = 0.15;
+        const leg_height = 0.1;
+        const totalHeight = frameheight + cushion_height + height + leg_height;
+        
+        // Add a bottom
         const sofaFrame = new THREE.Mesh( new THREE.BoxGeometry(width, frameheight, depth),
                                             new THREE.MeshStandardMaterial( { map: frameTexture} ) );
         sofaFrame.name = name + "_Frame";
         sofaFrame.position.x = 0.0;
-        sofaFrame.position.y = frameheight / 2.0;
+        sofaFrame.position.y = frameheight / 2.0 + leg_height - (totalHeight / 2.0);
         sofaFrame.position.z = 0.0;
 
         group.children.push( sofaFrame );
@@ -39,7 +44,6 @@ export class Sofa {
         const offset = 0.001;
         const noOfCushion = width > 2.3 ? 3 : 2;
         let cushion_width = width / noOfCushion;
-        const cushion_height = 0.15;
         const backDepth = 0.1;
         let start_x = noOfCushion == 2 ? -0.5 * cushion_width : -1 * cushion_width;
         for(let i=1; i<=noOfCushion; i++) {
@@ -47,7 +51,7 @@ export class Sofa {
                                             new THREE.MeshStandardMaterial( { map: cushionTexture} ));
             cushion.name = name + "_cushion" + i;
             cushion.position.x = start_x;
-            cushion.position.y = frameheight + cushion_height / 2.0;
+            cushion.position.y = frameheight + cushion_height / 2.0 + leg_height - (totalHeight / 2.0);
             cushion.position.z = 0.0;
 
             group.children.push( cushion );
@@ -57,7 +61,7 @@ export class Sofa {
                                             new THREE.MeshStandardMaterial( { map: cushionTexture} ) );
             backFrame.name = name + "_BackFrame" + i;
             backFrame.position.x = start_x;
-            backFrame.position.y = frameheight + cushion_height / 2.0 + height / 2.0;
+            backFrame.position.y = frameheight + cushion_height / 2.0 + height / 2.0 + leg_height - (totalHeight / 2.0);
             backFrame.position.z = -depth / 2.0;
             backFrame.rotation.x = -Math.PI / 8.0
 
@@ -74,7 +78,7 @@ export class Sofa {
                                             new THREE.MeshStandardMaterial( { map: cushionTexture} ));
             armrest.name = name + "_armrest" + i;
             armrest.position.x = (i % 2 == 0) ? -width / 2.0 : width / 2.0;
-            armrest.position.y = frameheight + radius;
+            armrest.position.y = frameheight + radius + leg_height - (totalHeight / 2.0);
             armrest.position.z = 0.0;
             armrest.rotation.x = Math.PI / 2.0;
 
@@ -84,7 +88,6 @@ export class Sofa {
 
         // Add 4 legs
         const leg_width = 0.05;
-        const leg_height = 0.1;
         const offset_x = width / 2.0 - (leg_width / 2.0);
         const offset_z = depth / 2.0 - (leg_width / 2.0);
 
@@ -94,7 +97,7 @@ export class Sofa {
                                         new THREE.MeshStandardMaterial( { map: legTexture} ));
             leg.name = name + "_leg" + i;
             leg.position.x = (i % 2 == 0) ? offset_x : -offset_x;
-            leg.position.y = -leg_height / 2.0;
+            leg.position.y = -leg_height / 2.0 + leg_height - (totalHeight / 2.0);
             leg.position.z = (i < 3) ? -offset_z : offset_z;
 
             group.children.push( leg );
@@ -102,7 +105,7 @@ export class Sofa {
         }
 
 
-        group.position.y = leg_height;
+        group.position.y = totalHeight / 2.0;
 
         editor.objectChanged(group);
 

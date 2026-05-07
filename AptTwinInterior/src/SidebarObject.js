@@ -143,7 +143,7 @@ export class SidebarObject {
                 Wardrobe.add(editor, true);
             } else if(type == 'Sofa') {
                 Sofa.add(editor, true);
-            } else if(type == 'WashingMachine') {
+            } else if(type == 'WashingMachine1' || type == 'WashingMachine2') {
                 WashingMachine.add(editor, true);
             } else if(type == 'CoffeeTable') {
                 CoffeeTable.add(editor, true);

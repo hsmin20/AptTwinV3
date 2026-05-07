@@ -242,7 +242,14 @@ export class Editor {
         mesh.rotateX(-Math.PI / 2);
         mesh.castShadow = true;
         mesh.receiveShadow = true;
+        
         mesh.name = "Wall_" + index;
+        mesh.userData.type = 'wall';
+        mesh.userData.width = dx;
+        mesh.userData.depth = dz;
+        mesh.userData.height = height;
+        mesh.userData.centerx = (maxX + minX) / 2;
+        mesh.userData.centerz = (maxZ + minZ) / 2;
 
         return mesh;
     }
@@ -546,6 +553,8 @@ export class Editor {
         mesh.position.y = 0;
         mesh.position.z = z1 + dz / 2.0;
         mesh.rotation.x = Math.PI / 2.0;
+        mesh.userData.type = 'floor';
+
         group.children.push( mesh );
         mesh.parent = group;
 
@@ -559,6 +568,8 @@ export class Editor {
         mesh.position.y = HEIGHT;
         mesh.position.z = z1 + dz / 2.0;
         mesh.rotation.x = Math.PI / 2.0;
+        mesh.userData.type = 'ceiling';
+        
         group.children.push( mesh );
         mesh.parent = group;
     }

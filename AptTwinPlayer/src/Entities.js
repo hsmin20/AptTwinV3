@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-
+import * as CANNON from 'cannon-es';
 import { GasRangeFlame } from './GasRangeFlame.js';
 import { textureHelper } from '../../src_common/TextureHelper.js';
 
@@ -39,12 +39,103 @@ class Light {
     }
 }
 
-class Door {
-    constructor(object) {
+class PhsyicsObject {
+    constructor(object, physicsWorld) {
+        // object is actually a group 
+        this.obj = object;
+
+        const clone = object.clone();
+        clone.rotation.x = 0;
+        clone.rotation.y = 0;
+        clone.rotation.z = 0;
+        const box = new THREE.Box3().setFromObject(clone, true);
+        const size = new THREE.Vector3();
+        box.getSize(size)
+
+        const groupmass = size.x * size.y * size.z * 2000;
+
+		const shape = new CANNON.Box(new CANNON.Vec3(size.x/2.0, size.y/2.0, size.z/2.0));
+		this.body = new CANNON.Body({ mass: groupmass })
+		this.body.addShape(shape);
+
+        const pos = this.obj.position;
+        const qua = this.obj.quaternion;
+
+		this.body.position.x = pos.x;
+		this.body.position.y = pos.y;
+		this.body.position.z = pos.z;
+
+		this.body.quaternion.x = qua.x;
+		this.body.quaternion.y = qua.y;
+		this.body.quaternion.z = qua.z;
+		this.body.quaternion.w = qua.w;
+
+        physicsWorld.addBody(this.body);
+    }
+
+    updateToPhysicsBody() {
+        this.obj.position.set(
+            this.body.position.x,
+            this.body.position.y,
+            this.body.position.z
+        )
+
+        this.obj.quaternion.set(
+            this.body.quaternion.x,
+            this.body.quaternion.y,
+            this.body.quaternion.z,
+            this.body.quaternion.w
+        )
+    }
+}
+
+class Wall {
+    constructor(object, physicsWorld) {
         this.object = object;
+        this.physicsWorld = physicsWorld;
+
+        const width = object.userData.width;
+        const depth = object.userData.depth;
+        const height = object.userData.height;
+
+        const centerx = object.userData.centerx;
+        const centerz = object.userData.centerz;
+
+        this.buildPhysicsBody(width, depth, height, centerx, centerz);
+    }
+
+    buildPhysicsBody(width, depth, height, centerx, centerz) {
+        const cubeShape = new CANNON.Box(new CANNON.Vec3(0.5 * width, 0.5 * height, 0.5 * depth))
+        const cubeBody = new CANNON.Body({ mass: 0 })
+        cubeBody.addShape(cubeShape)
+        cubeBody.position.x = centerx;
+        cubeBody.position.y = 0.5 * height;
+        cubeBody.position.z = centerz;
+
+        // const theta = Math.atan(depth/width);
+        // const euler = new THREE.Euler(0, theta, 0);
+        // const quaternion = new THREE.Quaternion().setFromEuler(euler);
+
+        // cubeBody.quaternion.x = quaternion.x;
+		// cubeBody.quaternion.y = quaternion.y;
+		// cubeBody.quaternion.z = quaternion.z;
+		// cubeBody.quaternion.w = quaternion.w;
+        
+        this.physicsWorld.addBody(cubeBody)
+    }
+
+    updateToPhysicsBody() {}
+}
+
+class Door {
+    constructor(object, physicsWorld, type) {
+        this.object = object;
+
         const geometry = object.geometry;
         const parameters = geometry.parameters;
         this.width = parameters.width;
+        const height = parameters.height;
+        const depth = parameters.depth;
 
         this.state = CLOSED;
         this.pivotPos = new THREE.Vector3();
@@ -68,11 +159,27 @@ class Door {
 
         this.rotated = 0;
 
-        this.buildPhysicsBody(this.object.position, this.object.quaternion, parameters);
-    }
+        // build physics body
+		const shape = new CANNON.Box(new CANNON.Vec3(this.width/2.0, height/2.0, depth/2.0));
+		this.body = new CANNON.Body({ mass: 0 })
+		this.body.addShape(shape);
 
-    buildPhysicsBody(pos, quat, parameters) {
+        const pos = new THREE.Vector3();
+        const qua = new THREE.Quaternion();
+        this.object.getWorldPosition(pos);
+        this.object.getWorldQuaternion(qua);
 
+		this.body.position.x = pos.x;
+		this.body.position.y = pos.y;
+		this.body.position.z = pos.z;
+
+		this.body.quaternion.x = qua.x;
+		this.body.quaternion.y = qua.y;
+		this.body.quaternion.z = qua.z;
+		this.body.quaternion.w = qua.w;
+
+        if(type == 'door')
+            physicsWorld.addBody(this.body);
     }
 
     click() {
@@ -117,13 +224,12 @@ class Door {
 
             if(Math.abs(this.rotated) >=90)
                 this.state = CLOSED;
-            
         }
 	}
 
     rotateAroundAxis(pp, angle) {
 		var pt = pp;
-		rotateAroundWorldAxis(this.object, pt, Y_AXIS_VECTOR, angle * Math.PI / 180.0);
+        rotateAroundWorldAxis(this.object, pt, Y_AXIS_VECTOR, angle * Math.PI / 180.0);
 	}
 
     update(state) {
@@ -132,18 +238,59 @@ class Door {
         if(state == 'on' && this.state == CLOSED)
             this.click();
     }
+
+    updateToPhysicsBody() {
+        // Here, mesh is copied to physics body! This is reverse!!
+        const pos = new THREE.Vector3();
+        const qua = new THREE.Quaternion();
+        this.object.getWorldPosition(pos);
+        this.object.getWorldQuaternion(qua);
+
+		this.body.position.x = pos.x;
+		this.body.position.y = pos.y;
+		this.body.position.z = pos.z;
+
+		this.body.quaternion.x = qua.x;
+		this.body.quaternion.y = qua.y;
+		this.body.quaternion.z = qua.z;
+		this.body.quaternion.w = qua.w;
+    }
 }
 
 class Window {
-    constructor(object) {
+    constructor(object, physicsWorld) {
         this.object = object;
+
         const geometry = object.geometry;
         const parameters = geometry.parameters;
         this.width = parameters.width;
+        const height = parameters.height;
+        const depth = parameters.depth;
 
         this.state = CLOSED;
         this.moved = 0;
         this.openDir = object.userData.openDir;
+
+        // build physics body
+		const shape = new CANNON.Box(new CANNON.Vec3(this.width/2.0, height/2.0, depth/2.0));
+		this.body = new CANNON.Body({ mass: 0 })
+		this.body.addShape(shape);
+
+        const pos = new THREE.Vector3();
+        const qua = new THREE.Quaternion();
+        this.object.getWorldPosition(pos);
+        this.object.getWorldQuaternion(qua);
+
+		this.body.position.x = pos.x;
+		this.body.position.y = pos.y;
+		this.body.position.z = pos.z;
+
+		this.body.quaternion.x = qua.x;
+		this.body.quaternion.y = qua.y;
+		this.body.quaternion.z = qua.z;
+		this.body.quaternion.w = qua.w;
+
+        physicsWorld.addBody(this.body);
     }
 
     click() {
@@ -187,6 +334,23 @@ class Window {
             this.click();
         if(state == 'on' && this.state == CLOSED)
             this.click();
+    }
+
+    updateToPhysicsBody() {
+        // Here, mesh is copied to physics body! This is reverse!!
+        const pos = new THREE.Vector3();
+        const qua = new THREE.Quaternion();
+        this.object.getWorldPosition(pos);
+        this.object.getWorldQuaternion(qua);
+
+		this.body.position.x = pos.x;
+		this.body.position.y = pos.y;
+		this.body.position.z = pos.z;
+
+		this.body.quaternion.x = qua.x;
+		this.body.quaternion.y = qua.y;
+		this.body.quaternion.z = qua.z;
+		this.body.quaternion.w = qua.w;
     }
 }
 
@@ -292,7 +456,7 @@ class WashingMachine extends THREE.Mesh {
         this.depth = depth;
 
         if(this.type == 0) {
-            this.position.y = this.height / 2.0;
+            this.position.y = 0.0; //this.height / 2.0;
             this.rotation.x = Math.PI / 2.0;
         }
 
@@ -386,10 +550,12 @@ class Multimap {
 }
 
 export class EntityManager {
-    constructor(scene) {
+    constructor(scene, physicsWorld) {
         this.scene = scene;
+        this.physicsWorld = physicsWorld;
 
-        this.arGroup = [];
+        this.arPhysicsObj = [];
+
         this.arAnimEntity = [];
         this.arAnimObj = [];
         this.mapClickable = new Map();
@@ -404,13 +570,13 @@ export class EntityManager {
     build() {
         var scope = this;
         this.scene.traverse(function(object) {
-            if(object.parent == scope.scene && object.type == 'Group') {
-                scope.arGroup.push(object);
-            }
-            if (object.userData.type != undefined) {
+            if ( object.userData.type != undefined) {
                 let type = object.userData.type;
-                if(type == 'door') {
-                    let door = new Door(object);
+                if(type == 'wall') {
+                    let wall = new Wall(object, scope.physicsWorld);
+                } else if(type == 'door' || type == 'ref_door') {
+                    let door = new Door(object, scope.physicsWorld, type);
+                    scope.arPhysicsObj.push(door);
                     scope.arAnimEntity.push(door);
                     scope.arAnimObj.push(object);
                     scope.mapClickable.set(object, door);
@@ -420,7 +586,8 @@ export class EntityManager {
                         scope.mapUpdatable.set(DBid, door);
                     }
                 } else if(type == 'window') {
-                    let window = new Window(object);
+                    let window = new Window(object, scope.physicsWorld);
+                    scope.arPhysicsObj.push(window);
                     scope.arAnimEntity.push(window);
                     scope.arAnimObj.push(object);
                     scope.mapClickable.set(object, window);
@@ -442,6 +609,13 @@ export class EntityManager {
                     scope.arAnimObj.push(object);
                     scope.mapClickable.set(object, drawer);
                 }
+            }
+
+            if(object.userData?.isInterior == true) {
+                // This is a normal physics-based object
+                let physicsObj = new PhsyicsObject(object, scope.physicsWorld);
+
+                scope.arPhysicsObj.push(physicsObj);
             }
 
             if(object.userData?.interiorType == 'GasRange') {
@@ -514,7 +688,7 @@ export class EntityManager {
     }
 
     intersectObjects(raycaster) {
-        return raycaster.intersectObjects(this.arGroup);
+        return raycaster.intersectObjects(this.arAnimObj);
     }
 
     handleMouseClick(raycaster) {
@@ -527,9 +701,12 @@ export class EntityManager {
 	}
 
     run(delta) {
-        for(let i=0; i<this.arAnimEntity.length; i++) {
-            let object = this.arAnimEntity[i];
-            object.run(delta);
+        for(let obj of this.arAnimEntity) {
+            obj.run(delta);
+        }
+
+        for(let obj of this.arPhysicsObj) {
+            obj.updateToPhysicsBody();
         }
     }
 
@@ -542,6 +719,7 @@ export class EntityManager {
         }
     }
 
+    // Home Assistant REST data
     updateScene(data) {
         let last_position_name = null;
         for (const item of data) {

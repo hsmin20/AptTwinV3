@@ -11,7 +11,7 @@ export class AirConditioner {
         const group = new THREE.Group();
         group.name = name;
         group.userData.isInterior = true;
-        group.userData.interiorType = 'AC';
+        group.userData.interiorType = 'AirConditioner';
         group.userData.DBid = 'n/a';
 
         if (oldPos) group.position.copy(oldPos);
@@ -69,24 +69,28 @@ export class AirConditioner {
         }
 
         body.name = name + "_Body";
-        body.position.y = height / 2;
+        body.position.y = 0.0;
         group.add(body);
 
         // ===== 받침대 (스탠드형만 추가) =====
         if (actype === "StandAC") {
             const baseHeight = 0.05 * height;
+
+            body.position.y = baseHeight / 2.0;
+
             const base = new THREE.Mesh(
                 new THREE.BoxGeometry(width * 1.1, baseHeight, depth * 1.1),
                 new THREE.MeshStandardMaterial({ color: 0xc0c0c0 })
             );
             base.name = name + "_Base";
-            base.position.y = baseHeight / 2;
+            base.position.y = -height / 2;
             group.add(base);
         }
 
+        group.position.y = height / 2.0;
+
         editor.objectChanged(group);
     }
-
 
     static add(editor, modify = false) {
         const _html = `

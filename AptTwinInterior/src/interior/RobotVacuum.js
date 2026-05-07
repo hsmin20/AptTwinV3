@@ -22,8 +22,10 @@ export class RobotVacuum {
         const cleaner_height = 0.1;
         const cleaner = new THREE.Mesh( new THREE.CylinderGeometry(radius, radius, cleaner_height), new THREE.MeshStandardMaterial({ map: cleanerTexture }));
         cleaner.name = '_cleaner';
-        cleaner.position.y = cleaner_height / 2.0 + 0.02;
+        cleaner.position.y = 0.02;
         cleaner.rotation.y = Math.PI / -2.0;
+
+        group.position.y = cleaner_height / 2.0;
 
         group.add(cleaner);
         cleaner.parent = group;
@@ -36,20 +38,20 @@ export class RobotVacuum {
             const part1Height = height - cleaner_height - (thin_depth * 3);
             const stationPart1 = new THREE.Mesh(new THREE.BoxGeometry(radius*1.8, part1Height, depth), new THREE.MeshStandardMaterial({ map: stationTexture }));
             stationPart1.name = name + "_StationPart1";
-            stationPart1.position.y = part1Height / 2.0 + cleaner_height + (thin_depth * 3);
+            stationPart1.position.y = part1Height / 2.0 + cleaner_height + (thin_depth * 3) - height / 2.0;
             stationPart1.position.z = -radius / 2.0;
 
             const part2Height = cleaner_height + thin_depth * 2;
             const stationPart2 = new THREE.Mesh(new THREE.BoxGeometry(radius*1.8, part2Height, thin_depth), new THREE.MeshStandardMaterial({ map: stationTexture }));
             stationPart2.name = name + "_StationPart2";
-            stationPart2.position.y = part2Height / 2.0 + thin_depth;
+            stationPart2.position.y = part2Height / 2.0 + thin_depth - height / 2.0;
             stationPart2.position.z = -(depth + radius) / 2.0 + thin_depth / 2.0;
 
             const part3Height = thin_depth;
             const part3Depth = depth * 1.5;
             const stationPart3 = new THREE.Mesh(new THREE.BoxGeometry(radius*1.8, part3Height, part3Depth), new THREE.MeshStandardMaterial({ map: stationTexture }));
             stationPart3.name = name + "_StationPart3";
-            stationPart3.position.y = part3Height / 2.0;
+            stationPart3.position.y = part3Height / 2.0 - height / 2.0;
             stationPart3.position.z = (part3Depth - radius - depth) / 2.0;
             
             group.add(stationPart1);
@@ -58,7 +60,11 @@ export class RobotVacuum {
             stationPart2.parent = group;
             group.add(stationPart3);
             stationPart3.parent = group;
+
+            cleaner.position.y = 0.02 - height / 2.0;
         }
+
+        group.position.y = height / 2.0;
 
         editor.objectChanged(group);
     }

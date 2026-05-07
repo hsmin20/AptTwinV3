@@ -13,14 +13,15 @@ export class CoffeeTable {
         group.userData.isInterior = true;
         group.userData.interiorType = 'CoffeeTable';
 
-        if(oldPos != null)
-            group.position.copy(oldPos);
-        if(oldRot != null)
-            group.rotation.copy(oldRot);
+        // if(oldPos != null)
+        //     group.position.copy(oldPos);
+        // if(oldRot != null)
+        //     group.rotation.copy(oldRot);
 
         let parent = editor.getFurniture();
         editor.execute( new AddGroupCommand( editor, group, parent ) );
 
+        // totalHeight = height + panelHeight
         // Add a Panel
         const panelHeight = 0.05;
         let panelTexture = textureHelper.get(coffeeTabletype, 1, 1);
@@ -34,7 +35,7 @@ export class CoffeeTable {
         const tablePanel = new THREE.Mesh( new THREE.BoxGeometry(width, panelHeight, depth), material );
         tablePanel.name = name + "_Panel";
         tablePanel.position.x = 0.0;
-        tablePanel.position.y = height + (panelHeight / 2.0);
+        tablePanel.position.y = height / 2.0;
         tablePanel.position.z = 0.0;
 
         group.children.push( tablePanel );
@@ -47,15 +48,18 @@ export class CoffeeTable {
 
         const legTexture = textureHelper.get('Wood', 1, 4);
         for(let i=1; i<=4; i++) {
-            const leg = new THREE.Mesh( new THREE.BoxGeometry(leg_width, height, leg_width), new THREE.MeshStandardMaterial( { map: legTexture} ));
+            const leg = new THREE.Mesh( new THREE.BoxGeometry(leg_width, height, leg_width), 
+                                        new THREE.MeshStandardMaterial( { map: legTexture} ));
             leg.name = name + "_leg" + i;
             leg.position.x = (i % 2 == 0) ? offset_x : -offset_x;
-            leg.position.y = height / 2.0;
+            leg.position.y = 0.0; //-panelHeight / 2.0;
             leg.position.z = (i < 3) ? -offset_z : offset_z;
 
             group.children.push( leg );
             leg.parent = group;
         }
+
+        group.position.y = (height + 0) / 2.0;
 
         editor.objectChanged(group);
     }

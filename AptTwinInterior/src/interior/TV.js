@@ -13,8 +13,6 @@ export class TV {
         group.userData.isInterior = true;
         group.userData.interiorType = 'TV';
         group.userData.DBid = 'n/a';
-        
-        group.position.y = 1.0;
 
         if(oldPos != null)
             group.position.copy(oldPos);
@@ -48,17 +46,23 @@ export class TV {
         group.children.push( tvFrame );
         tvFrame.parent = group;
 
+        let totalHeight = height;
+
         if(tvtype == 'StandTV') {
             //  add 4 legs
             const radius = 0.01;
             const length = 0.1;
             const offset_x = 0.1;
             const offset_y = (length / 2) * Math.sin(Math.PI / 4.0);
+
+            totalHeight += offset_y;
+            tvFrame.position.y = offset_y / 2.0;
+
             for(let i=1; i<=4; i++) {
                 const leg = new THREE.Mesh( new THREE.CylinderGeometry(radius, radius, length), new THREE.MeshStandardMaterial( { map: sideTexture} ));
                 leg.name = name + "_leg" + i;
                 leg.position.x = i < 3 ? width / 2.0 - offset_x : -(width / 2.0 - offset_x);
-                leg.position.y = -(height / 2.0 + offset_y);
+                leg.position.y = -(height + offset_y) / 2.0;
                 leg.position.z = (i % 2 == 0) ? -offset_y : offset_y;
                 leg.rotation.x = (i % 2 == 0) ? Math.PI / 4.0 : -(Math.PI / 4.0);
 
@@ -66,6 +70,8 @@ export class TV {
                 leg.parent = group;
             }
         }
+
+        group.position.y = totalHeight / 2.0;
 
         editor.objectChanged(group);
     }

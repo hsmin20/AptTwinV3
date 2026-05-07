@@ -37,11 +37,13 @@ export class GasRange {
         ] );
         gasRange.name = name + "_Body";
         gasRange.position.x = 0.0;
-        gasRange.position.y = height / 2.0;
+        gasRange.position.y = 0.0;
         gasRange.position.z = 0.0;
 
         group.children.push( gasRange );
         gasRange.parent = group;
+
+        group.position.y = height / 2.0;
 
         editor.objectChanged( group );
     }

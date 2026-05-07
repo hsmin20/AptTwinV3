@@ -18,26 +18,23 @@ export class Chair {
         editor.execute(new AddGroupCommand(editor, group, parent));
 
         // 재질 결정
-        let material;
-        if (chairColor === 'black') {
-            material = new THREE.MeshStandardMaterial({ color: 0x000000 });
-        } else {
-            const whitePlasticTexture = textureHelper.get('WhitePlastic', 1, 1);
-            material = new THREE.MeshStandardMaterial({ map: whitePlasticTexture });
-        }
+        const texture = chairColor === 'black' ? textureHelper.get('BlackFabric', 1, 1) : textureHelper.get('Fabric', 1, 1);
+        const material = new THREE.MeshStandardMaterial({ map: texture });
+
+        const seatHeight = 0.05;
+        const backrestHeight = 0.44;
+        const totalHeight = height + seatHeight + backrestHeight + 0.025;
 
         // 좌석
-        const seatHeight = 0.05;
         const seat = new THREE.Mesh(
             new THREE.BoxGeometry(width, seatHeight, depth),
             material
         );
         seat.name = name + "_Seat";
-        seat.position.y = height + seatHeight / 2;
+        seat.position.y = height + seatHeight / 2 - (totalHeight / 2.0);
         group.add(seat);
 
         // 등받이: 상단 가로판 + 좌우 세로 기둥 2개
-        const backrestHeight = 0.44;
         const backrestDepth = 0.05;
 
         const backrestTop = new THREE.Mesh(
@@ -45,7 +42,7 @@ export class Chair {
             material
         );
         backrestTop.name = name + "_BackrestTop";
-        backrestTop.position.y = height + seatHeight + backrestHeight - 0.025;
+        backrestTop.position.y = height + seatHeight + backrestHeight - 0.025 - (totalHeight / 2.0);
         backrestTop.position.z = -depth / 2 + backrestDepth / 2;
         group.add(backrestTop);
 
@@ -54,7 +51,7 @@ export class Chair {
             material
         );
         backrestMiddle.name = name + "_BackrestMiddle";
-        backrestMiddle.position.y = backrestTop.position.y - 0.2;
+        backrestMiddle.position.y = backrestTop.position.y - 0.2 - (totalHeight / 2.0);
         backrestMiddle.position.z = -depth / 2 + backrestDepth / 2;
         group.add(backrestMiddle);
 
@@ -63,8 +60,8 @@ export class Chair {
             material
         );
         backrestBottom.name = name + "_BackrestBottom";
-        backrestBottom.position.y = backrestMiddle.position.y - 0.1;
-        backrestBottom.position.z = -depth / 2 + backrestDepth / 2;
+        backrestBottom.position.y = backrestTop.position.y - 0.2 - (totalHeight / 2.0);
+        backrestBottom.position.z = depth / 2 - backrestDepth / 2;
         group.add(backrestBottom);
 
         // 좌우 세로 기둥
@@ -79,7 +76,7 @@ export class Chair {
             );
             bar.name = name + "_BackrestBar" + (i + 1);
             bar.position.x = (i === 0) ? -barOffsetX : barOffsetX;
-            bar.position.y = height + seatHeight + barHeight / 2;
+            bar.position.y = height + seatHeight + barHeight / 2 - (totalHeight / 2.0);
             bar.position.z = -depth / 2 + backrestDepth / 2;
             group.add(bar);
         }
@@ -97,9 +94,11 @@ export class Chair {
             leg.name = name + "_Leg" + (i + 1);
             leg.position.x = (i % 2 === 0) ? -offsetX : offsetX;
             leg.position.z = (i < 2) ? -offsetZ : offsetZ;
-            leg.position.y = height / 2;
+            leg.position.y = height / 2 - (totalHeight / 2.0);
             group.add(leg);
         }
+
+        group.position.y = totalHeight / 2.0;
 
         editor.objectChanged(group);
     }

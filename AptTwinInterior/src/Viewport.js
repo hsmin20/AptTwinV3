@@ -64,7 +64,7 @@ export class Viewport {
 
         this.viewportHelper.center = this.controls.center;
 
-        // this.clock = new THREE.Clock();
+        this.clock = new THREE.Clock();
 
         let objectPositionOnDown = null;
         let objectRotationOnDown = null;

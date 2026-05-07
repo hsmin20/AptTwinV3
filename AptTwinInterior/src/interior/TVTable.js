@@ -22,6 +22,7 @@ export class TVTable {
         let parent = editor.getFurniture();
         editor.execute( new AddGroupCommand( editor, group, parent ) );
 
+        // const totalHeight = panelDepth + height
         // Panel 두께
         const panelDepth = 0.02;
 
@@ -39,7 +40,7 @@ export class TVTable {
             new THREE.MeshStandardMaterial( { map: panelTexture} ) 
         );
         topPanel.name = name + "_TopPanel";
-        topPanel.position.set(0, height - (panelDepth / 2.0), 0);
+        topPanel.position.set(0, height / 2.0 - panelDepth, 0);
         group.add(topPanel);
 
         // 하판
@@ -48,7 +49,7 @@ export class TVTable {
             new THREE.MeshStandardMaterial( { map: panelTexture} ) 
         );
         bottomPanel.name = name + "_BottomPanel";
-        bottomPanel.position.set(0, panelDepth / 2.0, 0);
+        bottomPanel.position.set(0, -height / 2.0, 0);
         group.add(bottomPanel);
 
         // 좌/우 패널
@@ -57,7 +58,7 @@ export class TVTable {
             new THREE.MeshStandardMaterial( { map: panelTexture} ) 
         );
         leftPanel.name = name + "_LeftPanel";
-        leftPanel.position.set(-(width - panelDepth) / 2.0, height / 2.0, 0);
+        leftPanel.position.set(-(width - panelDepth) / 2.0, -panelDepth / 2.0, 0);
         group.add(leftPanel);
 
         const rightPanel = new THREE.Mesh( 
@@ -65,7 +66,7 @@ export class TVTable {
             new THREE.MeshStandardMaterial( { map: panelTexture} ) 
         );
         rightPanel.name = name + "_RightPanel";
-        rightPanel.position.set((width - panelDepth) / 2.0, height / 2.0, 0);
+        rightPanel.position.set((width - panelDepth) / 2.0, -panelDepth / 2.0, 0);
         group.add(rightPanel);
 
         // 뒷판
@@ -74,7 +75,7 @@ export class TVTable {
             new THREE.MeshStandardMaterial( { map: panelTexture} ) 
         );
         backPanel.name = name + "_BackPanel";
-        backPanel.position.set(0, height / 2.0, -(depth - panelDepth) / 2.0);
+        backPanel.position.set(0, -panelDepth / 2.0, -(depth - panelDepth) / 2.0);
         group.add(backPanel);
 
         // 내부 구획
@@ -88,7 +89,7 @@ export class TVTable {
                 new THREE.MeshStandardMaterial( { map: panelTexture} ) 
             );
             layer.name = name + "_layer" + i;
-            layer.position.set(cur_x, panelDepth + height_inside / 2.0, 0);
+            layer.position.set(cur_x, panelDepth / 2.0 + height_inside / 2.0 - height / 2.0, 0);
             group.add(layer);
 
             cur_x += one_layer_width;
@@ -110,7 +111,7 @@ export class TVTable {
                     new THREE.MeshStandardMaterial({ map: drawerTexture })
                 );
                 drawerFront.name = name + "_drawer" + i;
-                drawerFront.position.set(cur_x, panelDepth + height_inside / 2.0, depth / 2.0);
+                drawerFront.position.set(cur_x, panelDepth / 2.0 + height_inside / 2.0 - height / 2.0, depth / 2.0);
                 group.add(drawerFront);
 
                 // 손잡이 (Metal 고정)
@@ -120,12 +121,14 @@ export class TVTable {
                 );
                 handle.rotation.z = Math.PI / 2;
                 handle.name = name + "_drawer" + i + "_handle";
-                handle.position.set(cur_x, height / 2.0, depth / 2.0 + 0.05);
+                handle.position.set(cur_x, -panelDepth / 2.0, depth / 2.0 + 0.05);
                 group.add(handle);
 
                 cur_x += one_layer_width;
             }
         }
+
+        group.position.y = height / 2.0;
 
         editor.objectChanged(group);
     }

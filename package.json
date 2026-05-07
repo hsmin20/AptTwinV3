@@ -39,6 +39,7 @@
     "call-bind-apply-helpers": "^1.0.2",
     "call-bound": "^1.0.4",
     "caniuse-lite": "^1.0.30001739",
+    "cannon-es-debugger": "^1.0.0",
     "chalk": "^4.1.2",
     "chokidar": "^3.6.0",
     "chrome-trace-event": "^1.0.4",

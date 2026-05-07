@@ -28,7 +28,7 @@ export class Wardrobe {
         const topPanel = new THREE.Mesh( new THREE.BoxGeometry(width, panelDepth, depth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
         topPanel.name = name + "_TopPanel";
         topPanel.position.x = 0.0;
-        topPanel.position.y = height - (panelDepth / 2.0);
+        topPanel.position.y = (height - panelDepth) / 2.0;
         topPanel.position.z = 0.0;
 
         group.children.push( topPanel );
@@ -37,7 +37,7 @@ export class Wardrobe {
         const bottomPanel = new THREE.Mesh( new THREE.BoxGeometry(width, panelDepth, depth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
         bottomPanel.name = name + "_BottomPanel";
         bottomPanel.position.x = 0.0;
-        bottomPanel.position.y = panelDepth / 2.0;
+        bottomPanel.position.y = -(height - panelDepth) / 2.0;
         bottomPanel.position.z = 0.0;
 
         group.children.push( bottomPanel );
@@ -47,7 +47,7 @@ export class Wardrobe {
         const leftPanel = new THREE.Mesh( new THREE.BoxGeometry(panelDepth, height, depth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
         leftPanel.name = name + "_LeftPanel";
         leftPanel.position.x = -(width - panelDepth) / 2.0;
-        leftPanel.position.y = height / 2.0;
+        leftPanel.position.y = 0.0;
         leftPanel.position.z = 0.0;
 
         group.children.push( leftPanel );
@@ -56,7 +56,7 @@ export class Wardrobe {
         const rightPanel = new THREE.Mesh( new THREE.BoxGeometry(panelDepth, height, depth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
         rightPanel.name = name + "_RightPanel";
         rightPanel.position.x = (width - panelDepth) / 2.0;
-        rightPanel.position.y = height / 2.0;
+        rightPanel.position.y = 0.0;
         rightPanel.position.z = 0.0;
 
         group.children.push( rightPanel );
@@ -66,7 +66,7 @@ export class Wardrobe {
         const backPanel = new THREE.Mesh( new THREE.BoxGeometry(width, height, panelDepth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
         backPanel.name = name + "_BackPanel";
         backPanel.position.x = 0.0;
-        backPanel.position.y = height / 2.0;
+        backPanel.position.y = 0.0;
         backPanel.position.z = -(depth - panelDepth) / 2.0;
 
         group.children.push( backPanel );
@@ -82,7 +82,7 @@ export class Wardrobe {
         const pole = new THREE.Mesh( new THREE.CylinderGeometry(radius, radius, pole_length), new THREE.MeshStandardMaterial( { map: shinyTexture} ));
         pole.name = name + "_pole";
         pole.position.x = 0.0;
-        pole.position.y = (height - offset_y);
+        pole.position.y = height / 2.0 - offset_y;
         pole.position.z = 0.0;
         pole.rotation.z = Math.PI / 2.0;
 
@@ -105,10 +105,10 @@ export class Wardrobe {
         const doorLTexture = textureHelper.get('DrawerDoorLeft', 1, 1);
 
         let door_height = height;
-        let pos_y = height / 2.0;
+        let pos_y = 0.0;
         if(wardrobetype == 'drawer') {
             door_height = height * 2.0 / 3.0;
-            pos_y = door_height;
+            pos_y = (height - door_height) / 2.0;
         }
 
         const bodyDepth = depth - doorDepth;
@@ -159,7 +159,7 @@ export class Wardrobe {
             const drawersTotalHeight = height / 3.0;
             const oneDrawerHeight = drawersTotalHeight / noOfDrawers;
             const drawerWidth = width - (panelDepth * 2);
-            let pos_y = oneDrawerHeight / 2.0;
+            let pos_y = -(height - oneDrawerHeight) / 2.0;
 
             const drawerInsideTexture = textureHelper.get('DrawerInside', 1, 1);
             const drawerDoorTexture = textureHelper.get('DrawerDoorFront', 1, 1);
@@ -183,6 +183,8 @@ export class Wardrobe {
                 pos_y += oneDrawerHeight;
             }
         }
+
+        group.position.y = height / 2.0;
 
         editor.objectChanged( group );
     }

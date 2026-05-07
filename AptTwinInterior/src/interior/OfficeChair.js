@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { AddGroupCommand } from '../../../src_common/commands/AddGroupCommand.js';
 import { RemoveObjectCommand } from '../../../src_common/commands/RemoveObjectCommand.js';
+import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 function rotateAroundWorldAxis(obj, point, axis, angle) {
     var q = new THREE.Quaternion();
@@ -28,8 +29,19 @@ export class OfficeChair {
         editor.execute(new AddGroupCommand(editor, group, parent));
 
         // 전체 색상 결정
-        const color = chairColor === 'black' ? 0x000000 : 0xffffff;
-        const material = new THREE.MeshStandardMaterial({ color });
+        let texture = null;
+        if(chairColor === 'black')
+            texture = textureHelper.get('BlackFabric', 1, 1);
+        else
+            texture = textureHelper.get('Fabric', 1, 1);
+        const material = new THREE.MeshStandardMaterial({ map: texture });
+
+        const backrestHeight = 0.6;
+        const centerLegHeight = height * 2 / 3.0;
+        const legLength = 0.3;
+        const wheelRadius = 0.07; 
+        const theta = Math.PI / 8.0;
+        const totalHeight = backrestHeight + centerLegHeight + legLength * Math.sin(theta) + wheelRadius * 2.0;
 
         // ====== 좌석 ======
         const cushionHeight = 0.08;
@@ -38,24 +50,25 @@ export class OfficeChair {
             material
         );
         seat.name = name + "_Seat";
-        seat.position.y = height + cushionHeight / 2;
+        seat.position.y = height + cushionHeight / 2 - (totalHeight / 2.0);
         group.add(seat);
 
         // ====== 등받이 ======
-        const backrestHeight = 0.6;
         const backrestDepth = 0.04;
         const backrest = new THREE.Mesh(
             new THREE.BoxGeometry(width * 0.9, backrestHeight, backrestDepth),
             material
         );
         backrest.name = name + "_Backrest";
-        backrest.position.set(0, height + cushionHeight + backrestHeight / 2, -depth * 0.5);
+        backrest.position.x = 0;
+        backrest.position.y = height + cushionHeight + backrestHeight / 2 - (totalHeight / 2.0);
+        backrest.position.z = -depth * 0.5;
         backrest.rotation.x = -Math.PI / 16.0;
         group.add(backrest);
 
         // ====== 팔걸이 ======
         const armHeight = 0.2;
-        const armY = height + cushionHeight - cushionHeight;
+        const armY = height;
         const armWidth = 0.04;
         const armDepth = depth * 0.8;
 
@@ -64,7 +77,9 @@ export class OfficeChair {
             material
         );
         leftArm.name = name + "_LeftArm";
-        leftArm.position.set(-width / 2 - armWidth / 2, armY, 0);
+        leftArm.position.x = -width / 2 - armWidth / 2;
+        leftArm.position.y = armY - (totalHeight / 2.0);
+        leftArm.position.z = 0;
         leftArm.rotation.y = Math.PI / 2.0;
         group.add(leftArm);
 
@@ -76,20 +91,17 @@ export class OfficeChair {
 
         // ====== 중심 기둥 ======
         const centerLeg = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.07, 0.07, height * 2 / 3.0, 16),
+            new THREE.CylinderGeometry(0.07, 0.07, centerLegHeight, 16),
             material
         );
         centerLeg.name = name + "_CenterLeg";
-        centerLeg.position.y = height * 3 / 4;
+        centerLeg.position.y = height * 3 / 4 - (totalHeight / 2.0);
         group.add(centerLeg);
 
         // ====== 다리 + 바퀴 ======
-        const wheelRadius = 0.07; 
         const wheelThickness = 0.05;
-        const legLength = 0.3;
         const legGeometry = new THREE.BoxGeometry(0.05, 0.05, legLength);
 
-        const theta = Math.PI / 8.0;
         const yaxis = new THREE.Vector3(0, 1, 0).normalize(); 
         const origin = new THREE.Vector3(0, 0, 0);
 
@@ -99,7 +111,7 @@ export class OfficeChair {
             const leg = new THREE.Mesh(legGeometry, material);
             leg.name = name + "_leg" + i;
             leg.position.x = 0;
-            leg.position.y = wheelRadius + legLength * Math.sin(theta);
+            leg.position.y = wheelRadius + legLength * Math.sin(theta) - (totalHeight / 2.0);
             leg.position.z = legLength * Math.cos(theta) / 2.0;
             leg.rotation.x = theta; 
             rotateAroundWorldAxis(leg, origin, yaxis, angle);
@@ -109,12 +121,14 @@ export class OfficeChair {
             const wheel = new THREE.Mesh(wheelGeo, material);
             wheel.name = name + "_wheel" + i;
             wheel.position.x = 0;
-            wheel.position.y = wheelRadius;
+            wheel.position.y = wheelRadius - (totalHeight / 2.0);
             wheel.position.z = legLength * Math.cos(theta);
             wheel.rotation.z = Math.PI / 2;
             rotateAroundWorldAxis(wheel, origin, yaxis, angle);
             group.add(wheel);
         }
+        
+        group.position.y = totalHeight / 2.0;
 
         editor.objectChanged(group);
     }

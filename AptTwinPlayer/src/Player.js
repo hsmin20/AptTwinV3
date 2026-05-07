@@ -7,6 +7,8 @@ import { textureHelper } from '../../src_common/TextureHelper.js';
 
 import { HAWebSocket, HARestAPI } from './Updater.js';
 
+import CannonDebugger from 'cannon-es-debugger';
+
 export class Player {
 	constructor() {
         this.dom = document.createElement( 'div' );
@@ -71,7 +73,7 @@ export class Player {
             this.camera.lookAt(new THREE.Vector3(0, 1.2, 0));
         }
 
-		this.entityManager = new EntityManager(this.scene);
+		this.entityManager = new EntityManager(this.scene, this.cannonWorld);
 	}
 
     toJSON () {
@@ -175,14 +177,25 @@ export class Player {
         // Are these needed?
         this.cannonWorld.broadphase = new CANNON.NaiveBroadphase();
         this.cannonWorld.solver.iterations = 10;
+
+        // prevent from falling... maybe change later
+        const planeShape = new CANNON.Plane();
+		const planeBody = new CANNON.Body({ mass: 0 });
+		planeBody.addShape(planeShape);
+		planeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
+        planeBody.position.y = 0.0;
+		this.cannonWorld.addBody(planeBody);
+
+        // var scope = this;
+        // this.cannonDebugger = new CannonDebugger(this.scene, this.cannonWorld, {onInit(body, mesh) { if(body == scope.playerBody) mesh.visible = false; },});
     }
 
     createPlayerBody() {
-        const playerShape = new CANNON.Sphere(0.5);
+        const playerShape = new CANNON.Cylinder(0.5, 0.5, 1.7, 10);
         const playerMat = new CANNON.Material('player');
-        this.playerBody  = new CANNON.Body({ mass: 70, material: playerMat });
+        this.playerBody  = new CANNON.Body({ mass: 60, material: playerMat });
         this.playerBody.addShape(playerShape);
-        this.playerBody.position.set(-5, 2, 5);
+        this.playerBody.position.set(-5, 0.85, 5);
         this.playerBody.linearDamping = 0.9;
         this.playerBody.angularDamping = 1;
         this.playerBody.fixedRotation = true;
@@ -200,18 +213,16 @@ export class Player {
 	}
 
     handleSelectedObj() {
-		var intersects = this.entityManager.intersectObjects(this.raycaster);
-        if (intersects.length > 0) {
-            let obj = intersects[0].object;
-            if(obj != null && obj.userData.info !== undefined) {
-				if(obj.userData.info != 'clickable') {
-                    this.crosshair.visible = true;
-                    this.handMesh.visible = false;
-				} else {
-                    this.crosshair.visible = false;
-                    this.handMesh.visible = true;
-                }
-            }
+        const DISTANCE = 0.15;
+        const DISTANCE2 = 1.5;
+
+		var intersectedObjects = this.entityManager.intersectObjects(this.raycaster);
+        if (intersectedObjects.length > 0 && intersectedObjects[0].distance < DISTANCE2 && this.entityManager.isClickable(intersectedObjects[0].object)) {
+            this.handMesh.visible = true;
+            this.crosshair.visible = false;
+        } else {
+            this.handMesh.visible = false;
+            this.crosshair.visible = true;
         }
     }
 
@@ -238,7 +249,7 @@ export class Player {
 	animate() {
 		requestAnimationFrame(this.animate.bind(this));
 
-		this.timer.update();
+		this.timer.update(); 
         let delta = this.timer.getDelta();
 
         this.cannonWorld.step(delta);
@@ -251,9 +262,12 @@ export class Player {
 
 		this.renderer.setViewport( 0, 0, this.dom.offsetWidth, this.dom.offsetHeight );
         this.renderer.render(this.scene, this.camera);
+
+        // this.cannonDebugger.update();
 	}
 
 	addCrosshair() {
+        // Normal Crosshair
         const cameraMin = 0.0005;
         const cursorSize = 1;
         const cursorThickness = 1.5;
@@ -263,21 +277,20 @@ export class Player {
         );
         const cursorMaterial = new THREE.MeshBasicMaterial({ color: "green" });
         this.crosshair = new THREE.Mesh(cursorGeometry, cursorMaterial);
-
 		this.crosshair.position.z = -0.1;
 
         this.camera.add( this.crosshair );
 
-        ///////////////////////////////////////////
+        // Hand Icon
         const handTexture = textureHelper.get('Hand', 1, 1);
         const handMaterial = new THREE.MeshBasicMaterial({
             map: handTexture,
             transparent: true
         });
-        const handGeometry = new THREE.PlaneGeometry(0.003, 0.003);
+        const handGeometry = new THREE.PlaneGeometry(0.005, 0.005);
         this.handMesh = new THREE.Mesh(handGeometry, handMaterial);
-
         this.handMesh.position.z = -0.1;
+
         this.camera.add(this.handMesh);
         this.handMesh.visible = false;
 	}
@@ -287,57 +300,13 @@ export class Player {
         this.scene.add(this.camera);
 	}
 
-    detectCollison() {
-        const DISTANCE = 0.15;
-        const DISTANCE2 = 2.0;
-        // Forward
-        this.setRaycasterPosDir();
-        var intersectedObjects = this.entityManager.intersectObjects(this.raycaster);
-        if (intersectedObjects.length > 0 && intersectedObjects[0].distance < DISTANCE2 && this.entityManager.isClickable(intersectedObjects[0].object)) {
-            this.handMesh.visible = true;
-            this.crosshair.visible = false;
-        } else {
-            this.handMesh.visible = false;
-            this.crosshair.visible = true;
-        }
-        if (intersectedObjects.length > 0 && intersectedObjects[0].distance < DISTANCE) {
-            return true;
-        }
-
-        // Left
-        this.camera_world_dir.applyAxisAngle(this.Y_UNIT_VECTOR, Math.PI / 2);
-        this.raycaster.set(this.camera_world_pos, this.camera_world_dir);
-        intersectedObjects = this.entityManager.intersectObjects(this.raycaster);
-        if (intersectedObjects.length > 0 && intersectedObjects[0].distance < DISTANCE) {
-            return true;
-        }
-
-        // Backward
-        this.camera_world_dir.applyAxisAngle(this.Y_UNIT_VECTOR, Math.PI / 2);
-        this.raycaster.set(this.camera_world_pos, this.camera_world_dir);
-        intersectedObjects = this.entityManager.intersectObjects(this.raycaster);
-        if (intersectedObjects.length > 0 && intersectedObjects[0].distance < DISTANCE) {
-            return true;
-        }
-
-        // Right
-        this.camera_world_dir.applyAxisAngle(this.Y_UNIT_VECTOR, Math.PI / 2);
-        this.raycaster.set(this.camera_world_pos, this.camera_world_dir);
-        intersectedObjects = this.entityManager.intersectObjects(this.raycaster);
-        if (intersectedObjects.length > 0 && intersectedObjects[0].distance < DISTANCE) {
-            return true;
-        }
-
-        return false
-    }
-
     changeView(style) {
         if(style == 1) {
 			this.control.dispose();
             this.control = new OrbitalControl(this, this.camera, this.renderer );
         } else if(style == 0) {
             this.control.dispose();
-            this.control = new FreeLookControl(this, this.camera, this.scene);
+            this.control = new FreeLookControl(this, this.playerBody);
             if(!this.mobile) {
                 this.camera.position.set(5.2, 1.5, -5.2);
                 this.camera.lookAt(new THREE.Vector3(0, 1.2, 0));

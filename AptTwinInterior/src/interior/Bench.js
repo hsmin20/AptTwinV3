@@ -19,8 +19,11 @@ export class Bench {
         let parent = editor.getFurniture();
         editor.execute(new AddGroupCommand(editor, group, parent));
 
-        // 좌석
         const seatHeight = 0.05;
+        const cushionHeight = 0.03;
+
+        const halfTotalHeight = (height + seatHeight + cushionHeight) / 2.0;
+        // 좌석
         const seatTexture = textureHelper.get('Wood', 1, 1);
         const seatMaterial = new THREE.MeshStandardMaterial({ map: seatTexture });
 
@@ -29,11 +32,10 @@ export class Bench {
             seatMaterial
         );
         seat.name = name + "_Seat";
-        seat.position.y = height + seatHeight / 2;
+        seat.position.y = height + seatHeight / 2 - halfTotalHeight;
         group.add(seat);
 
         // 좌석 쿠션
-        const cushionHeight = 0.03;
         let cushionMaterial;
         if (cushionColor === 'black') {
             const blackFabricTexture = textureHelper.get('BlackFabric', 1, 1); 
@@ -46,7 +48,7 @@ export class Bench {
             new THREE.BoxGeometry(width, cushionHeight, depth),
             cushionMaterial
         );
-        seatCushion.position.y = height + seatHeight + cushionHeight / 2;
+        seatCushion.position.y = height + seatHeight + cushionHeight / 2 - halfTotalHeight;
         seatCushion.position.z = 0;
         group.add(seatCushion);
 
@@ -64,9 +66,11 @@ export class Bench {
             leg.name = name + "_Leg" + (i + 1);
             leg.position.x = (i % 2 === 0) ? -offsetX : offsetX;
             leg.position.z = (i < 2) ? -offsetZ : offsetZ;
-            leg.position.y = height / 2;
+            leg.position.y = height / 2 - halfTotalHeight;
             group.add(leg);
         }
+
+        group.position.y = halfTotalHeight;
 
         editor.objectChanged(group);
     }

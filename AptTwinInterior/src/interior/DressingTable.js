@@ -19,6 +19,8 @@ export class DressingTable {
         let parent = editor.getFurniture();
         editor.execute( new AddGroupCommand( editor, group, parent ) );
 
+        const halfTotalHeight = (height + mirrorheight) / 2.0;
+
         // Add a Mirror Frame
         const thickness = 0.01;
         let panelTexture = textureHelper.get(texturetype, 2, 3);
@@ -26,7 +28,7 @@ export class DressingTable {
         const mirrorFrame = new THREE.Mesh( new THREE.BoxGeometry(width, mirrorheight, thickness), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
         mirrorFrame.name = name + "_Frame";
         mirrorFrame.position.x = 0.0;
-        mirrorFrame.position.y = height + (mirrorheight / 2.0);
+        mirrorFrame.position.y = height + (mirrorheight / 2.0) - halfTotalHeight;
         mirrorFrame.position.z = -( depth - thickness ) / 2.0;
 
         group.children.push( mirrorFrame );
@@ -50,7 +52,7 @@ export class DressingTable {
         const mirror = new THREE.Mesh(new THREE.PlaneGeometry(width-thickness, mirrorheight-thickness), material);
 
         mirror.name = name + "_Mirror";
-        mirror.position.y = height + (mirrorheight / 2.0);
+        mirror.position.y = height + (mirrorheight / 2.0) - halfTotalHeight;
         mirror.position.z = -( depth / 2.0) + thickness + 0.001;
 
         // mirror.add(cubeCamera);
@@ -69,7 +71,7 @@ export class DressingTable {
 
         tablePanel.name = name + "_Panel";
         tablePanel.position.x = 0.0;
-        tablePanel.position.y = height - (panelHeight / 2.0);
+        tablePanel.position.y = height - (panelHeight / 2.0) - halfTotalHeight;
         tablePanel.position.z = 0.0;
 
         group.children.push( tablePanel );
@@ -85,12 +87,14 @@ export class DressingTable {
             const leg = new THREE.Mesh( new THREE.BoxGeometry(leg_width, leg_height, leg_width), new THREE.MeshStandardMaterial( { map: panelTexture} ));
             leg.name = name + "_leg" + i;
             leg.position.x = (i % 2 == 0) ? offset_x : -offset_x;
-            leg.position.y = leg_height / 2.0;
+            leg.position.y = leg_height / 2.0 - halfTotalHeight;
             leg.position.z = (i < 3) ? -offset_z : offset_z;
 
             group.children.push( leg );
             leg.parent = group;
         }
+
+        group.position.y =  halfTotalHeight;
 
         editor.objectChanged(group);        
     }
