@@ -48,7 +48,7 @@ class MenubarTools {
         fileInput.multiple = false;
         fileInput.type = 'file';
         fileInput.accetp = '.json';
-        fileInput.addEventListener( 'change', async function () {
+        fileInput.addEventListener( 'click', async function () {
             const file = fileInput.files[ 0 ];
             if ( file === undefined ) return;
 

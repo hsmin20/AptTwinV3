@@ -21,113 +21,113 @@ export class RoomBuilder {
         }
     }
 
-    addRoom(name, width, length, height) {
-        // Add a group first
-        const group = new THREE.Group();
-		group.name = name;
+    // addRoom(name, width, length, height) {
+    //     // Add a group first
+    //     const group = new THREE.Group();
+	// 	group.name = name;
 
-        this.editor.execute( new AddGroupCommand( this.editor, group ) );
+    //     this.editor.execute( new AddGroupCommand( this.editor, group ) );
 
-        const depth = 0.2;
-        // Add 4 box for room
-        const northWall = new THREE.Mesh( new THREE.BoxGeometry(width-offset, height, depth), [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
-        ] );
-        northWall.name = name + "_NorthWall";
-        northWall.position.x = 0.0;
-        northWall.position.y = height / 2.0;
-        northWall.position.z = -(length - depth) / 2.0;
+    //     const depth = 0.2;
+    //     // Add 4 box for room
+    //     const northWall = new THREE.Mesh( new THREE.BoxGeometry(width-offset, height, depth), [  
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+    //     ] );
+    //     northWall.name = name + "_NorthWall";
+    //     northWall.position.x = 0.0;
+    //     northWall.position.y = height / 2.0;
+    //     northWall.position.z = -(length - depth) / 2.0;
 
-        // this.editor.execute( new AddObjectCommand( this.editor, northWall, group ) );
-        group.children.push( northWall );
-		northWall.parent = group;
+    //     // this.editor.execute( new AddObjectCommand( this.editor, northWall, group ) );
+    //     group.children.push( northWall );
+	// 	northWall.parent = group;
 
-        const eastWall = new THREE.Mesh( new THREE.BoxGeometry(length-offset, height, depth),  [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
-        ] );
-        eastWall.name = name + "_EastWall";
-        eastWall.position.x = (width - depth) / 2.0;
-        eastWall.position.y = height / 2.0;
-        eastWall.position.z = 0.0;
-        eastWall.rotation.y = -Math.PI / 2.0;
+    //     const eastWall = new THREE.Mesh( new THREE.BoxGeometry(length-offset, height, depth),  [  
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+    //     ] );
+    //     eastWall.name = name + "_EastWall";
+    //     eastWall.position.x = (width - depth) / 2.0;
+    //     eastWall.position.y = height / 2.0;
+    //     eastWall.position.z = 0.0;
+    //     eastWall.rotation.y = -Math.PI / 2.0;
 
-        // this.editor.execute( new AddObjectCommand( this.editor, eastWall, group ) );
-        group.children.push( eastWall );
-		eastWall.parent = group;
+    //     // this.editor.execute( new AddObjectCommand( this.editor, eastWall, group ) );
+    //     group.children.push( eastWall );
+	// 	eastWall.parent = group;
 
-        const southWall = new THREE.Mesh( new THREE.BoxGeometry(width-offset, height, depth),  [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
-        ] );
-        southWall.name = name + "_SouthWall";
-        southWall.position.x = 0.0;
-        southWall.position.y = height / 2.0;
-        southWall.position.z = (length - depth) / 2.0;
-        southWall.rotation.y = Math.PI;
+    //     const southWall = new THREE.Mesh( new THREE.BoxGeometry(width-offset, height, depth),  [  
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+    //     ] );
+    //     southWall.name = name + "_SouthWall";
+    //     southWall.position.x = 0.0;
+    //     southWall.position.y = height / 2.0;
+    //     southWall.position.z = (length - depth) / 2.0;
+    //     southWall.rotation.y = Math.PI;
 
-        // this.editor.execute( new AddObjectCommand( this.editor, southWall, group ) );
-        group.children.push( southWall );
-		southWall.parent = group;
+    //     // this.editor.execute( new AddObjectCommand( this.editor, southWall, group ) );
+    //     group.children.push( southWall );
+	// 	southWall.parent = group;
 
-        const westWall = new THREE.Mesh( new THREE.BoxGeometry(length-offset, height, depth),  [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
-        ] );
-        westWall.name = name + "_WestWall";
-        westWall.position.x = -(width - depth) / 2.0;
-        westWall.position.y = height / 2.0;
-        westWall.position.z = 0.0;
-        westWall.rotation.y = Math.PI / 2.0;
+    //     const westWall = new THREE.Mesh( new THREE.BoxGeometry(length-offset, height, depth),  [  
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+    //     ] );
+    //     westWall.name = name + "_WestWall";
+    //     westWall.position.x = -(width - depth) / 2.0;
+    //     westWall.position.y = height / 2.0;
+    //     westWall.position.z = 0.0;
+    //     westWall.rotation.y = Math.PI / 2.0;
 
-        // this.editor.execute( new AddObjectCommand( this.editor, westWall, group ) );
-        group.children.push( westWall );
-		westWall.parent = group;
+    //     // this.editor.execute( new AddObjectCommand( this.editor, westWall, group ) );
+    //     group.children.push( westWall );
+	// 	westWall.parent = group;
 
-        // Floor
-        const floor = new THREE.Mesh( new THREE.PlaneGeometry(width, length), new THREE.MeshStandardMaterial() );
-        floor.name = name + "_Floor";
-        floor.position.x = 0.0;
-        floor.position.y = -0.005;
-        floor.rotation.x = -Math.PI / 2.0;
+    //     // Floor
+    //     const floor = new THREE.Mesh( new THREE.PlaneGeometry(width, length), new THREE.MeshStandardMaterial() );
+    //     floor.name = name + "_Floor";
+    //     floor.position.x = 0.0;
+    //     floor.position.y = -0.005;
+    //     floor.rotation.x = -Math.PI / 2.0;
 
-        // this.editor.execute( new AddObjectCommand( this.editor, floor, group ) );
-        group.children.push( floor );
-		floor.parent = group;
+    //     // this.editor.execute( new AddObjectCommand( this.editor, floor, group ) );
+    //     group.children.push( floor );
+	// 	floor.parent = group;
 
-         // Ceiling
-        const ceiling = new THREE.Mesh( new THREE.PlaneGeometry(width, length), new THREE.MeshStandardMaterial() );
-        ceiling.name = name + "_Ceiling";
-        ceiling.position.x = 0.0;
-        ceiling.position.y = 2.3;
-        ceiling.rotation.x = Math.PI / 2.0;
+    //      // Ceiling
+    //     const ceiling = new THREE.Mesh( new THREE.PlaneGeometry(width, length), new THREE.MeshStandardMaterial() );
+    //     ceiling.name = name + "_Ceiling";
+    //     ceiling.position.x = 0.0;
+    //     ceiling.position.y = 2.3;
+    //     ceiling.rotation.x = Math.PI / 2.0;
 
-        // this.editor.execute( new AddObjectCommand( this.editor, ceiling, group ) );
-        group.children.push( ceiling );
-		ceiling.parent = group;
+    //     // this.editor.execute( new AddObjectCommand( this.editor, ceiling, group ) );
+    //     group.children.push( ceiling );
+	// 	ceiling.parent = group;
 
-        this.editor.objectChanged(group);
-    }
+    //     this.editor.objectChanged(group);
+    // }
 
-    addWall(name, x, y, z, rx, ry, rz, width, height, depth, parent) {
-        const offset = 0.001; // 1mm. needed for cope with 'z-fighting'
+    // addWall(name, x, y, z, rx, ry, rz, width, height, depth, parent) {
+    //     const offset = 0.001; // 1mm. needed for cope with 'z-fighting'
 
-        // Add a box for room
-        const newWall = new THREE.Mesh( new THREE.BoxGeometry(width-offset, height, depth), [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
-        ] );
-        newWall.name = name + "_NewWall";
-        newWall.position.x = x;
-        newWall.position.y = y;
-        newWall.position.z = z;
-        newWall.rotation.x = rx;
-        newWall.rotation.y = ry;
-        newWall.rotation.z = rz;
+    //     // Add a box for room
+    //     const newWall = new THREE.Mesh( new THREE.BoxGeometry(width-offset, height, depth), [  
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+    //     ] );
+    //     newWall.name = name + "_NewWall";
+    //     newWall.position.x = x;
+    //     newWall.position.y = y;
+    //     newWall.position.z = z;
+    //     newWall.rotation.x = rx;
+    //     newWall.rotation.y = ry;
+    //     newWall.rotation.z = rz;
 
-        this.editor.execute( new AddObjectCommand( this.editor, newWall, parent ) );
-    }
+    //     this.editor.execute( new AddObjectCommand( this.editor, newWall, parent ) );
+    // }
 
     addLightLampInRoom(parent, lighttype, color) {
          // Add a group first
@@ -228,121 +228,121 @@ export class RoomBuilder {
 		light.parent = parent;
     }
 
-    splitWallVertically(object, num, leftWidths) {
-        let x = object.position.x;
-        let y = object.position.y;
-        let z = object.position.z;
-        let ry = object.rotation.y;
+    // splitWallVertically(object, num, leftWidths) {
+    //     let x = object.position.x;
+    //     let y = object.position.y;
+    //     let z = object.position.z;
+    //     let ry = object.rotation.y;
 
-        let name = object.name;
+    //     let name = object.name;
 
-        const parameters = object.geometry.parameters;
-        let width = parameters.width;
-        let height = parameters.height;
-        let depth = parameters.depth;
+    //     const parameters = object.geometry.parameters;
+    //     let width = parameters.width;
+    //     let height = parameters.height;
+    //     let depth = parameters.depth;
 
-        let parent = object.parent;
+    //     let parent = object.parent;
 
-        this.editor.execute( new RemoveObjectCommand( this.editor, object ) );
+    //     this.editor.execute( new RemoveObjectCommand( this.editor, object ) );
 
-        const group = new THREE.Group();
-		group.name = name;
-        group.position.x = x;
-        group.position.y = 0.0;
-        group.position.z = z;
-        group.rotation.y = ry;
+    //     const group = new THREE.Group();
+	// 	group.name = name;
+    //     group.position.x = x;
+    //     group.position.y = 0.0;
+    //     group.position.z = z;
+    //     group.rotation.y = ry;
 
-        this.editor.execute( new AddGroupCommand( this.editor, group, parent ) );
+    //     this.editor.execute( new AddGroupCommand( this.editor, group, parent ) );
 
-        // Add walls
-        var totalLeftWidth = 0;
-        for(let i=0; i<num-1; i++) {
-            const leftwidth = leftWidths[i];
+    //     // Add walls
+    //     var totalLeftWidth = 0;
+    //     for(let i=0; i<num-1; i++) {
+    //         const leftwidth = leftWidths[i];
 
-            const wall = new THREE.Mesh( new THREE.BoxGeometry(leftwidth, height, depth), [  
-                new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-                new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
-            ] );
-            wall.name = name + "_" + (i + 1);
-            wall.position.x = - (width/2.0) + totalLeftWidth + (leftwidth/2.0);
-            wall.position.y = y;
-            wall.position.z = 0.0;
+    //         const wall = new THREE.Mesh( new THREE.BoxGeometry(leftwidth, height, depth), [  
+    //             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+    //             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+    //         ] );
+    //         wall.name = name + "_" + (i + 1);
+    //         wall.position.x = - (width/2.0) + totalLeftWidth + (leftwidth/2.0);
+    //         wall.position.y = y;
+    //         wall.position.z = 0.0;
 
-            this.editor.execute( new AddObjectCommand( this.editor, wall, group ) );
+    //         this.editor.execute( new AddObjectCommand( this.editor, wall, group ) );
 
-            totalLeftWidth += leftwidth;
-        }
+    //         totalLeftWidth += leftwidth;
+    //     }
 
-        var rightGap = width - totalLeftWidth;
-        const rightWall = new THREE.Mesh( new THREE.BoxGeometry(rightGap, height, depth), [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
-        ] );
-        rightWall.name = name + "_r";
-        rightWall.position.x = totalLeftWidth - ( width - rightGap ) / 2.0;
-        rightWall.position.y = y;
-        rightWall.position.z = 0.0;
+    //     var rightGap = width - totalLeftWidth;
+    //     const rightWall = new THREE.Mesh( new THREE.BoxGeometry(rightGap, height, depth), [  
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+    //     ] );
+    //     rightWall.name = name + "_r";
+    //     rightWall.position.x = totalLeftWidth - ( width - rightGap ) / 2.0;
+    //     rightWall.position.y = y;
+    //     rightWall.position.z = 0.0;
 
-        this.editor.execute( new AddObjectCommand( this.editor, rightWall, group ) );
-    }
+    //     this.editor.execute( new AddObjectCommand( this.editor, rightWall, group ) );
+    // }
 
-    splitWallHorizontally(object, num, topHeights) {
-        let x = object.position.x;
-        let y = object.position.y;
-        let z = object.position.z;
-        let ry = object.rotation.y;
+    // splitWallHorizontally(object, num, topHeights) {
+    //     let x = object.position.x;
+    //     let y = object.position.y;
+    //     let z = object.position.z;
+    //     let ry = object.rotation.y;
 
-        let name = object.name;
+    //     let name = object.name;
 
-        const parameters = object.geometry.parameters;
-        let width = parameters.width;
-        let height = parameters.height;
-        let depth = parameters.depth;
+    //     const parameters = object.geometry.parameters;
+    //     let width = parameters.width;
+    //     let height = parameters.height;
+    //     let depth = parameters.depth;
 
-        let parent = object.parent;
+    //     let parent = object.parent;
 
-        this.editor.execute( new RemoveObjectCommand( this.editor, object ) );
+    //     this.editor.execute( new RemoveObjectCommand( this.editor, object ) );
 
-        const group = new THREE.Group();
-		group.name = name;
-        group.position.x = x;
-        group.position.y = y;
-        group.position.z = z;
-        group.rotation.y = ry;
+    //     const group = new THREE.Group();
+	// 	group.name = name;
+    //     group.position.x = x;
+    //     group.position.y = y;
+    //     group.position.z = z;
+    //     group.rotation.y = ry;
 
-        this.editor.execute( new AddGroupCommand( this.editor, group, parent ) );
+    //     this.editor.execute( new AddGroupCommand( this.editor, group, parent ) );
 
-        // Add walls
-        var totalTopHeight = 0;
-        for(let i=0; i<num-1; i++) {
-            const topHeight = topHeights[i];
+    //     // Add walls
+    //     var totalTopHeight = 0;
+    //     for(let i=0; i<num-1; i++) {
+    //         const topHeight = topHeights[i];
 
-            const wall = new THREE.Mesh( new THREE.BoxGeometry(width, topHeight, depth), [  
-                new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-                new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
-            ] );
-            wall.name = name + "_" + (i + 1);
-            wall.position.x = 0.0;
-            wall.position.y = - (height/2.0) + totalTopHeight + (topHeight/2.0);
-            wall.position.z = 0.0;
+    //         const wall = new THREE.Mesh( new THREE.BoxGeometry(width, topHeight, depth), [  
+    //             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+    //             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+    //         ] );
+    //         wall.name = name + "_" + (i + 1);
+    //         wall.position.x = 0.0;
+    //         wall.position.y = - (height/2.0) + totalTopHeight + (topHeight/2.0);
+    //         wall.position.z = 0.0;
 
-            this.editor.execute( new AddObjectCommand( this.editor, wall, group ) );
+    //         this.editor.execute( new AddObjectCommand( this.editor, wall, group ) );
 
-            totalTopHeight += topHeight;
-        }
+    //         totalTopHeight += topHeight;
+    //     }
 
-        var heightGap = height - totalTopHeight;
-        const bottomWall = new THREE.Mesh( new THREE.BoxGeometry(width, heightGap, depth), [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
-        ] );
-        bottomWall.name = name + "_b";
-        bottomWall.position.x = 0.0;
-        bottomWall.position.y = totalTopHeight - ( height - heightGap ) / 2.0;
-        bottomWall.position.z = 0.0;
+    //     var heightGap = height - totalTopHeight;
+    //     const bottomWall = new THREE.Mesh( new THREE.BoxGeometry(width, heightGap, depth), [  
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
+    //     ] );
+    //     bottomWall.name = name + "_b";
+    //     bottomWall.position.x = 0.0;
+    //     bottomWall.position.y = totalTopHeight - ( height - heightGap ) / 2.0;
+    //     bottomWall.position.z = 0.0;
 
-        this.editor.execute( new AddObjectCommand( this.editor, bottomWall, group ) );
-    }
+    //     this.editor.execute( new AddObjectCommand( this.editor, bottomWall, group ) );
+    // }
 
     addBathtub(parent, width, length, height, xpos=0, zpos=0, angle=0) {
         // Add four sides, making horizontal basis
@@ -540,7 +540,7 @@ export class RoomBuilder {
         group.position.z = zpos;
         group.rotation.y = angle * Math.PI / 180;
 
-        group.userData.isInterior = true;
+        group.userData.isInterior = false;
         group.userData.interiorType = 'GasRange';
         group.userData.DBid = 'n/a';
 
@@ -698,52 +698,52 @@ export class RoomBuilder {
         this.editor.objectChanged(group)
     }
 
-    addPlane(parent, type, width, height, xrotation) {
-        let name = 'Ceiling';
-        if(type == 'floor')
-            name = 'Floor';
-        const plane = new THREE.Mesh( new THREE.PlaneGeometry(width, height), new THREE.MeshStandardMaterial() );
-        plane.name = name;
-        plane.position.x = 0.0;
-        if(type == 'floor') {
-            plane.position.y = -0.01;
-            plane.rotation.x = -Math.PI / 2.0;
-        } else {
-            plane.position.y = 2.3;
-            plane.rotation.x = Math.PI / 2.0;
-        }
-        plane.position.z = 0.0;
+    // addPlane(parent, type, width, height, xrotation) {
+    //     let name = 'Ceiling';
+    //     if(type == 'floor')
+    //         name = 'Floor';
+    //     const plane = new THREE.Mesh( new THREE.PlaneGeometry(width, height), new THREE.MeshStandardMaterial() );
+    //     plane.name = name;
+    //     plane.position.x = 0.0;
+    //     if(type == 'floor') {
+    //         plane.position.y = -0.01;
+    //         plane.rotation.x = -Math.PI / 2.0;
+    //     } else {
+    //         plane.position.y = 2.3;
+    //         plane.rotation.x = Math.PI / 2.0;
+    //     }
+    //     plane.position.z = 0.0;
 
-        this.editor.execute( new AddObjectCommand( this.editor, plane, parent ) );
-		plane.parent = parent;
+    //     this.editor.execute( new AddObjectCommand( this.editor, plane, parent ) );
+	// 	plane.parent = parent;
 
-        this.editor.objectChanged(plane)
-    }
+    //     this.editor.objectChanged(plane)
+    // }
 
-    addFloor(parent, width, length, yPosition = -0.005) {
-        if (!parent) {
-            console.warn("addFloor 호출 시 parent가 null입니다. Floor는 생성되지 않습니다.");
-            return; // parent가 없으면 floor 생성하지 않고 종료
-        }
+    // addFloor(parent, width, length, yPosition = -0.005) {
+    //     if (!parent) {
+    //         console.warn("addFloor 호출 시 parent가 null입니다. Floor는 생성되지 않습니다.");
+    //         return; // parent가 없으면 floor 생성하지 않고 종료
+    //     }
 
-        // Floor 생성
-        const floor = new THREE.Mesh(
-            new THREE.PlaneGeometry(width, length),
-            undefined // material은 editor에서 자동 선택되도록
-        );
+    //     // Floor 생성
+    //     const floor = new THREE.Mesh(
+    //         new THREE.PlaneGeometry(width, length),
+    //         undefined // material은 editor에서 자동 선택되도록
+    //     );
 
-        // 이름은 parent 이름을 참고하거나 기본 "Floor"
-        const parentName = parent.name ? parent.name : "Room";
-        floor.name = parentName + "_Floor";
+    //     // 이름은 parent 이름을 참고하거나 기본 "Floor"
+    //     const parentName = parent.name ? parent.name : "Room";
+    //     floor.name = parentName + "_Floor";
 
-        // 위치 설정
-        floor.position.set(0, yPosition, 0);
-        floor.rotation.x = -Math.PI / 2;
+    //     // 위치 설정
+    //     floor.position.set(0, yPosition, 0);
+    //     floor.rotation.x = -Math.PI / 2;
 
-        // 씬에 추가
-        this.editor.execute(new AddObjectCommand(this.editor, floor, parent));
-        floor.parent = parent;
+    //     // 씬에 추가
+    //     this.editor.execute(new AddObjectCommand(this.editor, floor, parent));
+    //     floor.parent = parent;
 
-        this.editor.execute(new AddObjectCommand(this.editor, floor, this.editor.scene));
-    }
+    //     this.editor.execute(new AddObjectCommand(this.editor, floor, this.editor.scene));
+    // }
 }

@@ -186,8 +186,8 @@ export class Player {
         planeBody.position.y = 0.0;
 		this.cannonWorld.addBody(planeBody);
 
-        // var scope = this;
-        // this.cannonDebugger = new CannonDebugger(this.scene, this.cannonWorld, {onInit(body, mesh) { if(body == scope.playerBody) mesh.visible = false; },});
+        var scope = this;
+        this.cannonDebugger = new CannonDebugger(this.scene, this.cannonWorld, {onInit(body, mesh) { if(body == scope.playerBody) mesh.visible = false; },});
     }
 
     createPlayerBody() {
@@ -263,7 +263,7 @@ export class Player {
 		this.renderer.setViewport( 0, 0, this.dom.offsetWidth, this.dom.offsetHeight );
         this.renderer.render(this.scene, this.camera);
 
-        // this.cannonDebugger.update();
+        this.cannonDebugger.update();
 	}
 
 	addCrosshair() {
