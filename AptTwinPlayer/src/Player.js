@@ -191,7 +191,7 @@ export class Player {
     }
 
     createPlayerBody() {
-        const playerShape = new CANNON.Cylinder(0.5, 0.5, 1.7, 10);
+        const playerShape = new CANNON.Cylinder(0.3, 0.3, 0.8, 10);
         const playerMat = new CANNON.Material('player');
         this.playerBody  = new CANNON.Body({ mass: 60, material: playerMat });
         this.playerBody.addShape(playerShape);

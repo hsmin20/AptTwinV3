@@ -35,7 +35,7 @@ export class Cat {
         const body_radius = 0.08;
         const head_radius = 0.05;
 
-        const height = leg_height + body_radius + head_radius;
+        const height = leg_height + (body_radius + head_radius) * 2.0;
 
         const body_length = 0.24;
         const bodygeometry = new THREE.CapsuleGeometry( body_radius, body_length, 8, 20 ); 

@@ -416,7 +416,7 @@ class TV extends THREE.Mesh {
         videoMaterial.needsUpdate = true;
 
         //Create screen
-        const screen = new THREE.PlaneGeometry(width-0.02, height-0.02);
+        const screen = new THREE.PlaneGeometry(width-0.02, height-0.04);
         // const videoScreen = new THREE.Mesh(screen, videoMaterial);
         super(screen, videoMaterial);
 
