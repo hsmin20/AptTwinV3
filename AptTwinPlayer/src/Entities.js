@@ -89,7 +89,46 @@ class PhsyicsObject {
     }
 }
 
-class Wall {
+class PlaneWall {
+    constructor(object, physicsWorld) {
+        this.object = object;
+        this.physicsWorld = physicsWorld;
+
+        const geometry = object.geometry;
+        const parameters = geometry.parameters;
+        const width = parameters.width;
+        const height = parameters.height;
+        const depth = 0.0001;
+
+        this.buildPhysicsBody(width, depth, height);
+    }
+
+    buildPhysicsBody(width, depth, height) {
+        const shape = new CANNON.Box(new CANNON.Vec3(width/2.0, height/2.0, depth));
+		this.body = new CANNON.Body({ mass: 0 })
+		this.body.addShape(shape);
+
+        const pos = new THREE.Vector3();
+        const qua = new THREE.Quaternion();
+        this.object.getWorldPosition(pos);
+        this.object.getWorldQuaternion(qua);
+
+		this.body.position.x = pos.x;
+		this.body.position.y = pos.y;
+		this.body.position.z = pos.z;
+
+		this.body.quaternion.x = qua.x;
+		this.body.quaternion.y = qua.y;
+		this.body.quaternion.z = qua.z;
+		this.body.quaternion.w = qua.w;
+
+        this.physicsWorld.addBody(this.body);
+    }
+
+    updateToPhysicsBody() {}
+}
+
+class ExtrudeWall {
     constructor(object, physicsWorld) {
         this.object = object;
         this.physicsWorld = physicsWorld;
@@ -572,8 +611,10 @@ export class EntityManager {
         this.scene.traverse(function(object) {
             if ( object.userData.type != undefined) {
                 let type = object.userData.type;
-                if(type == 'wall') {
-                    let wall = new Wall(object, scope.physicsWorld);
+                if(type == 'planeWall') {
+                    let wall = new PlaneWall(object, scope.physicsWorld);
+                } else if(type == 'extrudeWall') {
+                    let wall = new ExtrudeWall(object, scope.physicsWorld);
                 } else if(type == 'door' || type == 'ref_door') {
                     let door = new Door(object, scope.physicsWorld, type);
                     scope.arPhysicsObj.push(door);

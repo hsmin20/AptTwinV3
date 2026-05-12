@@ -25,7 +25,7 @@ const Side = { UP: 0, DOWN: 1 };
 const BIND_CIRCLE_DISTANCE = 8;
 const RADIUS_CIRCLE_BINDER = 8;
 
-const WALL_HEIGHT = 2.3 * METER;
+const WALL_HEIGHT = 2.5 * METER;
 
 let timeoutID;
 
