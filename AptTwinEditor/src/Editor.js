@@ -354,9 +354,8 @@ export class Editor {
         const repeatX = Math.round(width);
         const repeatY = Math.round(height);
         const wallTexture  = textureHelper.get('Wallpaper1', repeatX, repeatY);
-        const wallTexture2  = textureHelper.get('PointWall', repeatX, repeatY);
         const materials = [ new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-                            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({ map: wallTexture2 }),
+                            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({ map: wallTexture }),
                             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({ map: wallTexture }) ];
 
         const mesh = new THREE.Mesh( geometry, materials ) ;
