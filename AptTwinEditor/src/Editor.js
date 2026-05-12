@@ -24,6 +24,42 @@ _DEFAULT_CAMERA.name = 'Camera';
 _DEFAULT_CAMERA.position.set( 0, 5, 10 );
 _DEFAULT_CAMERA.lookAt( new THREE.Vector3() );
 
+// Not really understand this UVGenerate.... change it later.
+const extrudeSettings = {
+    steps: 1,
+    depth: HEIGHT,
+    bevelEnabled: false,
+    UVGenerator: {
+        generateTopUV: (geometry, vertices, indexA, indexB, indexC) => [
+            new THREE.Vector2(vertices[indexA * 3] + 0.5, vertices[indexA * 3 + 1] + 0.5),
+            new THREE.Vector2(vertices[indexB * 3] + 0.5, vertices[indexB * 3 + 1] + 0.5),
+            new THREE.Vector2(vertices[indexC * 3] + 0.5, vertices[indexC * 3 + 1] + 0.5)
+        ],
+        generateSideWallUV: (geometry, vertices, indexA, indexB, indexC, indexD) => {
+            const [ax, ay, az] = [vertices[indexA * 3], vertices[indexA * 3 + 1], vertices[indexA * 3 + 2]];
+            const [bx, by, bz] = [vertices[indexB * 3], vertices[indexB * 3 + 1], vertices[indexB * 3 + 2]];
+            const [cx, cy, cz] = [vertices[indexC * 3], vertices[indexC * 3 + 1], vertices[indexC * 3 + 2]];
+            const [dx, dy, dz] = [vertices[indexD * 3], vertices[indexD * 3 + 1], vertices[indexD * 3 + 2]];
+
+            if (Math.abs(ay - by) > 0.01) {
+                return [
+                    new THREE.Vector2(ay + 0.5, -az),
+                    new THREE.Vector2(by + 0.5, -bz),
+                    new THREE.Vector2(cy + 0.5, -cz),
+                    new THREE.Vector2(dy + 0.5, -dz)
+                ];
+            } else {
+                return [
+                    new THREE.Vector2(ax + 0.5, -az),
+                    new THREE.Vector2(bx + 0.5, -bz),
+                    new THREE.Vector2(cx + 0.5, -cz),
+                    new THREE.Vector2(dx + 0.5, -dz)
+                ];
+            }
+        }
+    }
+};
+
 export class Editor {
     constructor(scene_name) {
         this.camera = _DEFAULT_CAMERA.clone();
@@ -190,6 +226,22 @@ export class Editor {
 		this.deselect();
     }
 
+    constructExtrudeGeometry() {
+        this.scene.traverse(function(obj) {
+            if(obj.geometry != undefined) {
+                const type = obj.geometry.type;
+                if(type == 'ExtrudeGeometry') {
+                    const geo = new THREE.ExtrudeGeometry(obj.geometry.parameters.shapes, extrudeSettings);
+                    geo.clearGroups();
+                    [0, 6, 12, 18, 24, 30].forEach((start, i) => geo.addGroup(start, 6, i));
+
+                    obj.geometry.dispose();
+                    obj.geometry = geo; // now a live ExtrudeGeometry again
+                }
+            }
+        });
+    }
+
     // Recent version has a bug exporting Camera so it's commented
     async fromJSON ( json ) {
 		var loader = new THREE.ObjectLoader(); // A loader for loading a JSON resource
@@ -200,6 +252,7 @@ export class Editor {
 		// this.camera.uuid = camera.uuid;
 
 		this.setScene( await loader.parseAsync( json.scene ) );
+        this.constructExtrudeGeometry();
 
         saveState();
         this.sidebar.refreshUI();
@@ -212,6 +265,70 @@ export class Editor {
 			camera: this.camera.toJSON(),
 			scene: this.scene.toJSON()
 		};
+	}
+    
+    removeDuplicate(textures, images) {
+        let imageMap = new Map();
+        let uuidArray = [];
+        images.forEach(function(image) {
+            const uuid = image.uuid;
+            const url = image.url;
+            if(imageMap.has(url)) {
+                const theUUID = imageMap.get(url);
+                textures.forEach(function(texture) {
+                    const imageUUID = texture.image;
+                    if(imageUUID == uuid) {
+                        texture.image = theUUID;
+                    }
+                });
+
+                uuidArray.push(uuid);
+            } else {
+                imageMap.set(url, uuid);
+            }
+        });
+
+        for(let i=0; i<uuidArray.length; i++) {
+            const uuid = uuidArray[i];
+
+            let index = images.findIndex(image => image.uuid === uuid);
+            if (index !== -1) {
+                images.splice(index, 1);
+            }
+        }
+    }
+
+    fixExtrudeGeometry(geometries) {
+        geometries.forEach(function(geometry) {
+            if(geometry.type === 'ExtrudeGeometry') {
+                delete geometry.options.UVGenerator;
+            }
+        });
+    }
+
+    // Recent version has a bug exporting Camera so it's commented
+	toJSON2 () {
+		let json =  {
+			metadata: {},
+			// camera: this.camera.toJSON(),
+			scene: this.scene.toJSON()
+		};
+
+        let geometries = json.scene.geometries;
+        this.fixExtrudeGeometry(geometries);
+
+        let textures = json.scene.textures;
+        let images = json.scene.images;
+        if(textures == undefined || images == undefined)
+            return json;
+
+         // replace base64 encoded image to file path
+        this.replaceImageToFilepath(textures, images);
+
+        // remove duplicate entries in images
+        this.removeDuplicate(textures, images);
+
+        return json;
 	}
 
     constructExtrudeWall(x1, z1, x2, z2, x3, z3, x4, z4, index, height) {
@@ -226,18 +343,23 @@ export class Editor {
         shape.lineTo( x3, -1 * z3 );
         shape.lineTo( x4, -1 * z4 );
         shape.lineTo( x1, -1 * z1 );
-        
-        const geometry = new THREE.ExtrudeGeometry( shape, { depth:height, bevelEnabled:false} );
-        // geometry.rotateX(-Math.PI / 2);
+
+        const geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+        geometry.clearGroups();
+        [0, 6, 12, 18, 24, 30].forEach((start, i) => geometry.addGroup(start, 6, i));
 
         let dx = maxX - minX;
         let dz = maxZ - minZ;
         const width = Math.max(dx, dz);
-        const repeatX = Math.round(width * 2);
-        const repeatY = Math.round(height * 2);
+        const repeatX = Math.round(width);
+        const repeatY = Math.round(height);
         const wallTexture  = textureHelper.get('Wallpaper1', repeatX, repeatY);
-        const material =  new THREE.MeshStandardMaterial({ map: wallTexture, side: THREE.FrontSide });
-        const mesh = new THREE.Mesh( geometry, material ) ;
+        const wallTexture2  = textureHelper.get('PointWall', repeatX, repeatY);
+        const materials = [ new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+                            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({ map: wallTexture2 }),
+                            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({ map: wallTexture }) ];
+
+        const mesh = new THREE.Mesh( geometry, materials ) ;
 
         mesh.rotateX(-Math.PI / 2);
         mesh.castShadow = true;
@@ -694,59 +816,6 @@ export class Editor {
             });
         });
     }
-
-    removeDuplicate(textures, images) {
-        let imageMap = new Map();
-        let uuidArray = [];
-        images.forEach(function(image) {
-            const uuid = image.uuid;
-            const url = image.url;
-            if(imageMap.has(url)) {
-                const theUUID = imageMap.get(url);
-                textures.forEach(function(texture) {
-                    const imageUUID = texture.image;
-                    if(imageUUID == uuid) {
-                        texture.image = theUUID;
-                    }
-                });
-
-                uuidArray.push(uuid);
-            } else {
-                imageMap.set(url, uuid);
-            }
-        });
-
-        for(let i=0; i<uuidArray.length; i++) {
-            const uuid = uuidArray[i];
-
-            let index = images.findIndex(image => image.uuid === uuid);
-            if (index !== -1) {
-                images.splice(index, 1);
-            }
-        }
-    }
-
-    // Recent version has a bug exporting Camera so it's commented
-	toJSON2 () {
-		let json =  {
-			metadata: {},
-			// camera: this.camera.toJSON(),
-			scene: this.scene.toJSON()
-		};
-
-        let textures = json.scene.textures;
-        let images = json.scene.images;
-        if(textures == undefined || images == undefined)
-            return json;
-
-         // replace base64 encoded image to file path
-        this.replaceImageToFilepath(textures, images);
-
-        // remove duplicate entries in images
-        this.removeDuplicate(textures, images);
-
-        return json;
-	}
 
     execute( cmd, optionalName ) {
 		this.history.execute( cmd, optionalName );

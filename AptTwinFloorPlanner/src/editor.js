@@ -1861,7 +1861,7 @@ export class Editor {
                     const door_width = 60; // 60 / METER = 1m, 48 -> 0.8m
                     this.binder = new Door2({x:wallSelect.x, y:wallSelect.y}, 0, 0, door_width, Hinge.NORMAL, wall.thick);
                 } else if(this.mode == Mode.ADD_WINDOW) {
-                    const window_width = 120; // 2m
+                    const window_width = 80; // 2m
                     this.binder = new Window({x:wallSelect.x, y:wallSelect.y}, 0, window_width, wall.thick, WALL_HEIGHT);
                 } else if(this.mode == Mode.ADD_WINDOW2) {
                     const window_width2 = 180; // 3m

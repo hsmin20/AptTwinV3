@@ -79,7 +79,7 @@ if(fromFloorplanner == 'true') {
     if(model_id != -1) {
         editor.storage.init(function() {});
         try {
-            const targetURL = './download_model.php?model_id=' + model_id;
+            const targetURL = './download_model.php?tblname=ModelHouses&model_id=' + model_id;
 
             const response = await fetch(targetURL);
             if (!response.ok) {

@@ -249,8 +249,8 @@ if(fromdb && model_id != undefined) {
 
         editor.fromJson( data, true );
 
-        let currentURL = window.location.href.split('?')[0];;
-        window.location.href = currentURL + '?model_id=' + model_id;
+        // let currentURL = window.location.href.split('?')[0];;
+        // window.location.href = currentURL + '?fromdb=' + fromdb + 'model_id=' + model_id;
     } catch (error) {
         // alert('Error fetching data -> '+ error);
         console.error('Error fetching data:', error);

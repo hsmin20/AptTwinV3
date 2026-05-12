@@ -133,7 +133,6 @@ export class BoxGeometryPanel {
         this.container.add( bottomRow );
         this.container.add( insideRow );
         this.container.add( outsideRow );
-
     }
 
     boxDimensionChanged() {
