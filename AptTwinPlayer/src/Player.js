@@ -35,6 +35,9 @@ export class Player {
         this.setupPhysicsWorld();
         this.createPlayerBody();
 
+        this.useCannonDebug = false;
+        this.cannonDebuggerCreated = false;
+
 		this.raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(), 0, 2.0);
 
         this.renderer = new THREE.WebGLRenderer({ alpha: true, });
@@ -69,7 +72,7 @@ export class Player {
         this.setScene( loader.parse( data.scene ) );
 
         if(!this.mobile) {
-            this.camera.position.set(5.2, 1.5, -5.2);
+            this.camera.position.set(0, 1.5, 0);
             this.camera.lookAt(new THREE.Vector3(0, 1.2, 0));
         }
 
@@ -185,9 +188,6 @@ export class Player {
 		planeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
         planeBody.position.y = 0.0;
 		this.cannonWorld.addBody(planeBody);
-
-        var scope = this;
-        this.cannonDebugger = new CannonDebugger(this.scene, this.cannonWorld, {onInit(body, mesh) { if(body == scope.playerBody) mesh.visible = false; },});
     }
 
     createPlayerBody() {
@@ -195,7 +195,7 @@ export class Player {
         const playerMat = new CANNON.Material('player');
         this.playerBody  = new CANNON.Body({ mass: 60, material: playerMat });
         this.playerBody.addShape(playerShape);
-        this.playerBody.position.set(-5, 0.85, 5);
+        this.playerBody.position.set(0, 0.85, 0);
         this.playerBody.linearDamping = 0.9;
         this.playerBody.angularDamping = 1;
         this.playerBody.fixedRotation = true;
@@ -263,7 +263,15 @@ export class Player {
 		this.renderer.setViewport( 0, 0, this.dom.offsetWidth, this.dom.offsetHeight );
         this.renderer.render(this.scene, this.camera);
 
-        this.cannonDebugger.update();
+        if(this.useCannonDebug) {
+            if(this.cannonDebuggerCreated == false) {
+                var scope = this;
+                this.cannonDebugger = new CannonDebugger(this.scene, this.cannonWorld, {onInit(body, mesh) { if(body == scope.playerBody) mesh.visible = false; },});
+                this.cannonDebuggerCreated = true;
+            }
+
+            this.cannonDebugger.update();
+        }
 	}
 
 	addCrosshair() {
@@ -299,6 +307,10 @@ export class Player {
     	this.control = new FreeLookControl(this, this.playerBody);
         this.scene.add(this.camera);
 	}
+
+    enableCannonDebugging() {
+        this.useCannonDebug = !this.useCannonDebug;
+    }
 
     changeView(style) {
         if(style == 1) {

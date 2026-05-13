@@ -97,6 +97,19 @@ class MenubarTools {
             window.location.href = './interior.html';
         } );
         options.appendChild( option );
+
+        horizontalRule = document.createElement( 'hr' );
+        horizontalRule.className = 'HorizontalRule';
+        options.appendChild( horizontalRule );
+
+        // Debugging for Cannon
+        option = document.createElement( 'div' );
+        option.className = 'option';
+        option.textContent = 'Enable Cannon Debugger';
+        option.addEventListener( 'click', () => {
+            player.enableCannonDebugging();
+        } );
+        options.appendChild( option );
     }
 }
 
