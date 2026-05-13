@@ -6,8 +6,10 @@ import { UITexture2 } from '../../src_common/libs/ui.three2.js';
 import { SetGeometryCommand } from '../../src_common/commands/SetGeometryCommand.js';
 
 import { SetMaterialMapCommand } from '../../src_common/commands/SetMaterialMapCommand.js';
+import { SetMaterialOpaqueCommand } from '../../src_common/commands/SetMaterialOpaqueCommand.js';
 
 import { showTextureImages } from './TextureDialog.js';
+import { UIBoolean } from '../../src_common/libs/ui.three.js';
 
 export class PlaneGeometryPanel {
     constructor( editor, object ) {
@@ -39,13 +41,17 @@ export class PlaneGeometryPanel {
         this.planeMapRow.add( new UIText( 'Map' ).setClass( 'Label' ) );
 
         var onMapChange = this.planeMapChanged.bind(this);
-        this.planeMap = new UITexture2( showTextureImages );
+        var onOpacityChangedFunc = this.opacityChanged.bind(this);
 
+        this.planeMap = new UITexture2( showTextureImages );
+        var planeOpacityTitle = new UIText( 'opacity' ).setClass( 'Label' ).setWidth( '50px' );
+        this.planeOpacity = new UIBoolean().setWidth( '100px' ).setFontSize( '12px' );
         var removeMapButton = new UIButton( 'Remove' ).setWidth( '80px' ).setMarginLeft( '10px' ).setMarginRight( '10px' );
+        this.planeOpacity.onChange( onOpacityChangedFunc );
         removeMapButton.onClick( () => { this.mapRemoved(); });
 
         this.planeMap.onChange( onMapChange );
-        this.planeMapRow.add( this.planeMap, removeMapButton );
+        this.planeMapRow.add( this.planeMap, planeOpacityTitle, this.planeOpacity, removeMapButton );
 
         this.container.add( this.planeMapRow );
     }
@@ -68,6 +74,14 @@ export class PlaneGeometryPanel {
         const newMap = this.planeMap.getValue();
 
         this.editor.execute( new SetMaterialMapCommand( this.editor, object, 'map', newMap ) );
+    }
+
+    opacityChanged() {
+        let currentObject = this.editor.selected;
+
+        const newOpacity = this.planeOpacity.getValue();
+
+        this.editor.execute( new SetMaterialOpaqueCommand( this.editor, currentObject, newOpacity ) );        
     }
 
     mapRemoved() {
