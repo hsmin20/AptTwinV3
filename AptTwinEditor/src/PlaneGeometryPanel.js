@@ -105,5 +105,6 @@ export class PlaneGeometryPanel {
         const material = object.material;
 
         this.planeMap.setValue( material[ 'map' ] );
+        this.planeOpacity.setValue( material.transparent );
     } 
 }
