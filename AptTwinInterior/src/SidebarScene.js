@@ -197,8 +197,21 @@ export class SidebarScene {
         for ( let i = 0; i < objectArray.length; i ++ ) {
             const object = objectArray[ i ];
 
-            // In Interior, show the rooms and iteriors only
+            // In Interior, show iteriors only
+            if ( object.isLight )
+                continue;
+            
             const parent = object.parent;
+            if ( object.isGroup ) { 
+                const name = object.name;
+                if(name != 'Furniture' && name != 'HomeAppliance' && name != 'Pet') {
+                    const parentName = parent.name;
+                    if(parentName != 'Furniture' && parentName != 'HomeAppliance' && parentName != 'Pet')
+                        continue;
+                }
+            }
+
+            
             if(parent !== this.editor.scene && object.userData.isInterior != true)
                 continue;
 

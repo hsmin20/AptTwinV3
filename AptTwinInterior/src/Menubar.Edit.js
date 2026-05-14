@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { UIPanel, UIRow, UIHorizontalRule } from '../../src_common/libs/ui.js';
 
+import { AddGroupCommand } from ' ../../src_common/commands/AddGroupCommand.js';
 import { RemoveObjectCommand } from '../../src_common/commands/RemoveObjectCommand.js';
 
 import { TV } from './interior/TV.js';
@@ -262,6 +263,26 @@ export class MenubarEdit {
         petSubmenu.add( option );
 
         //============================Horizontal
+        options.add( new UIHorizontalRule() );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Duplicate' );
+        option.onClick( function () {
+            if(editorscope.selected == null) {
+                alert('Select an item first');
+                return;
+            }
+
+            if (confirm('Are you sure you want to duplicate this item?')) {
+                const object = editorscope.selected;
+                if ( object !== null && object.parent !== null ) {
+                    const clone = object.clone(true);
+                    editorscope.execute( new AddGroupCommand( editorscope, clone, object.parent ) );
+                }  
+            }
+        } );
+        options.add( option );
 
         options.add( new UIHorizontalRule() );
 

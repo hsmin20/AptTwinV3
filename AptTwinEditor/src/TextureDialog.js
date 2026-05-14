@@ -108,6 +108,12 @@ export function showTextureImages( cbSetTexture ) {
                     </div>
                     <div class="responsive">
                     <div class="gallery">
+                        <img src="./textures/glass.jpg" alt="glass" width="60" height="40">
+                        <input type="radio" name="texture" id="glass" value="Glass"/>Glass
+                    </div>
+                    </div>
+                    <div class="responsive">
+                    <div class="gallery">
                         <img src="./textures/glassDoorL.jpg" alt="glassDoorL" width="60" height="40">
                         <input type="radio" name="texture" id="glassDoorL" value="GlassDoorLeft"/>Glass Door (Left Handle)
                     </div>
