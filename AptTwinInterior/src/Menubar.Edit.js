@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { UIPanel, UIRow, UIHorizontalRule } from '../../src_common/libs/ui.js';
 
-import { AddGroupCommand } from ' ../../src_common/commands/AddGroupCommand.js';
+import { AddGroupCommand } from '../../src_common/commands/AddGroupCommand.js';
 import { RemoveObjectCommand } from '../../src_common/commands/RemoveObjectCommand.js';
 
 import { TV } from './interior/TV.js';
