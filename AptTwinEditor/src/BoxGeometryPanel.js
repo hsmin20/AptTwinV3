@@ -9,7 +9,8 @@ import { SetMaterialCommand } from '../../src_common/commands/SetMaterialCommand
 import { SetMaterialMapCommand } from '../../src_common/commands/SetMaterialMapCommand.js';
 import { SetMaterialOpaqueCommand } from '../../src_common/commands/SetMaterialOpaqueCommand.js';
 
-import { showTextureImages } from './TextureDialog.js';
+import { setNamesAndRepeats, showTextureImagesByIndex0, showTextureImagesByIndex1, showTextureImagesByIndex2, 
+        showTextureImagesByIndex3, showTextureImagesByIndex4, showTextureImagesByIndex5 } from './TextureDialog.js';
 import { UIBoolean } from '../../src_common/libs/ui.three.js';
 
 export class BoxGeometryPanel {
@@ -68,7 +69,7 @@ export class BoxGeometryPanel {
         var onOpacityChangedFunc = this.opacityChanged.bind(this);
 
         var lefttitle = new UIText( 'Left Map' ).setClass( 'Label' ).setWidth( '120px' );
-        this.leftMap = new UITexture2( showTextureImages ).onChange( onMapChangedFunc );
+        this.leftMap = new UITexture2( showTextureImagesByIndex0 ).onChange( onMapChangedFunc );
         var leftopacityTitle = new UIText( 'opacity' ).setClass( 'Label' ).setWidth( '50px' );
         this.leftOpacity = new UIBoolean().setWidth( '100px' ).setFontSize( '12px' );
         var removeLeftButton = new UIButton( 'Remove' ).setWidth( '80px' ).setMarginLeft( '10px' ).setMarginRight( '10px' );
@@ -76,7 +77,7 @@ export class BoxGeometryPanel {
         removeLeftButton.onClick( () => { this.boxMapRemoved(0); });
 
         var righttitle = new UIText( 'Right Map' ).setClass( 'Label' ).setWidth( '120px' );
-        this.rightMap = new UITexture2( showTextureImages ).onChange( onMapChangedFunc );
+        this.rightMap = new UITexture2( showTextureImagesByIndex1 ).onChange( onMapChangedFunc );
         var rightopacityTitle = new UIText( 'opacity' ).setClass( 'Label' ).setWidth( '50px' );
         this.rightOpacity = new UIBoolean().setWidth( '100px' ).setFontSize( '12px' );
         var removeRightButton = new UIButton( 'Remove' ).setWidth( '80px' ).setMarginLeft( '10px' ).setMarginRight( '10px' );
@@ -84,7 +85,7 @@ export class BoxGeometryPanel {
         removeRightButton.onClick( () => { this.boxMapRemoved(1); });
 
         var toptitle = new UIText( 'Top Map' ).setClass( 'Label' ).setWidth( '120px' );
-        this.topMap = new UITexture2( showTextureImages ).onChange( onMapChangedFunc );
+        this.topMap = new UITexture2( showTextureImagesByIndex2 ).onChange( onMapChangedFunc );
         var topopacityTitle = new UIText( 'opacity' ).setClass( 'Label' ).setWidth( '50px' );
         this.topOpacity = new UIBoolean().setWidth( '100px' ).setFontSize( '12px' );
         var removeTopButton = new UIButton( 'Remove' ).setWidth( '80px' ).setMarginLeft( '10px' ).setMarginRight( '10px' );
@@ -92,7 +93,7 @@ export class BoxGeometryPanel {
         removeTopButton.onClick( () => { this.boxMapRemoved(2); });
 
         var bottomtitle = new UIText( 'Bottom Map' ).setClass( 'Label' ).setWidth( '120px' );
-        this.bottomMap = new UITexture2( showTextureImages ).onChange( onMapChangedFunc );
+        this.bottomMap = new UITexture2( showTextureImagesByIndex3 ).onChange( onMapChangedFunc );
         var bottomopacityTitle = new UIText( 'opacity' ).setClass( 'Label' ).setWidth( '50px' );
         this.bottomOpacity = new UIBoolean().setWidth( '100px' ).setFontSize( '12px' );
         var removeBottomButton = new UIButton( 'Remove' ).setWidth( '80px' ).setMarginLeft( '10px' ).setMarginRight( '10px' );
@@ -100,7 +101,7 @@ export class BoxGeometryPanel {
         removeBottomButton.onClick( () => { this.boxMapRemoved(3); });
 
         var insidetitle = new UIText( 'Inside Map' ).setClass( 'Label' ).setWidth( '120px' );
-        this.insideMap = new UITexture2( showTextureImages ).onChange( onMapChangedFunc );
+        this.insideMap = new UITexture2( showTextureImagesByIndex4 ).onChange( onMapChangedFunc );
         var insideopacityTitle = new UIText( 'opacity' ).setClass( 'Label' ).setWidth( '50px' );
         this.insideOpacity = new UIBoolean().setWidth( '100px' ).setFontSize( '12px' );
         var removeInsideButton = new UIButton( 'Remove' ).setWidth( '80px' ).setMarginLeft( '10px' ).setMarginRight( '10px' );
@@ -108,7 +109,7 @@ export class BoxGeometryPanel {
         removeInsideButton.onClick( () => { this.boxMapRemoved(4); });
 
         var outsidetitle = new UIText( 'Outside Map' ).setClass( 'Label' ).setWidth( '120px' );
-        this.outsideMap = new UITexture2( showTextureImages ).onChange( onMapChangedFunc );
+        this.outsideMap = new UITexture2( showTextureImagesByIndex5 ).onChange( onMapChangedFunc );
         var outsideopacityTitle = new UIText( 'opacity' ).setClass( 'Label' ).setWidth( '50px' );
         this.outsideOpacity = new UIBoolean().setWidth( '100px' ).setFontSize( '12px' );
         var removeOutsideButton = new UIButton( 'Remove' ).setWidth( '80px' ).setMarginLeft( '10px' ).setMarginRight( '10px' );
@@ -226,6 +227,17 @@ export class BoxGeometryPanel {
             return;
 
         this.materialClass.setValue( materials[0].type );
+
+        for(let i=0; i<materials.length; i++) {
+            const map = materials[i].map;
+            if(map != null) {
+                const name = map.name.substring(0, map.name.indexOf("_"));
+                const repeatx = map.repeat.x;
+                const repeaty = map.repeat.y;
+
+                setNamesAndRepeats(i, name, repeatx, repeaty); // To show them in showTextureImage Dialog
+            }
+        }
 
         for(let i=0; i<6; i++) {
             this.boxMaps[i].setValue( materials[i][ 'map' ] );

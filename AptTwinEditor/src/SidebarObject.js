@@ -227,7 +227,9 @@ export class SidebarObject {
 
 		if ( object.isAmbientLight || object.isHemisphereLight ) {
 			this.objectShadowRow.setDisplay( 'none' );
-		}
+		} else {
+            this.objectShadowRow.setDisplay( '' );
+        }
 
         try {
             this.objectUserData.setValue( JSON.stringify( object.userData, null, '  ' ) );
@@ -236,341 +238,341 @@ export class SidebarObject {
         }
 	}
 
-    changeToDoor(doortype) {
-        let object = this.editor.selected;
-        if(object.type != 'Group') {
-            alert('Only group can be changed to Door');
-            return;
-        }
+    // changeToDoor(doortype) {
+    //     let object = this.editor.selected;
+    //     if(object.type != 'Group') {
+    //         alert('Only group can be changed to Door');
+    //         return;
+    //     }
 
-        let box = new THREE.Box3();
-        box.setFromObject( object, true );
-        const dimensions = new THREE.Vector3().subVectors(box.max, box.min);
-        let width = dimensions.x;
-        const height = dimensions.y;
-        if(dimensions.z > dimensions.x)
-            width = dimensions.z;
+    //     let box = new THREE.Box3();
+    //     box.setFromObject( object, true );
+    //     const dimensions = new THREE.Vector3().subVectors(box.max, box.min);
+    //     let width = dimensions.x;
+    //     const height = dimensions.y;
+    //     if(dimensions.z > dimensions.x)
+    //         width = dimensions.z;
 
-        const center = new THREE.Vector3();
-        box.getCenter(center);
+    //     const center = new THREE.Vector3();
+    //     box.getCenter(center);
 
-        // delete old object (group)
-        this.editor.execute( new RemoveObjectCommand( this.editor, object ) );
+    //     // delete old object (group)
+    //     this.editor.execute( new RemoveObjectCommand( this.editor, object ) );
 
-        let doorLTexture = null;
-        let doorRTexture = null;
+    //     let doorLTexture = null;
+    //     let doorRTexture = null;
         
-        if(doortype == 'door1') {
-            doorLTexture = textureHelper.get('DoorLeft', 1, 1);
-            doorRTexture = textureHelper.get('DoorRight', 1, 1);
-        } else if(doortype == 'door2') {
-            doorLTexture = textureHelper.get('FrontDoorLeft', 1, 1);
-            doorRTexture = textureHelper.get('FrontDoorRight', 1, 1);
-        } else {
-            doorLTexture = textureHelper.get('GlassDoorLeft', 1, 1);
-            doorRTexture = textureHelper.get('GlassRight', 1, 1);
-        }
+    //     if(doortype == 'door1') {
+    //         doorLTexture = textureHelper.get('DoorLeft', 1, 1);
+    //         doorRTexture = textureHelper.get('DoorRight', 1, 1);
+    //     } else if(doortype == 'door2') {
+    //         doorLTexture = textureHelper.get('FrontDoorLeft', 1, 1);
+    //         doorRTexture = textureHelper.get('FrontDoorRight', 1, 1);
+    //     } else {
+    //         doorLTexture = textureHelper.get('GlassDoorLeft', 1, 1);
+    //         doorRTexture = textureHelper.get('GlassRight', 1, 1);
+    //     }
 
-        const group = new THREE.Group();
-        group.name = 'NewGroup';
-        group.position.x = center.x;
-        group.position.y = center.y;
-        group.position.z = center.z;
-        if(dimensions.z > dimensions.x)
-            group.rotation.y = Math.PI / 2.0;
+    //     const group = new THREE.Group();
+    //     group.name = 'NewGroup';
+    //     group.position.x = center.x;
+    //     group.position.y = center.y;
+    //     group.position.z = center.z;
+    //     if(dimensions.z > dimensions.x)
+    //         group.rotation.y = Math.PI / 2.0;
 
-        this.editor.execute( new AddGroupCommand( this.editor, group ) );
+    //     this.editor.execute( new AddGroupCommand( this.editor, group ) );
  
-        // add a door
-        const depth = 0.1;
-        const door = new THREE.Mesh( new THREE.BoxGeometry(width, height, depth), [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial( { map: doorLTexture} ), new THREE.MeshStandardMaterial( { map: doorRTexture} )
-        ] );
-        door.name = "_Door";
+    //     // add a door
+    //     const depth = 0.1;
+    //     const door = new THREE.Mesh( new THREE.BoxGeometry(width, height, depth), [  
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+    //         new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial( { map: doorLTexture} ), new THREE.MeshStandardMaterial( { map: doorRTexture} )
+    //     ] );
+    //     door.name = "_Door";
 
-        this.editor.execute( new AddObjectCommand( this.editor, door, group ) );
+    //     this.editor.execute( new AddObjectCommand( this.editor, door, group ) );
 
-        return door;
-    }
+    //     return door;
+    // }
     
-    changeToDoorwithUserData() {
-        const _html = `
-            <dialog id="changeToDoorwithUserDataDialog">
-                <form>
-                    <p>
-                    <label>
-                        <h1>User Data for Door</h1>
-                        <p>* Door Type </p>
-                        <div style="display:flex; gap:20px;">
-                            <div class="gallery">
-                                <img src="./textures/doorL.jpg" alt="door1" style="width:65px; height:160px;">
-                                <br>
-                                <input type="radio" id="door1" name="doortype" value="door1" checked>Door 1
-                            </div>
-                            <div class="gallery">
-                                <img src="./textures/frontdoorL.jpg" alt="door2" style="width:65px; height:160px;">
-                                <br>
-                                <input type="radio" id="door2" name="doortype" value="door2">Door 2
-                            </div>
-                            <div class="gallery">
-                                <img src="./textures/glassDoorL.jpg" alt="door3" style="width:65px; height:160px;">
-                                <br>
-                                <input type="radio" id="door3" name="doortype" value="door3">Door 3
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <p>* Pivot Position </p>
-                        <p><input type="radio" id="left" name="pivotDir" value="left" checked>Left</p>
-                        <p><input type="radio" id="right" name="pivotDir" value="right">Right</p>
+    // changeToDoorwithUserData() {
+    //     const _html = `
+    //         <dialog id="changeToDoorwithUserDataDialog">
+    //             <form>
+    //                 <p>
+    //                 <label>
+    //                     <h1>User Data for Door</h1>
+    //                     <p>* Door Type </p>
+    //                     <div style="display:flex; gap:20px;">
+    //                         <div class="gallery">
+    //                             <img src="./textures/doorL.jpg" alt="door1" style="width:65px; height:160px;">
+    //                             <br>
+    //                             <input type="radio" id="door1" name="doortype" value="door1" checked>Door 1
+    //                         </div>
+    //                         <div class="gallery">
+    //                             <img src="./textures/frontdoorL.jpg" alt="door2" style="width:65px; height:160px;">
+    //                             <br>
+    //                             <input type="radio" id="door2" name="doortype" value="door2">Door 2
+    //                         </div>
+    //                         <div class="gallery">
+    //                             <img src="./textures/glassDoorL.jpg" alt="door3" style="width:65px; height:160px;">
+    //                             <br>
+    //                             <input type="radio" id="door3" name="doortype" value="door3">Door 3
+    //                         </div>
+    //                     </div>
+    //                     <div class="clearfix"></div>
+    //                     <p>* Pivot Position </p>
+    //                     <p><input type="radio" id="left" name="pivotDir" value="left" checked>Left</p>
+    //                     <p><input type="radio" id="right" name="pivotDir" value="right">Right</p>
 
-                        <p>* Open Direction </p>
-                        <p><input type="radio" id="inward" name="openDir" value="inward" checked>Inward</p>
-                        <p><input type="radio" id="outward" name="openDir" value="outward">Outward</p>
+    //                     <p>* Open Direction </p>
+    //                     <p><input type="radio" id="inward" name="openDir" value="inward" checked>Inward</p>
+    //                     <p><input type="radio" id="outward" name="openDir" value="outward">Outward</p>
 
-                        <p>* Update state from DB </p>
-                        <p>Use DBid<input type="checkbox" id="updateable" name="updateable"></p>
-                    </label>
-                    </p>
-                    <div>
-                    <button value="cancel" formmethod="dialog">Cancel</button>
-                    <button id="confirmBtn" value="default">Add</button>
-                    </div>
-                </form>
-            </dialog>
-    `
+    //                     <p>* Update state from DB </p>
+    //                     <p>Use DBid<input type="checkbox" id="updateable" name="updateable"></p>
+    //                 </label>
+    //                 </p>
+    //                 <div>
+    //                 <button value="cancel" formmethod="dialog">Cancel</button>
+    //                 <button id="confirmBtn" value="default">Add</button>
+    //                 </div>
+    //             </form>
+    //         </dialog>
+    // `
 
-        const dom = new DOMParser().parseFromString(_html, 'text/html');
-        const dialog = dom.querySelector("dialog");
-        document.body.appendChild(dialog)
+    //     const dom = new DOMParser().parseFromString(_html, 'text/html');
+    //     const dialog = dom.querySelector("dialog");
+    //     document.body.appendChild(dialog)
 
-        const changeToDoorwithUserDataDialog = document.getElementById("changeToDoorwithUserDataDialog");
-        const confirmBtn = changeToDoorwithUserDataDialog.querySelector("#confirmBtn");
+    //     const changeToDoorwithUserDataDialog = document.getElementById("changeToDoorwithUserDataDialog");
+    //     const confirmBtn = changeToDoorwithUserDataDialog.querySelector("#confirmBtn");
 
-        // "Cancel" button closes the dialog without submitting because of [formmethod="dialog"], triggering a close event.
-        changeToDoorwithUserDataDialog.addEventListener("close", (e) => {
-            document.body.removeChild(dialog)
-        });
+    //     // "Cancel" button closes the dialog without submitting because of [formmethod="dialog"], triggering a close event.
+    //     changeToDoorwithUserDataDialog.addEventListener("close", (e) => {
+    //         document.body.removeChild(dialog)
+    //     });
 
-        // Prevent the "confirm" button from the default behavior of submitting the form, and close the dialog with the `close()` method, which triggers the "close" event.
-        confirmBtn.addEventListener("click", (event) => {
-            event.preventDefault(); // We don't want to submit this fake form
+    //     // Prevent the "confirm" button from the default behavior of submitting the form, and close the dialog with the `close()` method, which triggers the "close" event.
+    //     confirmBtn.addEventListener("click", (event) => {
+    //         event.preventDefault(); // We don't want to submit this fake form
 
-            const doortype = document.querySelector('input[name=doortype]:checked').value;
-            var pivotDir = document.querySelector('input[name=pivotDir]:checked').value;
-            var openDir = document.querySelector('input[name=openDir]:checked').value;
-            var updateable = document.getElementById("updateable").checked;
-            document.body.removeChild(dialog)
+    //         const doortype = document.querySelector('input[name=doortype]:checked').value;
+    //         var pivotDir = document.querySelector('input[name=pivotDir]:checked').value;
+    //         var openDir = document.querySelector('input[name=openDir]:checked').value;
+    //         var updateable = document.getElementById("updateable").checked;
+    //         document.body.removeChild(dialog)
 
-            // temporary obj for userData
-            var obj = new THREE.Object3D();
-            obj.userData.type = 'door';
-            obj.userData.pivotDir = pivotDir;
-            obj.userData.openDir = openDir;
-            if(updateable)
-                obj.userData.DBid = 'n/a';
+    //         // temporary obj for userData
+    //         var obj = new THREE.Object3D();
+    //         obj.userData.type = 'door';
+    //         obj.userData.pivotDir = pivotDir;
+    //         obj.userData.openDir = openDir;
+    //         if(updateable)
+    //             obj.userData.DBid = 'n/a';
 
-            const userData = obj.userData;
-            const object = this.changeToDoor(doortype);
+    //         const userData = obj.userData;
+    //         const object = this.changeToDoor(doortype);
 
-            if ( JSON.stringify( object.userData ) != JSON.stringify( userData ) ) {
-                this.editor.execute( new SetValueCommand( this.editor, object, 'userData', userData ) );
-            }
-        });
+    //         if ( JSON.stringify( object.userData ) != JSON.stringify( userData ) ) {
+    //             this.editor.execute( new SetValueCommand( this.editor, object, 'userData', userData ) );
+    //         }
+    //     });
 
-        changeToDoorwithUserDataDialog.showModal();
-    }
+    //     changeToDoorwithUserDataDialog.showModal();
+    // }
 
-    changeToWindow(windowtype, noWindows, openSide, updateable) {
-        let object = this.editor.selected;
+    // changeToWindow(windowtype, noWindows, openSide, updateable) {
+    //     let object = this.editor.selected;
 
-        let box = new THREE.Box3();
-        box.setFromObject( object, true );
-        const dimensions = new THREE.Vector3().subVectors(box.max, box.min);
-        let width = dimensions.x;
-        const height = dimensions.y;
-        if(dimensions.z > dimensions.x)
-            width = dimensions.z;
+    //     let box = new THREE.Box3();
+    //     box.setFromObject( object, true );
+    //     const dimensions = new THREE.Vector3().subVectors(box.max, box.min);
+    //     let width = dimensions.x;
+    //     const height = dimensions.y;
+    //     if(dimensions.z > dimensions.x)
+    //         width = dimensions.z;
 
-        const center = new THREE.Vector3();
-        box.getCenter(center);
+    //     const center = new THREE.Vector3();
+    //     box.getCenter(center);
 
-        // delete old object (group)
-        this.editor.execute( new RemoveObjectCommand( this.editor, object ) );
+    //     // delete old object (group)
+    //     this.editor.execute( new RemoveObjectCommand( this.editor, object ) );
 
-        let windowTexture = null;
+    //     let windowTexture = null;
        
-        if(windowtype == 'window1') {
-            windowTexture = textureHelper.get('Window', 1, 1);
-        } else if(windowtype == 'window2') {
-            windowTexture = textureHelper.get('InternalWindow', 1, 1);
-        } else {
-            windowTexture = textureHelper.get('SmallWindow', 1, 1);
-        }
+    //     if(windowtype == 'window1') {
+    //         windowTexture = textureHelper.get('Window', 1, 1);
+    //     } else if(windowtype == 'window2') {
+    //         windowTexture = textureHelper.get('InternalWindow', 1, 1);
+    //     } else {
+    //         windowTexture = textureHelper.get('SmallWindow', 1, 1);
+    //     }
 
-        const group = new THREE.Group();
-        group.name = 'NewGroup';
-        group.position.x = center.x;
-        group.position.y = center.y;
-        group.position.z = center.z;
-        if(dimensions.z > dimensions.x)
-            group.rotation.y = Math.PI / 2.0;
+    //     const group = new THREE.Group();
+    //     group.name = 'NewGroup';
+    //     group.position.x = center.x;
+    //     group.position.y = center.y;
+    //     group.position.z = center.z;
+    //     if(dimensions.z > dimensions.x)
+    //         group.rotation.y = Math.PI / 2.0;
 
-        this.editor.execute( new AddGroupCommand( this.editor, group ) );
+    //     this.editor.execute( new AddGroupCommand( this.editor, group ) );
  
-        // add windows
-        let nowin = 2;
-        if(noWindows == 'four')
-            nowin = 4;
+    //     // add windows
+    //     let nowin = 2;
+    //     if(noWindows == 'four')
+    //         nowin = 4;
 
-        width /= nowin;
-        let positionx = -(width / 2.0) * (nowin - 1);
-        for(let i=0; i<nowin; i++) {
-            const depth = 0.05;
-            const window = new THREE.Mesh( new THREE.BoxGeometry(width, height, depth), [  
-                new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-                new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial( { map: windowTexture} ), new THREE.MeshStandardMaterial( { map: windowTexture} )
-            ] );
-            window.name = "_Window" + i;
-            window.position.x = positionx;
+    //     width /= nowin;
+    //     let positionx = -(width / 2.0) * (nowin - 1);
+    //     for(let i=0; i<nowin; i++) {
+    //         const depth = 0.05;
+    //         const window = new THREE.Mesh( new THREE.BoxGeometry(width, height, depth), [  
+    //             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
+    //             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial( { map: windowTexture} ), new THREE.MeshStandardMaterial( { map: windowTexture} )
+    //         ] );
+    //         window.name = "_Window" + i;
+    //         window.position.x = positionx;
 
-            positionx += width;
-            const offset = depth / 2.0;
-            const offset2 = -offset;
-            if(nowin == 2) {
-                if(i == 0)
-                    window.position.z = offset;
-                else
-                    window.position.z = offset2;
+    //         positionx += width;
+    //         const offset = depth / 2.0;
+    //         const offset2 = -offset;
+    //         if(nowin == 2) {
+    //             if(i == 0)
+    //                 window.position.z = offset;
+    //             else
+    //                 window.position.z = offset2;
 
-                let openDir = '=>';
-                if(openSide == 'right') {
-                    openDir = '<=';
-                }
+    //             let openDir = '=>';
+    //             if(openSide == 'right') {
+    //                 openDir = '<=';
+    //             }
 
-                // temporary obj for userData
-                if((openSide == 'left' && i == 0) ||(openSide == 'right' && i == 1)) {
-                    var obj = new THREE.Object3D();
-                    obj.userData.type = 'window';
-                    obj.userData.openDir = openDir;
-                    if(updateable)
-                        obj.userData.DBid = 'n/a';
+    //             // temporary obj for userData
+    //             if((openSide == 'left' && i == 0) ||(openSide == 'right' && i == 1)) {
+    //                 var obj = new THREE.Object3D();
+    //                 obj.userData.type = 'window';
+    //                 obj.userData.openDir = openDir;
+    //                 if(updateable)
+    //                     obj.userData.DBid = 'n/a';
 
-                    const userData = obj.userData;
+    //                 const userData = obj.userData;
 
-                    if ( JSON.stringify( object.userData ) != JSON.stringify( userData ) ) {
-                        this.editor.execute( new SetValueCommand( this.editor, window, 'userData', userData ) );
-                    }
-                }
-            } else if(nowin == 4) {
-                if((i == 0) || ( i == 3)) {
-                    window.position.z = offset;
+    //                 if ( JSON.stringify( object.userData ) != JSON.stringify( userData ) ) {
+    //                     this.editor.execute( new SetValueCommand( this.editor, window, 'userData', userData ) );
+    //                 }
+    //             }
+    //         } else if(nowin == 4) {
+    //             if((i == 0) || ( i == 3)) {
+    //                 window.position.z = offset;
 
-                    let openDir = '=>';
-                    if(i == 3)
-                        openDir = '<=';
-                    // temporary obj for userData
-                    var obj = new THREE.Object3D();
-                    obj.userData.type = 'window';
-                    obj.userData.openDir = openDir;
-                    if(updateable)
-                        obj.userData.DBid = 'n/a';
+    //                 let openDir = '=>';
+    //                 if(i == 3)
+    //                     openDir = '<=';
+    //                 // temporary obj for userData
+    //                 var obj = new THREE.Object3D();
+    //                 obj.userData.type = 'window';
+    //                 obj.userData.openDir = openDir;
+    //                 if(updateable)
+    //                     obj.userData.DBid = 'n/a';
 
-                    const userData = obj.userData;
+    //                 const userData = obj.userData;
 
-                    if ( JSON.stringify( object.userData ) != JSON.stringify( userData ) ) {
-                        this.editor.execute( new SetValueCommand( this.editor, window, 'userData', userData ) );
-                    }
-                } else {
-                    window.position.z = offset2;
-                }
-            }
+    //                 if ( JSON.stringify( object.userData ) != JSON.stringify( userData ) ) {
+    //                     this.editor.execute( new SetValueCommand( this.editor, window, 'userData', userData ) );
+    //                 }
+    //             } else {
+    //                 window.position.z = offset2;
+    //             }
+    //         }
 
-            this.editor.execute( new AddObjectCommand( this.editor, window, group ) );
-        }
+    //         this.editor.execute( new AddObjectCommand( this.editor, window, group ) );
+    //     }
 
-        return group;
-    }
+    //     return group;
+    // }
 
-    changeToWindowwithUserData() {
-        let object = this.editor.selected;
-        if(object.type != 'Group') {
-            alert('Only group can be changed to Window');
-            return;
-        }
+    // changeToWindowwithUserData() {
+    //     let object = this.editor.selected;
+    //     if(object.type != 'Group') {
+    //         alert('Only group can be changed to Window');
+    //         return;
+    //     }
 
-        const _html = `
-            <dialog id="changeToWindowWithUserDataDialog">
-                <form>
-                    <p>
-                    <label>
-                        <h1>User Data for Window</h1>
-                        <p>* Window Type </p>
-                        <div style="display:flex; gap:20px;">
-                            <div class="gallery">
-                                <img src="./textures/window.jpg" alt="window1" style="width:65px; height:160px;">
-                                <br>
-                                <input type="radio" id="window1" name="windowtype" value="window1" checked>Window 1
-                            </div>
-                            <div class="gallery">
-                                <img src="./textures/internalWindow.jpg" alt="window2" style="width:65px; height:160px;">
-                                <br>
-                                <input type="radio" id="window2" name="windowtype" value="window2">Window 2
-                            </div>
-                            <div class="gallery">
-                                <img src="./textures/swindow.jpg" alt="window3" style="width:65px; height:90px;">
-                                <br>
-                                <input type="radio" id="window3" name="windowtype" value="window3">Window 3
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <p>* No of Windows </p>
-                        <p><input type="radio" id="2windows" name="noWindows" value="two" checked>2 windows</p>
-                        <p><input type="radio" id="4windows" name="noWindows" value="four">4 windows</p>
+    //     const _html = `
+    //         <dialog id="changeToWindowWithUserDataDialog">
+    //             <form>
+    //                 <p>
+    //                 <label>
+    //                     <h1>User Data for Window</h1>
+    //                     <p>* Window Type </p>
+    //                     <div style="display:flex; gap:20px;">
+    //                         <div class="gallery">
+    //                             <img src="./textures/window.jpg" alt="window1" style="width:65px; height:160px;">
+    //                             <br>
+    //                             <input type="radio" id="window1" name="windowtype" value="window1" checked>Window 1
+    //                         </div>
+    //                         <div class="gallery">
+    //                             <img src="./textures/internalWindow.jpg" alt="window2" style="width:65px; height:160px;">
+    //                             <br>
+    //                             <input type="radio" id="window2" name="windowtype" value="window2">Window 2
+    //                         </div>
+    //                         <div class="gallery">
+    //                             <img src="./textures/swindow.jpg" alt="window3" style="width:65px; height:90px;">
+    //                             <br>
+    //                             <input type="radio" id="window3" name="windowtype" value="window3">Window 3
+    //                         </div>
+    //                     </div>
+    //                     <div class="clearfix"></div>
+    //                     <p>* No of Windows </p>
+    //                     <p><input type="radio" id="2windows" name="noWindows" value="two" checked>2 windows</p>
+    //                     <p><input type="radio" id="4windows" name="noWindows" value="four">4 windows</p>
 
-                        <p>* Open Side </p>
-                        <p><input type="radio" id="toRight" name="openSide" value="right" checked>Right (Outer in 4 windows)</p>
-                        <p><input type="radio" id="toLeft" name="openSide" value="left">Left (Inner in 2 windows)</p>
+    //                     <p>* Open Side </p>
+    //                     <p><input type="radio" id="toRight" name="openSide" value="right" checked>Right (Outer in 4 windows)</p>
+    //                     <p><input type="radio" id="toLeft" name="openSide" value="left">Left (Inner in 2 windows)</p>
 
-                        <p>* Update state from DB </p>
-                        <p>Use DBid<input type="checkbox" id="updateable" name="updateable"></p>
-                    </label>
-                    </p>
-                    <div>
-                    <button value="cancel" formmethod="dialog">Cancel</button>
-                    <button id="confirmBtn" value="default">Add</button>
-                    </div>
-                </form>
-            </dialog>
-    `
+    //                     <p>* Update state from DB </p>
+    //                     <p>Use DBid<input type="checkbox" id="updateable" name="updateable"></p>
+    //                 </label>
+    //                 </p>
+    //                 <div>
+    //                 <button value="cancel" formmethod="dialog">Cancel</button>
+    //                 <button id="confirmBtn" value="default">Add</button>
+    //                 </div>
+    //             </form>
+    //         </dialog>
+    // `
 
-        const dom = new DOMParser().parseFromString(_html, 'text/html');
-        const dialog = dom.querySelector("dialog");
-        document.body.appendChild(dialog)
+    //     const dom = new DOMParser().parseFromString(_html, 'text/html');
+    //     const dialog = dom.querySelector("dialog");
+    //     document.body.appendChild(dialog)
 
-        const changeToWindowWithUserDataDialog = document.getElementById("changeToWindowWithUserDataDialog");
-        const confirmBtn = changeToWindowWithUserDataDialog.querySelector("#confirmBtn");
+    //     const changeToWindowWithUserDataDialog = document.getElementById("changeToWindowWithUserDataDialog");
+    //     const confirmBtn = changeToWindowWithUserDataDialog.querySelector("#confirmBtn");
 
-        // "Cancel" button closes the dialog without submitting because of [formmethod="dialog"], triggering a close event.
-        changeToWindowWithUserDataDialog.addEventListener("close", (e) => {
-            document.body.removeChild(dialog)
-        });
+    //     // "Cancel" button closes the dialog without submitting because of [formmethod="dialog"], triggering a close event.
+    //     changeToWindowWithUserDataDialog.addEventListener("close", (e) => {
+    //         document.body.removeChild(dialog)
+    //     });
 
-        // Prevent the "confirm" button from the default behavior of submitting the form, and close the dialog with the `close()` method, which triggers the "close" event.
-        confirmBtn.addEventListener("click", (event) => {
-            event.preventDefault(); // We don't want to submit this fake form
+    //     // Prevent the "confirm" button from the default behavior of submitting the form, and close the dialog with the `close()` method, which triggers the "close" event.
+    //     confirmBtn.addEventListener("click", (event) => {
+    //         event.preventDefault(); // We don't want to submit this fake form
 
-            const windowtype = document.querySelector('input[name=windowtype]:checked').value;
-            const noWindows = document.querySelector('input[name=noWindows]:checked').value;
-            var openSide = document.querySelector('input[name=openSide]:checked').value;
-            var updateable = document.getElementById("updateable").checked;
-            document.body.removeChild(dialog)
+    //         const windowtype = document.querySelector('input[name=windowtype]:checked').value;
+    //         const noWindows = document.querySelector('input[name=noWindows]:checked').value;
+    //         var openSide = document.querySelector('input[name=openSide]:checked').value;
+    //         var updateable = document.getElementById("updateable").checked;
+    //         document.body.removeChild(dialog)
             
-            const group = this.changeToWindow(windowtype, noWindows, openSide, updateable);
-        });
+    //         const group = this.changeToWindow(windowtype, noWindows, openSide, updateable);
+    //     });
 
-        changeToWindowWithUserDataDialog.showModal();
-    }
+    //     changeToWindowWithUserDataDialog.showModal();
+    // }
 
     addModelHouseInfo() {
         var _html = `

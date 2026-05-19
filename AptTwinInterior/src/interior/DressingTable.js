@@ -10,6 +10,11 @@ export class DressingTable {
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'DressingTable';
+        group.userData.width = width;
+        group.userData.height = height;
+        group.userData.depth = depth;
+        group.userData.mirrorheight = mirrorheight;
+        group.userData.tableType = texturetype;
 
         if(oldPos != null)
             group.position.copy(oldPos);
@@ -100,28 +105,28 @@ export class DressingTable {
     }
 
     static add(editor, modify=false) {
-        const _html = `
+        let _html = `
             <dialog id="DressingTableTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change a Dressing Table</h1>
-                        <p>Name : <input type="text" id="tableName" name="tableName" value="DressingTable_1"> </p>
+                        <p>Name : <input type="text" id="tableName" name="tableName" value="_NAME_"> </p>
 
                     <h2>Table Size (m)</h2>
-                     <p>Width : <input type="text" id="width" name="width" value="0.8">
-                           Height : <input type="text" id="height" name="height" value="0.75">
-                           Depth : <input type="text" id="depth" name="depth" value="0.468"></p>
+                     <p>Width : <input type="text" id="width" name="width" value="_WIDTH_">
+                           Height : <input type="text" id="height" name="height" value="_HEIGHT_">
+                           Depth : <input type="text" id="depth" name="depth" value="_DEPTH_"></p>
                     <div class="clearfix"></div>
                     <h2>Mirror Size (m)</h2>
-                    <p>Height : <input type="text" id="mirrorheight" name="height" value="1.2"></p>
+                    <p>Height : <input type="text" id="mirrorheight" name="height" value="_MIRRORHEIGHT_"></p>
                     <div class="clearfix"></div>
                         <h2>Table Type </h2>
                             <div style="display:flex; gap:20px;">
                             <div class="gallery">
                                 <img src="./images/DressingTable_Wood.JPG" alt="wood" style="width:140px; height:160px;">
                                 <br>
-                                <input type="radio" id="wood" name="texturetype" value="Wood" checked>Wood
+                                <input type="radio" id="wood" name="texturetype" value="Wood">Wood
                             </div>
 
                             <div class="gallery">
@@ -139,7 +144,32 @@ export class DressingTable {
                 <button id="confirmBtn" value="default">Apply</button>
                 </div>
             </form>
-            `
+        `;
+
+        let name = 'DressingTable_1';
+        let width = '0.8';
+        let height = '0.75';
+        let depth = '0.468';
+        let mirrorheight = '1.2';
+        let tableType = 'Wood';
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            width = editor.selected.userData.width;
+            height = editor.selected.userData.height;
+            depth = editor.selected.userData.depth;
+            mirrorheight = editor.selected.userData.mirrorheight;
+            tableType = editor.selected.userData.tableType;
+        }
+
+        _html = _html.replace('_NAME_', name);
+        _html = _html.replace('_WIDTH_', width);
+        _html = _html.replace('_HEIGHT_', height);
+        _html = _html.replace('_DEPTH_', depth);
+        _html = _html.replace('_MIRRORHEIGHT_', mirrorheight);
+
+        const origin = 'value="' + tableType + '"';
+        const replaced = 'value="' + tableType + '" checked';
+        _html = _html.replace(origin, replaced);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");

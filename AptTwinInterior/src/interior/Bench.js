@@ -7,11 +7,15 @@ import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class Bench {
         // --- 벤치 생성 함수 ---
-    static add_Internal(editor, name, width, height, depth, benchType, oldPos, oldRot, cushionColor) {
+    static add_Internal(editor, name, width, height, depth, benchType, oldPos, oldRot) {
         const group = new THREE.Group();
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'Bench';
+        group.userData.width = width;
+        group.userData.height = height;
+        group.userData.depth = depth;
+        group.userData.benchType = benchType;
 
         if (oldPos != null) group.position.copy(oldPos);
         if (oldRot != null) group.rotation.copy(oldRot);
@@ -37,7 +41,7 @@ export class Bench {
 
         // 좌석 쿠션
         let cushionMaterial;
-        if (cushionColor === 'black') {
+        if (benchType === 'black') {
             const blackFabricTexture = textureHelper.get('BlackFabric', 1, 1); 
             cushionMaterial = new THREE.MeshStandardMaterial({ map: blackFabricTexture });
         } else {
@@ -76,18 +80,18 @@ export class Bench {
     }
 
     static add(editor, modify = false) {
-        const _html = `
+        let _html = `
             <dialog id="benchTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change a Bench</h1>
-                    <p>Name : <input type="text" id="benchName" name="benchName" value="Bench_1"> </p>
+                    <p>Name : <input type="text" id="benchName" name="benchName" value="_NAME_"> </p>
 
                     <h2>Bench size </h2>
-                    <p>Width : <input type="text" id="width" name="width" value="1.2">
-                    Leg Height : <input type="text" id="height" name="height" value="0.47">
-                    Depth : <input type="text" id="depth" name="depth" value="0.4"></p>
+                    <p>Width : <input type="text" id="width" name="width" value="_WIDTH_">
+                    Leg Height : <input type="text" id="height" name="height" value="_HEIGHT_">
+                    Depth : <input type="text" id="depth" name="depth" value="_DEPTH_"></p>
                     <div class="clearfix"></div>
 
                     <h2>Seat Cushion Color</h2>
@@ -95,13 +99,13 @@ export class Bench {
                             <div class="gallery">
                                 <img src="./images/Bench_White.JPG" alt="white" style="width:160px; height:140px;">
                                 <br>
-                                <input type="radio" id="white" name="cushionColor" value="white" checked>White
+                                <input type="radio" id="white" name="benchType" value="white">White
                             </div>
 
                             <div class="gallery">
                                 <img src="./images/Bench_Black.JPG" alt="black" style="width:160px; height:140px;">
                                 <br>
-                                <input type="radio" id="black" name="cushionColor" value="black">Black
+                                <input type="radio" id="black" name="benchType" value="black">Black
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -114,6 +118,28 @@ export class Bench {
                 </div>
             </form>
         `;
+
+        let name = 'Bench_1';
+        let width = '1.2';
+        let height = '0.47';
+        let depth = '0.4';
+        let benchType = "white";
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            width = editor.selected.userData.width;
+            height = editor.selected.userData.height;
+            depth = editor.selected.userData.depth;
+            benchType = editor.selected.userData.benchType;
+        }
+
+        _html = _html.replace('_NAME_', name);
+        _html = _html.replace('_WIDTH_', width);
+        _html = _html.replace('_HEIGHT_', height);
+        _html = _html.replace('_DEPTH_', depth);
+
+        const origin = 'value="' + benchType + '"';
+        const replaced = 'value="' + benchType + '" checked';
+        _html = _html.replace(origin, replaced);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");
@@ -145,12 +171,11 @@ export class Bench {
             const width = parseFloat(widthBox.value);
             const height = parseFloat(heightBox.value);
             const depth = parseFloat(depthBox.value);
-            const benchType = 'Wood'; // 무조건 Wood
-            const cushionColor = document.querySelector('input[name=cushionColor]:checked').value;
+            const benchType = document.querySelector('input[name=benchType]:checked').value;
 
             document.body.removeChild(dialog);
 
-            this.add_Internal(editor, name, width, height, depth, benchType, oldPos, oldRot, cushionColor);
+            this.add_Internal(editor, name, width, height, depth, benchType, oldPos, oldRot);
         });
 
         benchTypeDialog.showModal();

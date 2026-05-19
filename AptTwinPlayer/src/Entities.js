@@ -628,14 +628,17 @@ export class EntityManager {
                     }
                 } else if(type == 'window') {
                     let window = new Window(object, scope.physicsWorld);
-                    scope.arPhysicsObj.push(window);
-                    scope.arAnimEntity.push(window);
-                    scope.arAnimObj.push(object);
-                    scope.mapClickable.set(object, window);
 
-                    const DBid = object.userData.DBid;
-                    if(DBid != undefined) {
-                        scope.mapUpdatable.set(DBid, window);
+                    if(object.userData.openDir != undefined) {
+                        scope.arPhysicsObj.push(window);
+                        scope.arAnimEntity.push(window);
+                        scope.arAnimObj.push(object);
+                        scope.mapClickable.set(object, window);
+
+                        const DBid = object.userData.DBid;
+                        if(DBid != undefined) {
+                            scope.mapUpdatable.set(DBid, window);
+                        }
                     }
                 } else if(type == 'light') {
                     let light = new Light(object);
@@ -653,10 +656,21 @@ export class EntityManager {
             }
 
             if(object.userData?.isInterior == true) {
-                // This is a normal physics-based object
-                let physicsObj = new PhsyicsObject(object, scope.physicsWorld);
+                let wallAttached = false;
+                if(object.userData.interiorType == 'TV' && object.userData.tvType === 'WallTV') {
+                    // No physics-based object
+                    wallAttached = true;
+                } 
+                if(object.userData.interiorType == 'AirConditioner' && object.userData.acType === 'WallAC') {
+                    wallAttached = true;
+                }
+                
+                if(wallAttached == false) {
+                    // This is a normal physics-based object
+                    let physicsObj = new PhsyicsObject(object, scope.physicsWorld);
 
-                scope.arPhysicsObj.push(physicsObj);
+                    scope.arPhysicsObj.push(physicsObj);
+                }
             }
 
             if(object.userData?.interiorType == 'GasRange') {

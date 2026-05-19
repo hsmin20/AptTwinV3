@@ -8,7 +8,7 @@ import { SetGeometryCommand } from '../../src_common/commands/SetGeometryCommand
 import { SetMaterialMapCommand } from '../../src_common/commands/SetMaterialMapCommand.js';
 import { SetMaterialOpaqueCommand } from '../../src_common/commands/SetMaterialOpaqueCommand.js';
 
-import { showTextureImages } from './TextureDialog.js';
+import { setNameAndRepeat, showTextureImages } from './TextureDialog.js';
 import { UIBoolean } from '../../src_common/libs/ui.three.js';
 
 export class PlaneGeometryPanel {
@@ -103,6 +103,12 @@ export class PlaneGeometryPanel {
         this.planeHeight.setValue( parameters.height );
 
         const material = object.material;
+        const map = material.map;
+        const name = map.name.substring(0, map.name.indexOf("_"));
+        const repeatx = map.repeat.x;
+        const repeaty = map.repeat.y;
+
+        setNameAndRepeat(name, repeatx, repeaty); // To show them in showTextureImage Dialog
 
         this.planeMap.setValue( material[ 'map' ] );
         this.planeOpacity.setValue( material.transparent );

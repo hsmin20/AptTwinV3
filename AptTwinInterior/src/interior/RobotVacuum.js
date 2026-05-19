@@ -10,6 +10,10 @@ export class RobotVacuum {
         group.userData.isInterior = true;
         group.userData.interiorType = 'RobotVacuum';
         group.userData.DBid = 'n/a';
+        group.userData.radius = radius;
+        group.userData.height = height;
+        group.userData.depth = depth;
+        group.userData.vacuumType = vacuumType;
 
         if(oldPos) group.position.copy(oldPos);
         if(oldRot) group.rotation.copy(oldRot);
@@ -70,18 +74,18 @@ export class RobotVacuum {
     }
 
     static add(editor, modify=false) {
-        const _html = `
+        let _html = `
             <dialog id="RobotVacuumDialog">
             <form>
                 <label>
                     <h1>Add/Change a Robot Vacuum Cleaner</h1>
-                    <p>Name : <input type="text" id="robotVacuumName" name="robotVacuumName" value="RobotVacuum_1"> </p>
+                    <p>Name : <input type="text" id="robotVacuumName" name="robotVacuumName" value="_NAME_"> </p>
 
                     <h2>Robot Vacuum Cleaner Size (m)</h2>
                     <p>
-                        Radius : <input type="text" id="radius" value="0.175">
-                        Height (Station) : <input type="text" id="height" value="0.5">
-                        Depth (Station) : <input type="text" id="depth" value="0.23">
+                        Radius : <input type="text" id="radius" value="_RADIUS_">
+                        Height (Station) : <input type="text" id="height" value="_HEIGHT_">
+                        Depth (Station) : <input type="text" id="depth" value="_DEPTH_">
                     </p>
 
                     <h2>Robot Vacuum Cleaner Type</h2>
@@ -89,7 +93,7 @@ export class RobotVacuum {
                             <div class="gallery">
                                 <img src="./images/robotVacuum1.jpg" alt="robotVacuum1" style="width:160px; height:140px;">
                                 <br>
-                                <input type="radio" id="robotVacuum1" name="vacuumType" value="robotVacuum1" checked>Cleaner
+                                <input type="radio" id="robotVacuum1" name="vacuumType" value="robotVacuum1">Cleaner
                             </div>
 
                             <div class="gallery">
@@ -108,6 +112,28 @@ export class RobotVacuum {
             </form>
             </dialog>
         `;
+
+        let name = 'RobotVacuum_1';
+        let radius = '0.175';
+        let height = '0.5';
+        let depth = '0.23';
+        let vacuumType = 'robotVacuum1';
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            radius = editor.selected.userData.radius;
+            height = editor.selected.userData.height;
+            depth = editor.selected.userData.depth;
+            vacuumType = editor.selected.userData.vacuumType;
+        }
+
+        _html = _html.replace('_NAME_', name);
+        _html = _html.replace('_RADIUS_', radius);
+        _html = _html.replace('_HEIGHT_', height);
+        _html = _html.replace('_DEPTH_', depth);
+
+        const origin = 'value="' + vacuumType + '"';
+        const replaced = 'value="' + vacuumType + '" checked';
+        _html = _html.replace(origin, replaced);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");

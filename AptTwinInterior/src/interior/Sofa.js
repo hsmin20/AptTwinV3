@@ -12,6 +12,10 @@ export class Sofa {
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'Sofa';
+        group.userData.width = width;
+        group.userData.height = height;
+        group.userData.depth = depth;
+        group.userData.sofaType = sofatype;
 
         if(oldPos != null)
             group.position.copy(oldPos);
@@ -112,25 +116,25 @@ export class Sofa {
     }
          
     static add(editor, modify=false) {
-        const _html = `
+        let _html = `
             <dialog id="sofaTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change a Sofa</h1>
-                        <p>Name : <input type="text" id="sofaName" name="sofaName" value="Sofa_1"> </p>
+                        <p>Name : <input type="text" id="sofaName" name="sofaName" value="_NAME_"> </p>
 
                         <h2>Sofa size </h2>
-                        <p>Width : <input type="text" id="width" name="width" value="1.4">
-                           Height : <input type="text" id="height" name="height" value="0.4">
-                           Depth : <input type="text" id="depth" name="depth" value="0.72"></p>
+                        <p>Width : <input type="text" id="width" name="width" value="_WIDTH_">
+                           Height : <input type="text" id="height" name="height" value="_HEIGHT_">
+                           Depth : <input type="text" id="depth" name="depth" value="_DEPTH_"></p>
                         <div class="clearfix"></div>
                         <h2>Sofa Type </h2>
                         <div style="display:flex; gap:20px;">
                             <div class="gallery">
                                 <img src="./images/Sofa_Fabric.JPG" alt="fabric" style="width:200px; height:120px;">
                                 <br>
-                                <input type="radio" id="fabric" name="sofatype" value="Fabric" checked>Fabric
+                                <input type="radio" id="fabric" name="sofatype" value="Fabric">Fabric
                             </div>
 
                             <div class="gallery">
@@ -148,7 +152,29 @@ export class Sofa {
                 <button id="confirmBtn" value="default">Apply</button>
                 </div>
             </form>
-    `
+        `;
+
+        let name = 'Sofa_1';
+        let width = '1.4';
+        let height = '0.4';
+        let depth = '0.72';
+        let sofaType = 'Fabric';
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            width = editor.selected.userData.width;
+            height = editor.selected.userData.height;
+            depth = editor.selected.userData.depth;
+            sofaType = editor.selected.userData.sofaType;
+        }
+
+        _html = _html.replace('_NAME_', name);
+        _html = _html.replace('_WIDTH_', width);
+        _html = _html.replace('_HEIGHT_', height);
+        _html = _html.replace('_DEPTH_', depth);
+
+        const origin = 'value="' + sofaType + '"';
+        const replaced = 'value="' + sofaType + '" checked';
+        _html = _html.replace(origin, replaced);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");

@@ -12,6 +12,11 @@ export class Bookshelf {
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'Bookshelf';
+        group.userData.width = width;
+        group.userData.height = height;
+        group.userData.depth = depth;
+        group.userData.noOfLayers = noOfLayers;
+        group.userData.frametype = frametype;
 
         if(oldPos != null)
             group.position.copy(oldPos);
@@ -98,13 +103,13 @@ export class Bookshelf {
     }
 
     static add(editor, modify = false) {
-        const _html = `
+        let _html = `
             <dialog id="bookshelfTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change a Bookshelf</h1>
-                        <p>Name : <input type="text" id="bookshelfName" name="bookshelfName" value="Bookshelf_1"> </p>
+                        <p>Name : <input type="text" id="bookshelfName" name="bookshelfName" value="_NAME_"> </p>
 
                         <h2>Desk size </h2>
                         <p>Width : <input type="text" id="width" name="width" value="0.57">
@@ -113,7 +118,7 @@ export class Bookshelf {
 
                         <div class="clearfix"></div>
                         <h2>No of Layers</h2>
-                        <p>Name : <input type="text" id="layers" name="layers" value="4">
+                        <p>Name : <input type="text" id="layers" name="layers" value="_NOOFLAYERS_">
                         </p>
 
                         <div class="clearfix"></div>
@@ -122,7 +127,7 @@ export class Bookshelf {
                             <div class="gallery">
                                 <img src="./images/Bookself_Wood.JPG" alt="wood" style="width:120px; height:170px;">
                                 <br>
-                                <input type="radio" id="wood" name="frametype" value="Wood" checked>Wood
+                                <input type="radio" id="wood" name="frametype" value="Wood">Wood
                             </div>
 
                             <div class="gallery">
@@ -141,6 +146,31 @@ export class Bookshelf {
                 </div>
             </form>
         `;
+
+        let name = 'BookShelf_1';
+        let width = '1.2';
+        let height = '1.0';
+        let depth = '0.75';
+        let noOfLayers = '4';
+        let frametype = "Wood";
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            width = editor.selected.userData.width;
+            height = editor.selected.userData.height;
+            depth = editor.selected.userData.depth;
+            noOfLayers = editor.selected.userData.noOfLayers;
+            frametype = editor.selected.userData.frametype;
+        }
+
+        _html = _html.replace('_NAME_', name);
+        _html = _html.replace('_WIDTH_', width);
+        _html = _html.replace('_HEIGHT_', height);
+        _html = _html.replace('_DEPTH_', depth);
+        _html = _html.replace('_NOOFLAYERS_', noOfLayers);
+
+        const origin = 'value="' + frametype + '"';
+        const replaced = 'value="' + frametype + '" checked';
+        _html = _html.replace(origin, replaced);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");

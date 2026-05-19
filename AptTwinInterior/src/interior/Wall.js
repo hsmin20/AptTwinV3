@@ -89,7 +89,7 @@ export class Wall {
                 </p>
                 </div>
             </form>
-    `
+        `;
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");

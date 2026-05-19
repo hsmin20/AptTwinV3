@@ -14,10 +14,29 @@ export class RoomBuilder {
 
     addTHREELight(name, type) {
         if(type == 'Ambient') {
-            var ambientLight = new THREE.AmbientLight ();
+            var ambientLight = new THREE.AmbientLight ( 0xffffff, 1 );
             ambientLight.name = name;
 
     		this.editor.execute( new AddObjectCommand( this.editor, ambientLight ) );
+        } else if(type == 'Directional') {
+            let directionalLight = new THREE.DirectionalLight( 0xffffff, 1.5 );
+            directionalLight.name = name;
+            directionalLight.position.set(5, 15, 7);
+            // directionalLight.castShadow = true;
+
+            this.editor.execute( new AddObjectCommand( this.editor, directionalLight ) );
+
+            directionalLight = new THREE.DirectionalLight( 0xffffff, 1.5 );
+            directionalLight.name = name;
+            directionalLight.position.set(-5, 15, -7);
+            // directionalLight.castShadow = true;
+
+            this.editor.execute( new AddObjectCommand( this.editor, directionalLight ) );
+        } else if(type == 'Hemisphere') {
+            const hemispherLight = new THREE.HemisphereLight( 0xffaff0, 0x080820, 1 );
+            hemispherLight.name = name;
+
+            this.editor.execute( new AddObjectCommand( this.editor, hemispherLight ) );
         }
     }
 

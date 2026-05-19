@@ -34,7 +34,7 @@ function loadDataFromFile(filename) {
 function onSuccessStorage() {
     player.storage.get( async function ( data ) {
         if ( data !== undefined ) {
-            player.loadScene(data);;
+            player.loadScene(data);
         }
 
         if(!player.isMobile())
@@ -74,12 +74,11 @@ if(isSample|| house_id != -1) {
         }
 
         const data = await response.json();
-
         player.loadScene(data);
 
         if(!player.isMobile())
             player.addCrosshair();
-        
+
         player.initControl();
         player.animate();
     } catch (error) {

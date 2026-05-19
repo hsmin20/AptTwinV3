@@ -6,12 +6,14 @@ import { RemoveObjectCommand } from '../../../src_common/commands/RemoveObjectCo
 import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class Bed {
-    static add_Internal(editor, name, bedsize, bedtype, oldPos, oldRot) {
+    static add_Internal(editor, name, bedsize, frametype, oldPos, oldRot) {
         // Add a group first
         const group = new THREE.Group();
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'Bed';
+        group.userData.bedSize = bedsize;
+        group.userData.frameType = frametype;
 
         if(oldPos != null)
             group.position.copy(oldPos);
@@ -35,7 +37,7 @@ export class Bed {
             width = 1.8;
 
         let frameTexture = null;
-        if(bedtype == 'metal')
+        if(frametype == 'metal')
             frameTexture = textureHelper.get('BlackMetal', 4, 4);
         else
             frameTexture = textureHelper.get('Wood', 4, 4);
@@ -105,19 +107,19 @@ export class Bed {
     }
          
     static add(editor, modify=false) {
-        const _html = `
+        let _html = `
             <dialog id="bedTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change a Bed</h1>
-                        <p>Name : <input type="text" id="bedName" name="bedName" value="Bed_1"> </p>
+                        <p>Name : <input type="text" id="bedName" name="bedName" value="_NAME_"> </p>
 
                         <h2>Bed size </h2>
                         <p><input type="radio" id="single" name="bedsize" value="single">Single
                            <input type="radio" id="supersingle" name="bedsize" value="supersingle">Super Single
                            <input type="radio" id="double" name="bedsize" value="double">Double
-                           <input type="radio" id="queen" name="bedsize" value="queen" checked>Queen
+                           <input type="radio" id="queen" name="bedsize" value="queen">Queen
                            <input type="radio" id="king" name="bedsize" value="king">King
                            <input type="radio" id="largeking" name="bedsize" value="largeking">Large King</p>
                         <div class="clearfix"></div>
@@ -126,7 +128,7 @@ export class Bed {
                             <div class="gallery">
                                 <img src="./images/Bed_Wood.JPG" alt="wood" style="width:150px; height:120px;">
                                 <br>
-                                <input type="radio" id="wood" name="frametype" value="wood" checked>Wood
+                                <input type="radio" id="wood" name="frametype" value="wood">Wood
                             </div>
 
                             <div class="gallery">
@@ -144,7 +146,25 @@ export class Bed {
                 <button id="confirmBtn" value="default">Apply</button>
                 </div>
             </form>
-    `
+    `;
+        
+        let name = 'Bed_1';
+        let bedSize = 'queen';
+        let frameType = 'wood';
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            bedSize = editor.selected.userData.bedSize;
+            frameType = editor.selected.userData.frameType;    
+        }
+
+        _html = _html.replace('_NAME_', name);
+        const origin = 'value="' + bedSize + '"';
+        const replaced = 'value="' + bedSize + '" checked';
+        _html = _html.replace(origin, replaced);
+
+        const origin2 = 'value="' + frameType + '"';
+        const replaced2 = 'value="' + frameType + '" checked';
+        _html = _html.replace(origin2, replaced2);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");

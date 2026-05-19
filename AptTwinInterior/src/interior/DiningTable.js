@@ -6,12 +6,16 @@ import { RemoveObjectCommand } from '../../../src_common/commands/RemoveObjectCo
 import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class DiningTable {
-    static add_Internal(editor, name, width, height, depth, texturetype, oldPos, oldRot) {
+    static add_Internal(editor, name, width, height, depth, tableType, oldPos, oldRot) {
         // Add a group first
         const group = new THREE.Group();
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'DiningTable';
+        group.userData.width = width;
+        group.userData.height = height;
+        group.userData.depth = depth;
+        group.userData.tableType = tableType;
 
         if(oldPos != null)
             group.position.copy(oldPos);
@@ -23,7 +27,7 @@ export class DiningTable {
 
         // Add a Panel
         const panelHeight = 0.05;
-        let panelTexture = textureHelper.get(texturetype, 2, 3);
+        let panelTexture = textureHelper.get(tableType, 2, 3);
 
         const tablePanel = new THREE.Mesh( new THREE.BoxGeometry(width, panelHeight, depth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
         tablePanel.name = name + "_Panel";
@@ -56,31 +60,31 @@ export class DiningTable {
         editor.objectChanged(group);
     }
     static add(editor, modify=false) {
-        const _html = `
+        let _html = `
             <dialog id="DiningTableTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change a DiningTable</h1>
-                        <p>Name : <input type="text" id="tableName" name="tableName" value="Table_1"> </p>
+                        <p>Name : <input type="text" id="tableName" name="tableName" value="_NAME_"> </p>
 
                     <h2>Table Size (m)</h2>
-                     <p>Width : <input type="text" id="width" name="width" value="1.4">
-                           Height : <input type="text" id="height" name="height" value="0.8">
-                           Depth : <input type="text" id="depth" name="depth" value="0.72"></p>
+                     <p>Width : <input type="text" id="width" name="width" value="_WIDTH_">
+                           Height : <input type="text" id="height" name="height" value="_HEIGHT_">
+                           Depth : <input type="text" id="depth" name="depth" value="_DEPTH_"></p>
                     <div class="clearfix"></div>
                         <h2>Table Type </h2>
                          <div style="display:flex; gap:20px;">
                             <div class="gallery">
                                 <img src="./images/DiningTable_Wood.JPG" alt="wood" style="width:160px; height:140px;">
                                 <br>
-                                <input type="radio" id="wood" name="texturetype" value="Wood" checked>Wood
+                                <input type="radio" id="wood" name="tabletype" value="Wood">Wood
                             </div>
 
                             <div class="gallery">
                                 <img src="./images/DiningTable_Marble.JPG" alt="marbel" style="width:160px; height:140px;">
                                 <br>
-                                <input type="radio" id="marbel" name="texturetype" value="Marble">Marble
+                                <input type="radio" id="marbel" name="tabletype" value="Marble">Marble
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -92,7 +96,29 @@ export class DiningTable {
                 <button id="confirmBtn" value="default">Apply</button>
                 </div>
             </form>
-            `
+        `;
+
+        let name = 'Table_1';
+        let width = '1.4';
+        let height = '0.8';
+        let depth = '0.72';
+        let tableType = 'Wood';
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            width = editor.selected.userData.width;
+            height = editor.selected.userData.height;
+            depth = editor.selected.userData.depth;
+            tableType = editor.selected.userData.tableType;
+        }
+
+        _html = _html.replace('_NAME_', name);
+        _html = _html.replace('_WIDTH_', width);
+        _html = _html.replace('_HEIGHT_', height);
+        _html = _html.replace('_DEPTH_', depth);
+
+        const origin = 'value="' + tableType + '"';
+        const replaced = 'value="' + tableType + '" checked';
+        _html = _html.replace(origin, replaced);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");
@@ -130,11 +156,11 @@ export class DiningTable {
             const width = parseFloat(widthDining.value);
             const height = parseFloat(heightDining.value);
             const depth = parseFloat(depthDining.value);
-            const texturetype = document.querySelector('input[name=texturetype]:checked').value;
+            const tabletype = document.querySelector('input[name=tabletype]:checked').value;
 
             document.body.removeChild(dialog)
             
-            this.add_Internal(editor, name, width, height, depth, texturetype, oldPos, oldRot)
+            this.add_Internal(editor, name, width, height, depth, tabletype, oldPos, oldRot)
         });
 
         DiningTableTypeDialog.showModal();

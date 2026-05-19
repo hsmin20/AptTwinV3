@@ -348,12 +348,19 @@ export class Editor {
 
         const width = Math.sqrt(Math.pow(dx, 2) + Math.pow(dz, 2));
 
-        const repeatX = Math.round(width * 2);
-        const repeatY = Math.round(HEIGHT * 2);
+        let repeatX = Math.round(width * 2);
+        let repeatY = Math.round(HEIGHT * 2);
+         if(repeatX == 0)
+            repeatX = 1;
+        if(repeatY == 0)
+            repeatY = 1;
         const wallTexture  = textureHelper.get('Wallpaper1', repeatX, repeatY);
 
         let mesh = new THREE.Mesh( new THREE.PlaneGeometry(width, HEIGHT), new THREE.MeshStandardMaterial({ map: wallTexture, side: whichSide }) );
         mesh.name = "new_mesh_" + index;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+
         mesh.userData.type = 'planeWall';
         mesh.position.x = x1 + dx / 2.0;
         mesh.position.y = HEIGHT / 2.0;
@@ -372,12 +379,19 @@ export class Editor {
 
         const width = Math.sqrt(Math.pow(dx, 2) + Math.pow(dz, 2));
 
-        const repeatX = Math.round(width * 2);
-        const repeatY = Math.round(height * 2);
+        let repeatX = Math.round(width * 2);
+        let repeatY = Math.round(height * 2);
+         if(repeatX == 0)
+            repeatX = 1;
+        if(repeatY == 0)
+            repeatY = 1;
         const wallTexture  = textureHelper.get('Wallpaper1', repeatX, repeatY);
 
         let mesh = new THREE.Mesh( new THREE.PlaneGeometry(width, height), new THREE.MeshStandardMaterial({ map: wallTexture, side: whichSide }) );
         mesh.name = "new_mesh_" + index;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+
         mesh.userData.type = 'planeWall';
         mesh.position.x = x1 + dx / 2.0;
         mesh.position.y = -(HEIGHT - height) / 2.0;
@@ -407,8 +421,12 @@ export class Editor {
         let dx = maxX - minX;
         let dz = maxZ - minZ;
         const width = Math.max(dx, dz);
-        const repeatX = Math.round(width);
-        const repeatY = Math.round(height);
+        let repeatX = Math.round(width);
+        let repeatY = Math.round(height);
+        if(repeatX == 0)
+            repeatX = 1;
+        if(repeatY == 0)
+            repeatY = 1;
         const wallTexture  = textureHelper.get('Wallpaper1', repeatX, repeatY);
         const materials = [ new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
                             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({ map: wallTexture }),
@@ -498,13 +516,17 @@ export class Editor {
             doorRTexture = textureHelper.get(doorRightTexture, 1, 1);
         }
 
+        const woodTexture = textureHelper.get('Wood', 1, 5);
+
         const depth = 0.1;
         const door = new THREE.Mesh( new THREE.BoxGeometry(width, HEIGHT, depth), [  
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial( { map: doorRTexture } ), 
-            new THREE.MeshStandardMaterial( { map: doorLTexture } )
+            new THREE.MeshStandardMaterial( { map: woodTexture } ), new THREE.MeshStandardMaterial( { map: woodTexture } ), 
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), 
+            new THREE.MeshStandardMaterial( { map: doorRTexture } ), new THREE.MeshStandardMaterial( { map: doorLTexture } )
         ] );
         door.name = "Door_" + i;
+        door.castShadow = true;
+        door.receiveShadow = true;
 
         var obj = new THREE.Object3D();
         obj.userData.type = 'door';
@@ -544,12 +566,15 @@ export class Editor {
 
         const depth = 0.1;
         const leftWindow = new THREE.Mesh( new THREE.BoxGeometry(width/2.0, height, depth), [  
-            new THREE.MeshStandardMaterial(  ), new THREE.MeshStandardMaterial({ map: frameTexture}), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial( { map: frameTexture} ), 
+            new THREE.MeshStandardMaterial( { map: frameTexture} ), new THREE.MeshStandardMaterial({ map: frameTexture}), 
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } )
         ] );
         leftWindow.name = "Window_left";
+        leftWindow.castShadow = true;
+        leftWindow.receiveShadow = true;
+
         leftWindow.position.x = -(width / 4.0);
         leftWindow.position.y = (HEIGHT - height) / 2.0;
         leftWindow.position.z = -(depth / 2.0);
@@ -568,12 +593,15 @@ export class Editor {
         leftWindow.parent = group;
 
         const rightWindow = new THREE.Mesh( new THREE.BoxGeometry(width/2.0, height, depth), [  
-            new THREE.MeshStandardMaterial( { map: frameTexture} ), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial( { map: frameTexture} ), 
+            new THREE.MeshStandardMaterial( { map: frameTexture} ), new THREE.MeshStandardMaterial({ map: frameTexture}), 
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } )
         ] );
         rightWindow.name = "Window_right";
+        rightWindow.castShadow = true;
+        rightWindow.receiveShadow = true;
+
         rightWindow.position.x = width / 4.0;
         rightWindow.position.y = (HEIGHT - height) / 2.0;
         rightWindow.position.z = depth / 2.0;
@@ -615,8 +643,12 @@ export class Editor {
                 let whichSide = THREE.FrontSide;
                 let rotX = Math.PI / 2.0 * -1;
 
-                const repeatX = Math.round(width * 2);
-                const repeatY = Math.round(thick * 2);
+                let repeatX = Math.round(width * 2);
+                let repeatY = Math.round(thick * 2);
+                if(repeatX == 0)
+                    repeatX = 1;
+                if(repeatY == 0)
+                    repeatY = 1;
                 const wallTexture  = textureHelper.get('Wallpaper1', repeatX, repeatY);
 
                 let roof = new THREE.Mesh( new THREE.PlaneGeometry(width, thick), new THREE.MeshStandardMaterial({ map: wallTexture, side: whichSide }) );
@@ -663,12 +695,15 @@ export class Editor {
 
         // Left Window 2
         const leftWindow2 = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, height, depth), [  
-            new THREE.MeshStandardMaterial(  ), new THREE.MeshStandardMaterial({ map: frameTexture}), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial( { map: frameTexture} ), 
+            new THREE.MeshStandardMaterial( { map: frameTexture} ), new THREE.MeshStandardMaterial({ map: frameTexture}),
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial( ), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } )
         ] );
         leftWindow2.name = "Window_left2";
+        leftWindow2.castShadow = true;
+        leftWindow2.receiveShadow = true;
+
         leftWindow2.position.x = -(width * 3 / 8.0);
         leftWindow2.position.y = (HEIGHT - height) / 2.0;
         leftWindow2.position.z = -(depth / 2.0);
@@ -688,8 +723,8 @@ export class Editor {
 
         // Left Window 1
         const leftWindow = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, height, depth), [  
-            new THREE.MeshStandardMaterial(  ), new THREE.MeshStandardMaterial({ map: frameTexture}), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial( { map: frameTexture} ), 
+            new THREE.MeshStandardMaterial( { map: frameTexture} ), new THREE.MeshStandardMaterial({ map: frameTexture}), 
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } )
         ] );
@@ -698,32 +733,42 @@ export class Editor {
         leftWindow.position.y = (HEIGHT - height) / 2.0;
         leftWindow.position.z = depth / 2.0;
 
+        leftWindow.userData.type = 'window';
+
         group.children.push( leftWindow );
         leftWindow.parent = group;
 
         // Right Window 1
         const rightWindow = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, height, depth), [  
-            new THREE.MeshStandardMaterial( { map: frameTexture} ), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial( { map: frameTexture} ), 
+            new THREE.MeshStandardMaterial( { map: frameTexture} ), new THREE.MeshStandardMaterial({ map: frameTexture}), 
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } )
         ] );
         rightWindow.name = "Window_right";
+        rightWindow.castShadow = true;
+        rightWindow.receiveShadow = true;
+
         rightWindow.position.x = width / 8.0;
         rightWindow.position.y = (HEIGHT - height) / 2.0;
         rightWindow.position.z = depth / 2.0;
+
+        rightWindow.userData.type = 'window';
 
         group.children.push( rightWindow );
         rightWindow.parent = group;
 
         // Right Window 2
         const rightWindow2 = new THREE.Mesh( new THREE.BoxGeometry(width/4.0, height, depth), [  
-            new THREE.MeshStandardMaterial( { map: frameTexture} ), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
-            new THREE.MeshStandardMaterial( { map: frameTexture} ), 
+            new THREE.MeshStandardMaterial( { map: frameTexture} ), new THREE.MeshStandardMaterial({ map: frameTexture}), 
+            new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } ), 
             new THREE.MeshStandardMaterial( { map: windowTexture, transparent: true, opacity: 0.8 } )
         ] );
         rightWindow2.name = "Window_right";
+        rightWindow2.castShadow = true;
+        rightWindow2.receiveShadow = true;
+
         rightWindow2.position.x = width * 3 / 8.0;
         rightWindow2.position.y = (HEIGHT - height) / 2.0;
         rightWindow2.position.z = -(depth / 2.0);
@@ -765,8 +810,12 @@ export class Editor {
                 let whichSide = THREE.FrontSide;
                 let rotX = Math.PI / 2.0 * -1;
 
-                const repeatX = Math.round(width * 2);
-                const repeatY = Math.round(thick * 2);
+                let repeatX = Math.round(width * 2);
+                let repeatY = Math.round(thick * 2);
+                if(repeatX == 0)
+                    repeatX = 1;
+                if(repeatY == 0)
+                    repeatY = 1;
                 const wallTexture  = textureHelper.get('Wallpaper1', repeatX, repeatY);
 
                 let roof = new THREE.Mesh( new THREE.PlaneGeometry(width, thick), new THREE.MeshStandardMaterial({ map: wallTexture, side: whichSide }) );
@@ -803,8 +852,13 @@ export class Editor {
         let width = dx;
         let height = dz;
 
-        const repeatX = Math.round(width * 2);
-        const repeatY = Math.round(height * 2);
+        let repeatX = Math.round(width * 2);
+        let repeatY = Math.round(height * 2);
+        if(repeatX == 0)
+            repeatX = 1;
+        if(repeatY == 0)
+            repeatY = 1;
+
         let floorTexture = null;
         if(element.type == ObjectType.FLOOR) // Room
             floorTexture = textureHelper.get('RoomFloor', repeatX, repeatY);
@@ -914,6 +968,8 @@ export class Editor {
 
     constructFrom2DJSON( json ) {
         this.roomBuilder.addTHREELight('AmbientLight', 'Ambient');
+        this.roomBuilder.addTHREELight('Directional', 'Directional');
+        // this.roomBuilder.addTHREELight('Hemisphere', 'Hemisphere');
 
         const elementArray = JSON.parse(json);
 

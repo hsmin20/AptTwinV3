@@ -16,11 +16,15 @@ function rotateAroundWorldAxis(obj, point, axis, angle) {
 
 export class OfficeChair {
     // --- 오피스체어 내부 생성 ---
-    static add_Internal(editor, name, width, height, depth, oldPos, oldRot, chairColor) {
+    static add_Internal(editor, name, width, height, depth, chairColor, oldPos, oldRot) {
         const group = new THREE.Group();
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'OfficeChair';
+        group.userData.width = width;
+        group.userData.height = height;
+        group.userData.depth = depth;
+        group.userData.chairColor = chairColor;
 
         if (oldPos) group.position.copy(oldPos);
         if (oldRot) group.rotation.copy(oldRot);
@@ -135,21 +139,21 @@ export class OfficeChair {
 
     // --- UI ---
     static add(editor, modify = false) {
-        const _html = `
+        let _html = `
             <dialog id="officeChairDialog">
             <form>
                 <h1>Add/Change an Office Chair</h1>
-                <p>Name : <input type="text" id="chairName" name="chairName" value="OfficeChair_1"> </p>
+                <p>Name : <input type="text" id="chairName" name="chairName" value="_NAME_"> </p>
                 <h2>Chair size</h2>
-                <p>Width : <input type="text" id="width" name="width" value="0.5">
-                Leg Height : <input type="text" id="height" name="height" value="0.5">
-                Depth : <input type="text" id="depth" name="depth" value="0.5"></p>
+                <p>Width : <input type="text" id="width" name="width" value="_WIDTH_">
+                Leg Height : <input type="text" id="height" name="height" value="_HEIGHT_">
+                Depth : <input type="text" id="depth" name="depth" value="_DEPTH_"></p>
                 <h2>Chair Color</h2>
                     <div style="display:flex; gap:20px;">
                             <div class="gallery">
                                 <img src="./images/OfficeChair_White.JPG" alt="white" style="width:140px; height:120px;">
                                 <br>
-                                <input type="radio" id="white" name="chairColor" value="white" checked>White
+                                <input type="radio" id="white" name="chairColor" value="white">White
                             </div>
 
                             <div class="gallery">
@@ -169,6 +173,28 @@ export class OfficeChair {
             </form>
             </dialog>
         `;
+
+        let name = 'OfficeChair_1';
+        let width = '0.5';
+        let height = '0.5';
+        let depth = '0.5';
+        let chairColor = 'white';
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            width = editor.selected.userData.width;
+            height = editor.selected.userData.height;
+            depth = editor.selected.userData.depth;
+            chairColor = editor.selected.userData.chairColor;
+        }
+
+        _html = _html.replace('_NAME_', name);
+        _html = _html.replace('_WIDTH_', width);
+        _html = _html.replace('_HEIGHT_', height);
+        _html = _html.replace('_DEPTH_', depth);
+
+        const origin = 'value="' + chairColor + '"';
+        const replaced = 'value="' + chairColor + '" checked';
+        _html = _html.replace(origin, replaced);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");
@@ -205,7 +231,7 @@ export class OfficeChair {
 
             officeChairDialog.close();
 
-            this.add_Internal(editor, name, width, height, depth, oldPos, oldRot, chairColor);
+            this.add_Internal(editor, name, width, height, depth, chairColor, oldPos, oldRot);
         });
 
         officeChairDialog.showModal();

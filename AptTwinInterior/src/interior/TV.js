@@ -13,6 +13,8 @@ export class TV {
         group.userData.isInterior = true;
         group.userData.interiorType = 'TV';
         group.userData.DBid = 'n/a';
+        group.userData.tvSize = tvsize;
+        group.userData.tvType = tvtype;
 
         if(oldPos != null)
             group.position.copy(oldPos);
@@ -77,13 +79,13 @@ export class TV {
     }
 
     static add(editor, modify=false) {
-        const _html = `
+        let _html = `
             <dialog id="tvTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change a TV</h1>
-                        <p>Name : <input type="text" id="tvName" name="tvName" value="TV_1"> </p>
+                        <p>Name : <input type="text" id="tvName" name="tvName" value="_NAME_"> </p>
 
                         <h2>TV size </h2>
                         <p><input type="radio" id="40inch" name="tvsize" value="40">40"
@@ -118,7 +120,26 @@ export class TV {
                 <button id="confirmBtn" value="default">Apply</button>
                 </div>
             </form>
-    `
+        `;
+
+        let name = 'TV_1';
+        let tvSize = '55';
+        let tvType = 'StandTV';
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            tvSize = editor.selected.userData.tvSize;
+            tvType = editor.selected.userData.tvType;
+        }
+
+        _html = _html.replace('_NAME_', name);
+
+        const origin = 'value="' + tvSize + '"';
+        const replaced = 'value="' + tvSize + '" checked';
+        _html = _html.replace(origin, replaced);
+
+        const origin2 = 'value="' + tvType + '"';
+        const replaced2 = 'value="' + tvType + '" checked';
+        _html = _html.replace(origin2, replaced2);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");

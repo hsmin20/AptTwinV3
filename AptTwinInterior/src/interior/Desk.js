@@ -9,7 +9,6 @@ export class Desk {
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'Desk';
-        group.userData.name = name;
         group.userData.width = width;
         group.userData.height = height;
         group.userData.depth = depth;
@@ -90,25 +89,25 @@ export class Desk {
                             <div class="gallery">
                                 <img src="./images/Desk_White.JPG" alt="white" style="width:160px; height:140px;">
                                 <br>
-                                <input type="radio" id="white" name="deskMaterial" value="white" _CHECKED1_>White
+                                <input type="radio" id="white" name="deskMaterial" value="white">White
                             </div>
 
                             <div class="gallery">
                                 <img src="./images/Desk_Black.JPG" alt="black" style="width:160px; height:140px;">
                                 <br>
-                                <input type="radio" id="black" name="deskMaterial" value="black" _CHECKED2_>Black
+                                <input type="radio" id="black" name="deskMaterial" value="black">Black
                             </div>
                               <div class="gallery">
                                 <img src="./images/Desk_Wood.JPG" alt="wood" style="width:160px; height:140px;">
                                 <br>
-                                <input type="radio" id="wood" name="deskMaterial" value="wood" _CHECKED3_>Wood
+                                <input type="radio" id="wood" name="deskMaterial" value="wood">Wood
                             </div>
                         </div>
                         <div class="clearfix"></div>
                         <h2>Desk Type </h2>
                         <p>
-                        <input type="radio" id="wood" name="desktype" value="Wood" _CHECKED4_>Wood
-                        <input type="radio" id="glass" name="desktype" value="Glass" _CHECKED5_>Glass
+                        <input type="radio" id="wood" name="desktype" value="Wood">Wood
+                        <input type="radio" id="glass" name="desktype" value="Glass">Glass
                         </p>
                 </label>
                 </p>
@@ -120,49 +119,33 @@ export class Desk {
             </dialog>
         `;
 
+        let name = 'Desk_1';
+        let width = '1.2';
+        let height = '1.0';
+        let depth = '0.75';
+        let deskMaterial = 'wood';
+        let deskType = 'Glass';
         if(modify && editor.selected) {
-            const name = editor.selected.userData.name;
-            const width = editor.selected.userData.width;
-            const height = editor.selected.userData.height;
-            const depth = editor.selected.userData.depth;
-            const deskMaterial = editor.selected.userData.deskMaterial;
-            const deskType = editor.selected.userData.deskType;
-
-            _html = _html.replace('_NAME_', name);
-            _html = _html.replace('_WIDTH_', width);
-            _html = _html.replace('_HEIGHT_', height);
-            _html = _html.replace('_DEPTH_', depth);
-            if(deskMaterial == 'white') {
-                _html = _html.replace('_CHECKED1_', 'checked');
-                _html = _html.replace('_CHECKED2_', '');
-                _html = _html.replace('_CHECKED3_', '');
-            } else if(deskMaterial == 'black') {
-                _html = _html.replace('_CHECKED1_', '');
-                _html = _html.replace('_CHECKED2_', 'checked');
-                _html = _html.replace('_CHECKED3_', '');
-            } if(deskMaterial == 'wood') {
-                _html = _html.replace('_CHECKED1_', '');
-                _html = _html.replace('_CHECKED2_', '');
-                _html = _html.replace('_CHECKED3_', 'checked');
-            }
-            if(deskType == 'Wood') {
-                _html = _html.replace('_CHECKED4_', 'checked');
-                _html = _html.replace('_CHECKED5_', '');
-            } else if(deskType == 'Glass') {
-                _html = _html.replace('_CHECKED4_', '');
-                _html = _html.replace('_CHECKED5_', 'checked');
-            }
-        } else {
-            _html = _html.replace('_NAME_', 'Desk_1');
-            _html = _html.replace('_WIDTH_', '1.2');
-            _html = _html.replace('_HEIGHT_', '1.0');
-            _html = _html.replace('_DEPTH_', '0.75');
-            _html = _html.replace('_CHECKED1_', '');
-            _html = _html.replace('_CHECKED2_', '');
-            _html = _html.replace('_CHECKED3_', 'checked');
-            _html = _html.replace('_CHECKED4_', 'checked');
-            _html = _html.replace('_CHECKED5_', '');
+            name = editor.selected.name;
+            width = editor.selected.userData.width;
+            height = editor.selected.userData.height;
+            depth = editor.selected.userData.depth;
+            deskMaterial = editor.selected.userData.deskMaterial;
+            deskType = editor.selected.userData.deskType;
         }
+
+        _html = _html.replace('_NAME_', name);
+        _html = _html.replace('_WIDTH_', width);
+        _html = _html.replace('_HEIGHT_', height);
+        _html = _html.replace('_DEPTH_', depth);
+            
+        const origin = 'value="' + deskMaterial + '"';
+        const replaced = 'value="' + deskMaterial + '" checked';
+        _html = _html.replace(origin, replaced);
+
+        const origin2 = 'value="' + deskType + '"';
+        const replaced2 = 'value="' + deskType + '" checked';
+        _html = _html.replace(origin2, replaced2);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");

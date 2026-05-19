@@ -13,6 +13,7 @@ export class AirConditioner {
         group.userData.isInterior = true;
         group.userData.interiorType = 'AirConditioner';
         group.userData.DBid = 'n/a';
+        group.userData.acType = actype;
 
         if (oldPos) group.position.copy(oldPos);
         if (oldRot) group.rotation.copy(oldRot);
@@ -93,13 +94,13 @@ export class AirConditioner {
     }
 
     static add(editor, modify = false) {
-        const _html = `
+        let _html = `
             <dialog id="acTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change an Air Conditioner</h1>
-                        <p>Name : <input type="text" id="acName" name="acName" value="AC_1"></p>
+                        <p>Name : <input type="text" id="acName" name="acName" value=_NAME_></p>
 
                         <div class="clearfix"></div>
                         <h2>AC Type</h2>
@@ -107,7 +108,7 @@ export class AirConditioner {
                             <div class="gallery">
                                 <img src="./images/AC.jpg" alt="StandAC" style="width:65px; height:160px;">
                                 <br>
-                                <input type="radio" id="StandAC" name="actype" value="StandAC" checked>StandAC
+                                <input type="radio" id="StandAC" name="actype" value="StandAC">StandAC
                             </div>
 
                             <div class="gallery">
@@ -124,7 +125,20 @@ export class AirConditioner {
                 <button value="cancel" formmethod="dialog">Cancel</button>
                 <button id="confirmBtn" value="default">Apply</button>
                 </div>
-            </form>`;
+            </form>
+        `;
+
+        let name = 'AirConditioner_1';
+        let actype = "StandAC";
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            actype = editor.selected.userData.acType;
+        }
+
+        _html = _html.replace('_NAME_', name);
+        const origin = 'value="' + actype + '"';
+        const replaced = 'value="' + actype + '" checked';
+        _html = _html.replace(origin, replaced);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");

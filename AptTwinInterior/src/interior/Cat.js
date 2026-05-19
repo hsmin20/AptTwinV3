@@ -13,6 +13,7 @@ export class Cat {
         group.userData.isInterior = true;
         group.userData.interiorType = 'Cat';
         group.userData.DBid = 'n/a';
+        group.userData.catType = cattype;
 
         if(oldPos != null)
             group.position.copy(oldPos);
@@ -143,20 +144,20 @@ export class Cat {
         editor.objectChanged(group);
     }
     static add(editor, modify=false) {
-        const _html = `
+        let _html = `
             <dialog id="CatTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change a Cat</h1>
-                        <p>Name : <input type="text" id="catName" name="catName" value="Cat_1"> </p>
+                        <p>Name : <input type="text" id="catName" name="catName" value="_NAME_"> </p>
 
                     <h2>Cat Type </h2>
                         <div style="display:flex; gap:20px;">
                         <div class="gallery">
                             <img src="./images/cat1.jpg" alt="cat1" style="width:160px; height:140px;">
                             <br>
-                            <input type="radio" id="cat1" name="cattype" value="cat1" checked>Cat 1
+                            <input type="radio" id="cat1" name="cattype" value="cat1">Cat 1
                         </div>
 
                         <div class="gallery">
@@ -174,7 +175,20 @@ export class Cat {
                 <button id="confirmBtn" value="default">Apply</button>
                 </div>
             </form>
-            `
+            `;
+        
+        let name = 'Cat_1';
+        let cattype = 'cat1';
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            cattype = editor.selected.userData.catType;
+        }
+
+        _html = _html.replace('_NAME_', name);
+
+        const origin = 'value="' + cattype + '"';
+        const replaced = 'value="' + cattype + '" checked';
+        _html = _html.replace(origin, replaced);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");

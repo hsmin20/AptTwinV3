@@ -1,7 +1,27 @@
 import { textureHelper } from '../../src_common/TextureHelper.js';
 
+let g_name = 'Wallpaper1';
+let g_repeatx = 1;
+let g_repeaty = 1;
+
+let g_names = [ 'Wallpaper1', 'Wallpaper1', 'Wallpaper1', 'Wallpaper1', 'Wallpaper1', 'Wallpaper1' ];
+let g_repeatxs = [ 1, 1, 1, 1, 1, 1 ];
+let g_repeatys = [ 1, 1, 1, 1, 1, 1 ];
+
+export function setNameAndRepeat(name, repeatx, repeaty) {
+    g_name = name;
+    g_repeatx = repeatx;
+    g_repeaty = repeaty;
+}
+
+export function setNamesAndRepeats(i, name, repeatx, repeaty) {
+    g_names[i] = name;
+    g_repeatxs[i] = repeatx;
+    g_repeatys[i] = repeaty;
+}
+
 export function showTextureImages( cbSetTexture ) {
-    const _html = `
+    let _html = `
         <dialog id="textureImageDialog">
             <form>
                 <p>
@@ -10,7 +30,7 @@ export function showTextureImages( cbSetTexture ) {
                     <div class="responsive">
                     <div class="gallery">
                         <img src="./textures/wallpaper1.jpg" alt="wallpaper1" width="60" height="40">
-                        <input type="radio" name="texture" id="wallpaper1" value="Wallpaper1" checked/>Wall Paper
+                        <input type="radio" name="texture" id="wallpaper1" value="Wallpaper1"/>Wall Paper
                     </div>
                     </div>
                     <div class="responsive">
@@ -181,7 +201,7 @@ export function showTextureImages( cbSetTexture ) {
                 <div class="clearfix"></div>
                 <div style="padding:6px;">
                 <p>
-                Repeat <input type="text" id="repeatx" name="repeatx" value="1" size="3"> x <input type="text" id="repeaty" name="repeaty" value="1" size="3">
+                Repeat <input type="text" id="repeatx" name="repeatx" value="_REPEATX_" size="3"> x <input type="text" id="repeaty" name="repeaty" value="_REPEATY_" size="3">
                 <button value="cancel" formmethod="dialog">Cancel</button>
                 <button id="confirmBtn" value="default">Apply</button>
                 </p>
@@ -189,6 +209,11 @@ export function showTextureImages( cbSetTexture ) {
             </form>
         </dialog>
 `
+    const origin = 'value="' + g_name + '"';
+    const replaced = 'value="' + g_name + '" checked';
+    _html = _html.replace(origin, replaced);
+    _html = _html.replace('_REPEATX_', g_repeatx);
+    _html = _html.replace('_REPEATY_', g_repeaty);
 
     const dom = new DOMParser().parseFromString(_html, 'text/html');
     const dialog = dom.querySelector("dialog");
@@ -218,4 +243,40 @@ export function showTextureImages( cbSetTexture ) {
     });
 
     textureImageDialog.showModal();
+}
+
+export function showTextureImagesByIndex0(cbSetTexture ) {
+    setNameAndRepeat(g_names[0], g_repeatxs[0], g_repeatys[0]);
+
+    showTextureImages( cbSetTexture );
+}
+
+export function showTextureImagesByIndex1(cbSetTexture ) {
+    setNameAndRepeat(g_names[1], g_repeatxs[1], g_repeatys[1]);
+
+    showTextureImages( cbSetTexture );
+}
+
+export function showTextureImagesByIndex2(cbSetTexture ) {
+    setNameAndRepeat(g_names[2], g_repeatxs[2], g_repeatys[2]);
+
+    showTextureImages( cbSetTexture );
+}
+
+export function showTextureImagesByIndex3(cbSetTexture ) {
+    setNameAndRepeat(g_names[3], g_repeatxs[3], g_repeatys[3]);
+
+    showTextureImages( cbSetTexture );
+}
+
+export function showTextureImagesByIndex4(cbSetTexture ) {
+    setNameAndRepeat(g_names[4], g_repeatxs[4], g_repeatys[4]);
+
+    showTextureImages( cbSetTexture );
+}
+
+export function showTextureImagesByIndex5(cbSetTexture ) {
+    setNameAndRepeat(g_names[5], g_repeatxs[5], g_repeatys[5]);
+
+    showTextureImages( cbSetTexture );
 }

@@ -5,11 +5,15 @@ import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class Chair {
     // --- 의자 생성 함수 ---
-    static add_Internal(editor, name, width, height, depth, chairType, oldPos, oldRot, chairColor) {
+    static add_Internal(editor, name, width, height, depth, chairType, oldPos, oldRot) {
         const group = new THREE.Group();
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'Chair';
+        group.userData.width = width;
+        group.userData.height = height;
+        group.userData.depth = depth;
+        group.userData.chairType = chairType;
 
         if (oldPos != null) group.position.copy(oldPos);
         if (oldRot != null) group.rotation.copy(oldRot);
@@ -18,7 +22,7 @@ export class Chair {
         editor.execute(new AddGroupCommand(editor, group, parent));
 
         // 재질 결정
-        const texture = chairColor === 'black' ? textureHelper.get('BlackFabric', 1, 1) : textureHelper.get('Fabric', 1, 1);
+        const texture = chairType === 'black' ? textureHelper.get('BlackFabric', 1, 1) : textureHelper.get('Fabric', 1, 1);
         const material = new THREE.MeshStandardMaterial({ map: texture });
 
         const seatHeight = 0.05;
@@ -105,18 +109,18 @@ export class Chair {
 
     // --- UI 함수 ---
     static add(editor, modify = false) {
-        const _html = `
+        let _html = `
             <dialog id="chairTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change a Chair</h1>
-                    <p>Name : <input type="text" id="chairName" name="chairName" value="Chair_1"> </p>
+                    <p>Name : <input type="text" id="chairName" name="chairName" value="_NAME_"> </p>
 
                     <h2>Chair size </h2>
-                    <p>Width : <input type="text" id="width" name="width" value="0.48">
-                    Leg Height : <input type="text" id="height" name="height" value="0.47">
-                    Depth : <input type="text" id="depth" name="depth" value="0.44"></p>
+                    <p>Width : <input type="text" id="width" name="width" value="_WIDTH_">
+                    Leg Height : <input type="text" id="height" name="height" value="_HEIGHT_">
+                    Depth : <input type="text" id="depth" name="depth" value="_DEPTH_"></p>
                     <div class="clearfix"></div>
 
                     <h2>Chair Color</h2>
@@ -124,13 +128,13 @@ export class Chair {
                             <div class="gallery">
                                 <img src="./images/Chair_White.JPG" alt="white" style="width:120px; height:140px;">
                                 <br>
-                                <input type="radio" id="white" name="chairColor" value="white" checked>White
+                                <input type="radio" id="white" name="chairType" value="white">White
                             </div>
 
                             <div class="gallery">
                                 <img src="./images/Chair_Black.JPG" alt="black" style="width:120px; height:140px;">
                                 <br>
-                                <input type="radio" id="black" name="chairColor" value="black">Black
+                                <input type="radio" id="black" name="chairType" value="black">Black
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -144,6 +148,28 @@ export class Chair {
             </form>
             </dialog>
         `;
+
+        let name = 'Chair_1';
+        let width = '0.48';
+        let height = '0.47';
+        let depth = '0.44';
+        let chairType = 'white';
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            width = editor.selected.userData.width;
+            height = editor.selected.userData.height;
+            depth = editor.selected.userData.depth;
+            chairType = editor.selected.userData.chairType;
+        }
+
+        _html = _html.replace('_NAME_', name);
+        _html = _html.replace('_WIDTH_', width);
+        _html = _html.replace('_HEIGHT_', height);
+        _html = _html.replace('_DEPTH_', depth);
+        
+        const origin = 'value="' + chairType + '"';
+        const replaced = 'value="' + chairType + '" checked';
+        _html = _html.replace(origin, replaced);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");
@@ -175,12 +201,11 @@ export class Chair {
             const width = parseFloat(widthBox.value);
             const height = parseFloat(heightBox.value);
             const depth = parseFloat(depthBox.value);
-            const chairType = 'Wood'; // 무조건 Wood
-            const chairColor = document.querySelector('input[name=chairColor]:checked').value;
+            const chairType = document.querySelector('input[name=chairType]:checked').value;
 
             document.body.removeChild(dialog);
 
-            this.add_Internal(editor, name, width, height, depth, chairType, oldPos, oldRot, chairColor);
+            this.add_Internal(editor, name, width, height, depth, chairType, oldPos, oldRot);
         });
 
         chairTypeDialog.showModal();

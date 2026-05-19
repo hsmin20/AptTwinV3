@@ -12,11 +12,15 @@ export class CoffeeTable {
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'CoffeeTable';
+        group.userData.width = width;
+        group.userData.height = height;
+        group.userData.depth = depth;
+        group.userData.coffeeTableType = coffeeTabletype;
 
-        // if(oldPos != null)
-        //     group.position.copy(oldPos);
-        // if(oldRot != null)
-        //     group.rotation.copy(oldRot);
+        if(oldPos != null)
+            group.position.copy(oldPos);
+        if(oldRot != null)
+            group.rotation.copy(oldRot);
 
         let parent = editor.getFurniture();
         editor.execute( new AddGroupCommand( editor, group, parent ) );
@@ -65,31 +69,31 @@ export class CoffeeTable {
     }
 
     static add(editor, modify=false) {
-        const _html = `
+        let _html = `
             <dialog id="coffeeTableTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change a Coffee Table</h1>
-                        <p>Name : <input type="text" id="coffeeTableName" name="coffeeTableName" value="CoffeeTable_1"> </p>
+                        <p>Name : <input type="text" id="coffeeTableName" name="coffeeTableName" value="_NAME_"> </p>
 
                         <h2>Coffee Table size </h2>
-                        <p>Width : <input type="text" id="width" name="width" value="0.686">
-                           Height : <input type="text" id="height" name="height" value="0.292">
-                           Depth : <input type="text" id="depth" name="depth" value="0.264"></p>
+                        <p>Width : <input type="text" id="width" name="width" value="_WIDTH_">
+                           Height : <input type="text" id="height" name="height" value="_HEIGHT_">
+                           Depth : <input type="text" id="depth" name="depth" value="_DEPTH_"></p>
                         <div class="clearfix"></div>
                         <h2>Coffee Table Option</h2>
                          <div style="display:flex; gap:20px;">
                             <div class="gallery">
                                 <img src="./images/CoffeTable_Wood.jpg" alt="wood" style="width:200px; height:120px;">
                                 <br>
-                                <input type="radio" id="wood" name="coffeeTabletype" value="Wood" checked>Wood
+                                <input type="radio" id="wood" name="coffeeTableType" value="Wood">Wood
                             </div>
 
                             <div class="gallery">
                                 <img src="./images/CoffeTable_Glass.jpg" alt="glass" style="width:200px; height:120px;">
                                 <br>
-                                <input type="radio" id="glass" name="coffeeTabletype" value="Glass">Glass
+                                <input type="radio" id="glass" name="coffeeTableType" value="Glass">Glass
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -101,7 +105,29 @@ export class CoffeeTable {
                 <button id="confirmBtn" value="default">Apply</button>
                 </div>
             </form>
-    `
+        `;
+
+        let name = 'CoffeeTable_1';
+        let width = '0.686';
+        let height = '0.292';
+        let depth = '0.264';
+        let coffeeTableType = 'Wood';
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            width = editor.selected.userData.width;
+            height = editor.selected.userData.height;
+            depth = editor.selected.userData.depth;
+            coffeeTableType = editor.selected.userData.coffeeTableType;
+        }
+
+        _html = _html.replace('_NAME_', name);
+        _html = _html.replace('_WIDTH_', width);
+        _html = _html.replace('_HEIGHT_', height);
+        _html = _html.replace('_DEPTH_', depth);
+
+        const origin = 'value="' + coffeeTableType + '"';
+        const replaced = 'value="' + coffeeTableType + '" checked';
+        _html = _html.replace(origin, replaced);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");
@@ -138,7 +164,7 @@ export class CoffeeTable {
             const width = parseFloat(widthBox.value);
             const height = parseFloat(heightBox.value);
             const depth = parseFloat(depthBox.value);
-           const coffeeTabletype = document.querySelector('input[name=coffeeTabletype]:checked').value;
+            const coffeeTabletype = document.querySelector('input[name=coffeeTableType]:checked').value;
 
             document.body.removeChild(dialog)
             

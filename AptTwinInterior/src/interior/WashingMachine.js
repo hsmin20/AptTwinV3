@@ -17,6 +17,10 @@ export class WashingMachine {
             group.userData.interiorType = 'WashingMachine2';
         }
         group.userData.DBid = 'n/a';
+        group.userData.width = width;
+        group.userData.height = height;
+        group.userData.depth = depth;
+        group.userData.washingMachinetype = washingMachinetype;
 
         if(oldPos != null)
             group.position.copy(oldPos);
@@ -60,25 +64,25 @@ export class WashingMachine {
     }
 
     static add(editor, modify=false) {
-        const _html = `
+        let _html = `
             <dialog id="washingMachineTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change a Washing Machine</h1>
-                        <p>Name : <input type="text" id="washingMachineName" name="washingMachineName" value="WashingMachine_1"> </p>
+                        <p>Name : <input type="text" id="washingMachineName" name="washingMachineName" value="_NAME_"> </p>
 
                         <h2>Desk size </h2>
-                        <p>Width : <input type="text" id="width" name="width" value="0.686">
-                           Height : <input type="text" id="height" name="height" value="0.892">
-                           Depth : <input type="text" id="depth" name="depth" value="0.864"></p>
+                        <p>Width : <input type="text" id="width" name="width" value="_WIDTH_">
+                           Height : <input type="text" id="height" name="height" value="_HEIGHT_">
+                           Depth : <input type="text" id="depth" name="depth" value="_DEPTH_"></p>
                         <div class="clearfix"></div>
                         <h2>Washing Machine Option</h2>
                         <div style="display:flex; gap:20px;">
                             <div class="gallery">
                                 <img src="./images/drummachine_front.jpg" alt="drum" style="width:120px; height:160px;">
                                 <br>
-                                <input type="radio" id="drum" name="washingMachinetype" " value="drum" checked>drum
+                                <input type="radio" id="drum" name="washingMachinetype" " value="drum">drum
                             </div>
 
                             <div class="gallery">
@@ -94,7 +98,29 @@ export class WashingMachine {
                 <button id="confirmBtn" value="default">Apply</button>
                 </div>
             </form>
-    `
+        `;
+
+        let name = 'WashingMachine_1';
+        let width = '0.686';
+        let height = '0.892';
+        let depth = '0.864';
+        let washingMachinetype = 'drum';
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            width = editor.selected.userData.width;
+            height = editor.selected.userData.height;
+            depth = editor.selected.userData.depth;
+            washingMachinetype = editor.selected.userData.washingMachinetype;
+        }
+
+        _html = _html.replace('_NAME_', name);
+        _html = _html.replace('_WIDTH_', width);
+        _html = _html.replace('_HEIGHT_', height);
+        _html = _html.replace('_DEPTH_', depth);
+
+        const origin = 'value="' + washingMachinetype + '"';
+        const replaced = 'value="' + washingMachinetype + '" checked';
+        _html = _html.replace(origin, replaced);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");

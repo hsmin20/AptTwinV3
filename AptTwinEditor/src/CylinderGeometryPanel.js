@@ -4,7 +4,7 @@ import { UIDiv, UIRow, UIText, UIInput, UIButton } from '../../src_common/libs/u
 
 import { SetGeometryCommand } from '../../src_common/commands/SetGeometryCommand.js';
 import { SetMaterialMapCommand } from '../../src_common/commands/SetMaterialMapCommand.js';
-import { showTextureImages } from './TextureDialog.js';
+import { setNameAndRepeat, showTextureImages } from './TextureDialog.js';
 
 import { UIBoolean } from '../../src_common/libs/ui.three.js';
 import { UITexture2 } from '../../src_common/libs/ui.three2.js';
@@ -132,6 +132,12 @@ export class CylinderGeometryPanel {
         this.thetaLength.setValue( parameters.thetaLength );
 
         const material = object.material;
+        const map = material.map;
+        const name = map.name.substring(0, map.name.indexOf("_"));
+        const repeatx = map.repeat.x;
+        const repeaty = map.repeat.y;
+
+        setNameAndRepeat(name, repeatx, repeaty); // To show them in showTextureImage Dialog
 
         this.cylinderMap.setValue( material[ 'map' ] );
     }    

@@ -13,6 +13,12 @@ export class TVTable {
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'TVTable';
+        group.userData.width = width;
+        group.userData.height = height;
+        group.userData.depth = depth;
+        group.userData.tvTabletype = tvTabletype;
+        group.userData.noOfLayers = noOfLayers;
+        group.userData.door = door;
 
         if(oldPos != null)
             group.position.copy(oldPos);
@@ -134,27 +140,27 @@ export class TVTable {
     }
 
     static add(editor, modify=false) {
-        const _html = `
+        let _html = `
             <dialog id="tvTableTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change a TV Table</h1>
-                        <p>Name : <input type="text" id="tvTableName" name="tvTableName" value="TVTable_1"> </p>
+                        <p>Name : <input type="text" id="tvTableName" name="tvTableName" value="_NAME_"> </p>
 
                         <h2>TV Table size </h2>
-                        <p>Width : <input type="text" id="width" name="width" value="2.5">
-                           Height : <input type="text" id="height" name="height" value="0.5">
-                           Depth : <input type="text" id="depth" name="depth" value="0.5"></p>
+                        <p>Width : <input type="text" id="width" name="width" value="_WIDTH_">
+                           Height : <input type="text" id="height" name="height" value="_HEIGHT_">
+                           Depth : <input type="text" id="depth" name="depth" value="_DEPTH_"></p>
                         <div class="clearfix"></div>
                         <h2>TV Table Option</h2>
-                        <p><input type="radio" id="wood" name="tvTabletype" value="Wood" checked>Wood
+                        <p><input type="radio" id="wood" name="tvTabletype" value="Wood">Wood
                            <input type="radio" id="white" name="tvTabletype" value="White">White
                         </p>
                         <h2>No of Layers</h2>
-                        <p>Name : <input type="text" id="layers" name="layers" value="4"></p>
+                        <p>Name : <input type="text" id="layers" name="layers" value="_NOOFLAYERS_"></p>
                         <h2>Drawer Type</h2>
-                        <p>Name : <input type="checkbox" id="door" name="door" checked><label for="door">Drawer</label></p>
+                        <p>Name : <input type="checkbox" id="door" name="door"><label for="door">Drawer</label></p>
                 </label>
                 </p>
                 <div>
@@ -165,6 +171,39 @@ export class TVTable {
                 </div>
             </form>
         `;
+
+        let name = 'TVTable_1';
+        let width = '2.5';
+        let height = '0.5';
+        let depth = '0.5';
+        let tvTabletype = 'Wood';
+        let noOfLayers = '4';
+        let door = true;
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            width = editor.selected.userData.width;
+            height = editor.selected.userData.height;
+            depth = editor.selected.userData.depth;
+            tvTabletype = editor.selected.userData.tvTabletype;
+            noOfLayers = editor.selected.userData.noOfLayers;
+            door = editor.selected.userData.door;
+        }
+
+        _html = _html.replace('_NAME_', name);
+        _html = _html.replace('_WIDTH_', width);
+        _html = _html.replace('_HEIGHT_', height);
+        _html = _html.replace('_DEPTH_', depth);
+        _html = _html.replace('_NOOFLAYERS_', noOfLayers);
+
+        const origin = 'value="' + tvTabletype + '"';
+        const replaced = 'value="' + tvTabletype + '" checked';
+        _html = _html.replace(origin, replaced);
+
+        if(door) {
+            const origin = 'name="door"';
+            const replaced = 'name="door" checked';
+            _html = _html.replace(origin, replaced);
+        }
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");

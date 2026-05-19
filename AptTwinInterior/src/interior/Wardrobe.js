@@ -12,6 +12,11 @@ export class Wardrobe {
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'Wardrobe';
+        group.userData.width = width;
+        group.userData.height = height;
+        group.userData.depth = depth;
+        group.userData.wardrobetype = wardrobetype;
+        group.userData.noOfDrawers = noOfDrawers;
 
         if(oldPos != null)
             group.position.copy(oldPos);
@@ -190,18 +195,18 @@ export class Wardrobe {
     }
 
     static add(editor, modify=false) {
-        const _html = `
+        let _html = `
             <dialog id="wardrobeTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change a Wardrobe</h1>
-                        <p>Name : <input type="text" id="wardrobeName" name="wardrobeName" value="Wardrobe_1"> </p>
+                        <p>Name : <input type="text" id="wardrobeName" name="wardrobeName" value="_NAME_"> </p>
 
                         <h2>Wardrobe size </h2>
-                        <p>Width : <input type="text" id="width" name="width" value="0.95">
-                           Height : <input type="text" id="height" name="height" value="2.06">
-                           Depth : <input type="text" id="depth" name="depth" value="0.6"></p>
+                        <p>Width : <input type="text" id="width" name="width" value="_WIDTH_">
+                           Height : <input type="text" id="height" name="height" value="_HEIGHT_">
+                           Depth : <input type="text" id="depth" name="depth" value="_DEPTH_"></p>
                         <div class="clearfix"></div>
                         <h2>Wardrobe Option</h2>
                           <div style="display:flex; gap:20px;">
@@ -216,7 +221,7 @@ export class Wardrobe {
                                 <br>
                                 <input type="radio" id="drawer" name="wardrobetype" value="drawer">With Drawer
                                 <h2>No of Drawers</h2>
-                                <p>Name : <input type="text" id="noOfDrawers" name="noOfDrawers" value="3">
+                                <p>Name : <input type="text" id="noOfDrawers" name="noOfDrawers" value="_NOOFDRAWERS_">
                                 </p>
                             </div>
                         </div>
@@ -229,7 +234,33 @@ export class Wardrobe {
                 <button id="confirmBtn" value="default">Apply</button>
                 </div>
             </form>
-    `
+        `;
+
+        let name = 'Wardrobe_1';
+        let width = '0.95';
+        let height = '2.06';
+        let depth = '0.6';
+        let wardrobetype = 'Wood';
+        let noOfDrawers = '3';
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            width = editor.selected.userData.width;
+            height = editor.selected.userData.height;
+            depth = editor.selected.userData.depth;
+            wardrobetype = editor.selected.userData.wardrobetype;
+            noOfDrawers = editor.selected.userData.noOfDrawers;
+        }
+
+        _html = _html.replace('_NAME_', name);
+        _html = _html.replace('_WIDTH_', width);
+        _html = _html.replace('_HEIGHT_', height);
+        _html = _html.replace('_DEPTH_', depth);
+        _html = _html.replace('_NOOFDRAWERS_', noOfDrawers);
+
+        const origin = 'value="' + wardrobetype + '"';
+        const replaced = 'value="' + wardrobetype + '" checked';
+        _html = _html.replace(origin, replaced);
+
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");

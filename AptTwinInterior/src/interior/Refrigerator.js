@@ -13,6 +13,10 @@ export class Refrigerator {
         group.userData.isInterior = true;
         group.userData.interiorType = 'Refrigerator';
         group.userData.DBid = 'n/a';
+        group.userData.width = width;
+        group.userData.height = height;
+        group.userData.depth = depth;
+        group.userData.doorType = doortype;
 
         if(oldPos != null)
             group.position.copy(oldPos);
@@ -199,18 +203,18 @@ export class Refrigerator {
         editor.objectChanged(group);
     }
     static add(editor, modify=false) {
-        const _html = `
+        let _html = `
             <dialog id="refrigeratorTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change a Refrigerator</h1>
-                        <p>Name : <input type="text" id="refrigeratorName" name="refrigeratorName" value="Refrigerator_1"> </p>
+                        <p>Name : <input type="text" id="refrigeratorName" name="refrigeratorName" value="_NAME_"> </p>
 
                         <h2>Refrigerator size </h2>
-                        <p>Width : <input type="text" id="width" name="width" value="0.912">
-                           Height : <input type="text" id="height" name="height" value="1.87">
-                           Depth : <input type="text" id="depth" name="depth" value="0.93"></p>
+                        <p>Width : <input type="text" id="width" name="width" value="_WIDTH_">
+                           Height : <input type="text" id="height" name="height" value="_HEIGHT_">
+                           Depth : <input type="text" id="depth" name="depth" value="_DEPTH_"></p>
                         <div class="clearfix"></div>
                         <h2>Door Type </h2>
                         <div class="responsive">
@@ -228,7 +232,7 @@ export class Refrigerator {
                         <div class="responsive">
                         <div class="gallery">
                             <img src="./images/4doorFridge.jpg" alt="fourDoors" width="60" height="60">
-                            <input type="radio" id="fourDoors" name="doortype" value="fourDoors" checked>4 Doors
+                            <input type="radio" id="fourDoors" name="doortype" value="fourDoors">4 Doors
                         </div>
                         </div>
                         <div class="clearfix"></div>
@@ -240,7 +244,29 @@ export class Refrigerator {
                 <button id="confirmBtn" value="default">Apply</button>
                 </div>
             </form>
-    `
+        `;
+
+        let name = 'Refrigerator_1';
+        let width = '0.912';
+        let height = '1.87';
+        let depth = '0.93';
+        let doorType = 'fourDoors';
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            width = editor.selected.userData.width;
+            height = editor.selected.userData.height;
+            depth = editor.selected.userData.depth;
+            doorType = editor.selected.userData.doorType;
+        }
+
+        _html = _html.replace('_NAME_', name);
+        _html = _html.replace('_WIDTH_', width);
+        _html = _html.replace('_HEIGHT_', height);
+        _html = _html.replace('_DEPTH_', depth);
+
+        const origin = 'value="' + doorType + '"';
+        const replaced = 'value="' + doorType + '" checked';
+        _html = _html.replace(origin, replaced);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");

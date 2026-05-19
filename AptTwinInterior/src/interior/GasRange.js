@@ -6,13 +6,17 @@ import { RemoveObjectCommand } from '../../../src_common/commands/RemoveObjectCo
 import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class GasRange {
-    static add_Internal(editor, name, width, height, depth, gasRangeType, oldPos, oldRot) {
+    static add_Internal(editor, name, width, height, depth, gasRangetype, oldPos, oldRot) {
         // Add a group first
         const group = new THREE.Group();
         group.name = name;
         group.userData.isInterior = true;
         group.userData.interiorType = 'GasRange';
         group.userData.DBid = 'n/a';
+        group.userData.width = width;
+        group.userData.height = height;
+        group.userData.depth = depth;
+        group.userData.gasRangetype = gasRangetype;
 
         if(oldPos != null)
             group.position.copy(oldPos);
@@ -23,7 +27,7 @@ export class GasRange {
         editor.execute( new AddGroupCommand( editor, group, parent ) );
 
         // Add a Body
-        let topTexture = textureHelper.get(gasRangeType, 1, 1);
+        let topTexture = textureHelper.get(gasRangetype, 1, 1);
         let frontTexture = textureHelper.get('WhitePlastic', 1, 1);
         let bottomTexture = textureHelper.get('WhitePlastic', 1, 1);
         let backTexture = textureHelper.get('WhitePlastic', 1, 1);
@@ -49,18 +53,18 @@ export class GasRange {
     }
 
     static add(editor, modify=false) {
-        const _html = `
+        let _html = `
             <dialog id="gasRangeTypeDialog">
             <form>
                 <p>
                 <label>
                     <h1>Add/Change a Gas Range</h1>
-                        <p>Name : <input type="text" id="gasRangeName" name="gasRangeName" value="GasRange_1"> </p>
+                        <p>Name : <input type="text" id="gasRangeName" name="gasRangeName" value="_NAME_"> </p>
 
                         <h2>Gas Range size </h2>
-                        <p>Width : <input type="text" id="width" name="width" value="1.0">
-                           Height : <input type="text" id="height" name="height" value="0.10">
-                           Depth : <input type="text" id="depth" name="depth" value="0.40"></p>
+                        <p>Width : <input type="text" id="width" name="width" value="_WIDTH_">
+                           Height : <input type="text" id="height" name="height" value="_HEIGHT_">
+                           Depth : <input type="text" id="depth" name="depth" value="_DEPTH_"></p>
                         <div class="clearfix"></div>
                         <h2>Gas Range Option</h2>
                         <div style="display:flex; gap:20px;">
@@ -72,7 +76,7 @@ export class GasRange {
                             <div class="gallery">
                                 <img src="./images/GasRange3Burner.jpg" alt="GasRange3Burner" style="width:120px; height:160px;">
                                 <br>
-                                <input type="radio" id="GasRange3Burner" name="gasRangetype" " value="GasRange3Burner" checked>3 Burners
+                                <input type="radio" id="GasRange3Burner" name="gasRangetype" " value="GasRange3Burner">3 Burners
                             </div>
                             <div class="gallery">
                                 <img src="./images/GasRange4Burner.jpg" alt="GasRange4Burner" style="width:120px; height:160px;">
@@ -87,7 +91,29 @@ export class GasRange {
                 <button id="confirmBtn" value="default">Apply</button>
                 </div>
             </form>
-    `
+        `;
+
+        let name = 'GasRange_1';
+        let width = '1.0';
+        let height = '0.1';
+        let depth = '0.4';
+        let gasRangetype = 'GasRange3Burner';
+        if(modify && editor.selected) {
+            name = editor.selected.name;
+            width = editor.selected.userData.width;
+            height = editor.selected.userData.height;
+            depth = editor.selected.userData.depth;
+            gasRangetype = editor.selected.userData.gasRangetype;
+        }
+
+        _html = _html.replace('_NAME_', name);
+        _html = _html.replace('_WIDTH_', width);
+        _html = _html.replace('_HEIGHT_', height);
+        _html = _html.replace('_DEPTH_', depth);
+
+        const origin = 'value="' + gasRangetype + '"';
+        const replaced = 'value="' + gasRangetype + '" checked';
+        _html = _html.replace(origin, replaced);
 
         const dom = new DOMParser().parseFromString(_html, 'text/html');
         const dialog = dom.querySelector("dialog");

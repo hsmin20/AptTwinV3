@@ -7,7 +7,7 @@ import { SetGeometryCommand } from '../../src_common/commands/SetGeometryCommand
 
 import { SetMaterialMapCommand } from '../../src_common/commands/SetMaterialMapCommand.js';
 
-import { showTextureImages } from './TextureDialog.js';
+import { setNameAndRepeat, showTextureImages } from './TextureDialog.js';
 import { UIBoolean } from '../../src_common/libs/ui.three.js';
 
 export class ConeGeometryPanel {
@@ -123,6 +123,12 @@ export class ConeGeometryPanel {
         this.thetaLength.setValue( parameters.thetaLength );
 
         const material = object.material;
+        const map = material.map;
+        const name = map.name.substring(0, map.name.indexOf("_"));
+        const repeatx = map.repeat.x;
+        const repeaty = map.repeat.y;
+
+        setNameAndRepeat(name, repeatx, repeaty); // To show them in showTextureImage Dialog
 
         this.coneMap.setValue( material[ 'map' ] );
     }    
