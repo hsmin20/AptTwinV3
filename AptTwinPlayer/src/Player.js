@@ -49,8 +49,8 @@ export class Player {
 		// this.renderer.autoClear = false; // For HUD, uncomment this. This could be located in render loop to toggle
         // this.renderer.localClippingEnabled = true;
 
-        this.webSockerUpdater = new HAWebSocket(this);
-        this.restUpdater = new HARestAPI(this);
+        // this.webSockerUpdater = new HAWebSocket(this);
+        // this.restUpdater = new HARestAPI(this);
 
         this.updating = false;
         
@@ -77,6 +77,9 @@ export class Player {
         }
 
 		this.entityManager = new EntityManager(this.scene, this.cannonWorld);
+
+        this.webSockerUpdater = new HAWebSocket(this);
+        this.restUpdater = new HARestAPI(this);
 	}
 
     toJSON () {

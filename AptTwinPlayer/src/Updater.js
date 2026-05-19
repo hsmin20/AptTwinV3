@@ -1,15 +1,14 @@
 // Updater.js
 
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjNDZhYWI1Y2VhZWE0ZWI2OGU1OGVkY2EyZmI0NTA3MiIsImlhdCI6MTc3MTgyNzM2MCwiZXhwIjoyMDg3MTg3MzYwfQ.s7wkgzN3Lrh8jQblsNxF5cpF78t7o-TtHyGXy9uJf_Q";
-
 // WebSocket
 export class HAWebSocket {
     ID = 18; // some arbitrary number for id
 
     constructor(playerself) {
-        const url = "ws://112.223.164.246:8123/api/websocket";
+        const base_url = playerself.scene.userData.url;
+        const url = "ws" + base_url.substring(4) + "/api/websocket";
         this.ha_socket = new WebSocket(url);
-        // this.ac_token = this.token; // player.scene.userData.token;
+        this.ac_token =  playerself.scene.userData.token;
 
         var scope = this;
         this.ha_socket.addEventListener("message", (event) => {
@@ -48,7 +47,7 @@ export class HAWebSocket {
     authenticate() {
         this.send({
             "type": "auth",
-            "access_token": token 
+            "access_token": this.ac_token 
         });
     }
 
@@ -79,11 +78,11 @@ export class HARestAPI {
     
     async fetchDataFromHAAndUpdateScene() {
         try {
-            const api_url = "http//112.223.164.246:8123/api/states";
-            // const access_token = player.scene.userData.token;
+            const api_url = playerself.scene.userData.url + "/api/states";
+            const access_token = player.scene.userData.token;
             const response = await fetch(api_url, {
                 headers: {
-                    "Authorization": `Bearer ${token}`,
+                    "Authorization": `Bearer ${access_token}`,
                     "Content-Type": "application/json"
                 }
             });
