@@ -127,7 +127,7 @@ export class Wardrobe {
         leftDoor.position.x = -halfWidth / 2.0;
         leftDoor.position.y = pos_y;
         leftDoor.position.z = 0.0;
-        leftDoor.userData.type = 'door';
+        leftDoor.userData.type = 'ref_door';
         leftDoor.userData.pivotDir = 'left';
         leftDoor.userData.openDir = 'inward';
 
@@ -143,7 +143,7 @@ export class Wardrobe {
         rightDoor.position.x = halfWidth / 2.0;
         rightDoor.position.y = pos_y;
         rightDoor.position.z = 0.0;
-        rightDoor.userData.type = 'door';
+        rightDoor.userData.type = 'ref_door';
         rightDoor.userData.pivotDir = 'right';
         rightDoor.userData.openDir = 'inward';
 

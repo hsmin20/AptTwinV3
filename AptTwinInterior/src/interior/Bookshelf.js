@@ -36,6 +36,8 @@ export class Bookshelf {
             panelTexture = textureHelper.get('Wood', 4, 6); // 기본 Wood
         }
 
+        const bookTexture = textureHelper.get('Books', 1, 1);
+
         const panelDepth = 0.01;
 
         // Add Top & Bottom
@@ -82,20 +84,30 @@ export class Bookshelf {
         group.add(backPanel);
 
         // Add Layers
-        const layer_width = width - (panelDepth * 2);
-        const height_inside = height - (panelDepth * 2);
-        const one_layer_height = height_inside / noOfLayers;
-        let cur_height = -(height / 2.0 - one_layer_height);
-        for (let i = 1; i <= noOfLayers; i++) {
-            const layer = new THREE.Mesh(
-                new THREE.BoxGeometry(layer_width, panelDepth, depth),
-                new THREE.MeshStandardMaterial({ map: panelTexture })
-            );
-            layer.name = name + "_layer" + i;
-            layer.position.set(0, cur_height, 0);
-            group.add(layer);
-            cur_height += one_layer_height;
-        }
+        // const layer_width = width - (panelDepth * 2);
+        // const height_inside = height - (panelDepth * 2);
+        // const one_layer_height = height_inside / noOfLayers;
+        // let cur_height = -(height / 2.0 - one_layer_height);
+        // for (let i = 1; i <= noOfLayers; i++) {
+        //     const layer = new THREE.Mesh(
+        //         new THREE.BoxGeometry(layer_width, panelDepth, depth),
+        //         new THREE.MeshStandardMaterial({ map: panelTexture })
+        //     );
+        //     layer.name = name + "_layer" + i;
+        //     layer.position.set(0, cur_height, 0);
+        //     group.add(layer);
+        //     cur_height += one_layer_height;
+        // }
+
+        // Add Books
+        const bookPanel = new THREE.Mesh(
+            new THREE.BoxGeometry(width - panelDepth * 2, height - panelDepth * 2, panelDepth),
+            new THREE.MeshStandardMaterial({ map: bookTexture })
+        );
+
+        bookPanel.name = name + "_BookPanel";
+        bookPanel.position.set(0, 0, depth / 2 - panelDepth * 3);
+        group.add(bookPanel);
 
         group.position.y = height / 2.0;
 
@@ -112,9 +124,9 @@ export class Bookshelf {
                         <p>Name : <input type="text" id="bookshelfName" name="bookshelfName" value="_NAME_"> </p>
 
                         <h2>Desk size </h2>
-                        <p>Width : <input type="text" id="width" name="width" value="0.57">
-                           Height : <input type="text" id="height" name="height" value="1.5">
-                           Depth : <input type="text" id="depth" name="depth" value="0.3"></p>
+                        <p>Width : <input type="text" id="width" name="width" value="_WIDTH_">
+                           Height : <input type="text" id="height" name="height" value="_HEIGHT_">
+                           Depth : <input type="text" id="depth" name="depth" value="_DEPTH_"></p>
 
                         <div class="clearfix"></div>
                         <h2>No of Layers</h2>

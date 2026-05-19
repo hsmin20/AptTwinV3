@@ -52,7 +52,7 @@ class PhsyicsObject {
         const size = new THREE.Vector3();
         box.getSize(size)
 
-        const groupmass = size.x * size.y * size.z * 2000;
+        const groupmass = size.x * size.y * size.z * 70000;
 
 		const shape = new CANNON.Box(new CANNON.Vec3(size.x/2.0, size.y/2.0, size.z/2.0));
 		this.body = new CANNON.Body({ mass: groupmass })

@@ -6,6 +6,12 @@ export class HAWebSocket {
 
     constructor(playerself) {
         const base_url = playerself.scene.userData.url;
+
+        if(base_url == undefined) {
+            console.log('URL is not defined');
+            return;
+        }
+
         const url = "ws" + base_url.substring(4) + "/api/websocket";
         this.ha_socket = new WebSocket(url);
         this.ac_token =  playerself.scene.userData.token;
