@@ -16,7 +16,7 @@ import { RoomBuilder } from './RoomBuilder.js';
 
 const ObjectType = { NEW: 0, WALL: 1, FLOOR: 2, FLOOR2: 3, FLOOR3: 4, FLOOR4: 5, FLOOR5: 6, DOOR: 7, DOOR2: 8, WINDOW: 9, 
                             WINDOW2: 10, BATHTUB: 11, TOILET: 12, BATHSINK: 13, KITCHENSINK: 14, LIGHT: 15, LIGHT2: 16 };
-const Hinge = { NORMAL: 0, REVERSE: 1 };
+const Hinge = { NORMAL: 1, REVERSE: -1 };
 const HEIGHT = 2.5;
 
 var _DEFAULT_CAMERA = new THREE.PerspectiveCamera( 50, 1, 0.1, 1000 );
@@ -493,8 +493,10 @@ export class Editor {
 
         const type = element.type;
 
-        const pivotDir = (hinge == hinge.NORMAL) ? 'left' : 'right';
+        const pivotDir = (hinge == Hinge.NORMAL) ? 'left' : 'right';
         const openDir = 'outward'; // (angle > 180) ? 'inward' : 'outward'; //(angleSign == 0) ? 'outward' : 'inward';
+
+        // console.log("pivotDir = " + pivotDir + ", hinge = " + hinge);
 
         group.position.x = x;
         group.position.y = HEIGHT / 2.0;

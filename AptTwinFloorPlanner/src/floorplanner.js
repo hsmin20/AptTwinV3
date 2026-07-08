@@ -1,4 +1,4 @@
-import { Editor, Mode } from './editor.js';
+import { Editor, Mode, Action } from './editor.js';
 
 
 function createSVG() {
@@ -117,50 +117,61 @@ function handleMouseInLeftPanel(editor) {
     }
 }
 
+function resetBinder(editor) {
+    if (editor.binder != null) {
+        editor.binder.graph.remove();
+        delete editor.binder;
+
+        editor.binder = null;
+    }
+
+    editor.action = Action.NONE;
+}
+
 function handleButtonClick(editor) {
     var sb = document.getElementById("select");
-    sb.onclick = function() { editor.mode = Mode.SELECT; }
+    sb.onclick = function() { resetBinder(editor); editor.mode = Mode.SELECT; }
     var sb2 = document.getElementById("select2");
-    sb2.onclick = function() { editor.mode = Mode.SELECT_FLOOR; }
+    sb2.onclick = function() { resetBinder(editor); editor.mode = Mode.SELECT_FLOOR; }
     var dwb = document.getElementById("drawwall");
-    dwb.onclick = function() { editor.mode = Mode.DRAW_WALL; }
+    dwb.onclick = function() { resetBinder(editor); editor.mode = Mode.DRAW_WALL; }
     var dwb2 = document.getElementById("drawwall2");
-    dwb2.onclick = function() { editor.mode = Mode.DRAW_WALL2; }
+    dwb2.onclick = function() { resetBinder(editor); editor.mode = Mode.DRAW_WALL2; }
     var dfb = document.getElementById("drawfloor");
-    dfb.onclick = function() { editor.mode = Mode.DRAW_FLOOR; }
+    dfb.onclick = function() { resetBinder(editor); editor.mode = Mode.DRAW_FLOOR; }
     var dfb2 = document.getElementById("drawfloor2");
-    dfb2.onclick = function() { editor.mode = Mode.DRAW_FLOOR2; }
+    dfb2.onclick = function() { resetBinder(editor); editor.mode = Mode.DRAW_FLOOR2; }
     var dfb3 = document.getElementById("drawfloor3");
-    dfb3.onclick = function() { editor.mode = Mode.DRAW_FLOOR3; }
+    dfb3.onclick = function() { resetBinder(editor); editor.mode = Mode.DRAW_FLOOR3; }
     var dfb4 = document.getElementById("drawfloor4");
-    dfb4.onclick = function() { editor.mode = Mode.DRAW_FLOOR4; }
+    dfb4.onclick = function() { resetBinder(editor); editor.mode = Mode.DRAW_FLOOR4; }
     var dfb5 = document.getElementById("drawfloor5");
-    dfb5.onclick = function() { editor.mode = Mode.DRAW_FLOOR5; }
+    dfb5.onclick = function() { resetBinder(editor); editor.mode = Mode.DRAW_FLOOR5; }
     var ddb = document.getElementById("drawdoor");
-    ddb.onclick = function() { editor.mode = Mode.ADD_DOOR; }
+    ddb.onclick = function() { resetBinder(editor); editor.mode = Mode.ADD_DOOR; }
     var ddb2 = document.getElementById("drawdoor2");
-    ddb2.onclick = function() { editor.mode = Mode.ADD_DOOR2; }
+    ddb2.onclick = function() { resetBinder(editor); editor.mode = Mode.ADD_DOOR2; }
     var dwb2 = document.getElementById("drawwindow");
-    dwb2.onclick = function() { editor.mode = Mode.ADD_WINDOW; }
+    dwb2.onclick = function() { resetBinder(editor); editor.mode = Mode.ADD_WINDOW; }
     var dwb4 = document.getElementById("drawwindow2");
-    dwb4.onclick = function() { editor.mode = Mode.ADD_WINDOW2; }
+    dwb4.onclick = function() { resetBinder(editor); editor.mode = Mode.ADD_WINDOW2; }
 
     var abtb = document.getElementById("addbathtub");
-    abtb.onclick = function() { editor.mode = Mode.ADD_BATHTUB; }
+    abtb.onclick = function() { resetBinder(editor); editor.mode = Mode.ADD_BATHTUB; }
     var atb = document.getElementById("addtoilet");
-    atb.onclick = function() { editor.mode = Mode.ADD_TOILET; }
+    atb.onclick = function() { resetBinder(editor); editor.mode = Mode.ADD_TOILET; }
     var absb = document.getElementById("addbathsink");
-    absb.onclick = function() { editor.mode = Mode.ADD_BATHSINK; }
+    absb.onclick = function() { resetBinder(editor); editor.mode = Mode.ADD_BATHSINK; }
     var aksb = document.getElementById("addkitchensink");
-    aksb.onclick = function() { editor.mode = Mode.ADD_KITCHENSINK; }
+    aksb.onclick = function() { resetBinder(editor); editor.mode = Mode.ADD_KITCHENSINK; }
 
     var alb = document.getElementById("addlight");
-    alb.onclick = function() { editor.mode = Mode.ADD_LIGHT; }
+    alb.onclick = function() { resetBinder(editor); editor.mode = Mode.ADD_LIGHT; }
     var al2b = document.getElementById("addlight2");
-    al2b.onclick = function() { editor.mode = Mode.ADD_LIGHT2; }
+    al2b.onclick = function() { resetBinder(editor); editor.mode = Mode.ADD_LIGHT2; }
 
     var cb = document.getElementById("cut");
-    cb.onclick = function() { editor.mode = Mode.CUT; }
+    cb.onclick = function() { resetBinder(editor); editor.mode = Mode.CUT; }
 
     var deleteFunc = editor.deleteSome.bind(editor);
     var deteteBtn = document.getElementById('delete');

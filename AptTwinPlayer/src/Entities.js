@@ -52,40 +52,58 @@ class PhsyicsObject {
         const size = new THREE.Vector3();
         box.getSize(size)
 
-        const groupmass = size.x * size.y * size.z * 70000;
+        const groupmass = size.x * size.y * size.z * 100000;
 
 		const shape = new CANNON.Box(new CANNON.Vec3(size.x/2.0, size.y/2.0, size.z/2.0));
 		this.body = new CANNON.Body({ mass: groupmass })
 		this.body.addShape(shape);
 
-        const pos = this.obj.position;
-        const qua = this.obj.quaternion;
+        // const pos = this.obj.position;
+        // const qua = this.obj.quaternion;
 
-		this.body.position.x = pos.x;
-		this.body.position.y = pos.y;
-		this.body.position.z = pos.z;
+		// Use WORLD position/quaternion, not local
+        const pos = new THREE.Vector3();
+        const qua = new THREE.Quaternion();
+        this.obj.getWorldPosition(pos);
+        this.obj.getWorldQuaternion(qua);
 
-		this.body.quaternion.x = qua.x;
-		this.body.quaternion.y = qua.y;
-		this.body.quaternion.z = qua.z;
-		this.body.quaternion.w = qua.w;
+        this.body.position.set(pos.x, pos.y, pos.z);
+        this.body.quaternion.set(qua.x, qua.y, qua.z, qua.w);
 
         physicsWorld.addBody(this.body);
     }
 
     updateToPhysicsBody() {
-        this.obj.position.set(
-            this.body.position.x,
-            this.body.position.y,
-            this.body.position.z
-        )
+        // this.obj.position.set(
+        //     this.body.position.x,
+        //     this.body.position.y,
+        //     this.body.position.z
+        // )
 
-        this.obj.quaternion.set(
-            this.body.quaternion.x,
-            this.body.quaternion.y,
-            this.body.quaternion.z,
-            this.body.quaternion.w
-        )
+        // this.obj.quaternion.set(
+        //     this.body.quaternion.x,
+        //     this.body.quaternion.y,
+        //     this.body.quaternion.z,
+        //     this.body.quaternion.w
+        // )
+        if (this.obj.parent) {
+            const worldPos = new THREE.Vector3(
+                this.body.position.x, this.body.position.y, this.body.position.z
+            );
+            this.obj.parent.worldToLocal(worldPos);
+            this.obj.position.copy(worldPos);
+
+            const worldQuat = new THREE.Quaternion(
+                this.body.quaternion.x, this.body.quaternion.y,
+                this.body.quaternion.z, this.body.quaternion.w
+            );
+            const parentWorldQuat = new THREE.Quaternion();
+            this.obj.parent.getWorldQuaternion(parentWorldQuat);
+            this.obj.quaternion.copy(parentWorldQuat.invert().multiply(worldQuat));
+        } else {
+            this.obj.position.set(this.body.position.x, this.body.position.y, this.body.position.z);
+            this.obj.quaternion.set(this.body.quaternion.x, this.body.quaternion.y, this.body.quaternion.z, this.body.quaternion.w);
+        }
     }
 }
 

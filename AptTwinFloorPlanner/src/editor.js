@@ -9,7 +9,7 @@ import { Window, Window2 } from './window.js';
 import { Light, Light2 } from './light.js';
 import { Bathtub, Toilet, Bathsink, Kitchensink } from './bathobjects.js';
 
-const Action = { NONE: 0, CLICKED: 1, MOVE: 2 };
+export const Action = { NONE: 0, CLICKED: 1, MOVE: 2 };
 export const Mode = { SELECT: 0, SELECT_FLOOR: 1, DRAW_WALL: 2, DRAW_WALL2: 3, BIND: 4, EDIT: 5, CUT: 6, DRAW_FLOOR: 7, DRAW_FLOOR2: 8, DRAW_FLOOR3: 9, 
                         DRAW_FLOOR4: 10, DRAW_FLOOR5: 11, ADD_DOOR: 12, ADD_DOOR2: 13, ADD_WINDOW: 14, ADD_WINDOW2: 15, OBJECT: 16, EDIT_DOOR: 17,
                         EDIT_WINDOW: 18, EDIT_FLOOR: 19, ADD_BATHTUB: 20, ADD_TOILET: 21, ADD_BATHSINK: 22, ADD_KITCHENSINK: 23, ADD_LIGHT: 24,
@@ -135,13 +135,13 @@ export class Editor {
 
     cursor(tool) {
         if (tool === 'grab') 
-            tool = "url('https://wiki.openmrs.org/s/en_GB/7502/b9217199c27dd617c8d51f6186067d7767c5001b/_/images/icons/emoticons/add.png') 8 8, auto";
+            tool = "url('https://openmrs.atlassian.net/wiki/s/en_GB/7502/b9217199c27dd617c8d51f6186067d7767c5001b/_/images/icons/emoticons/add.png') 8 8, auto";
         if (tool === 'scissor') 
             tool = "url('https://maxcdn.icons8.com/windows10/PNG/64/Hands/hand_scissors-64.png'), auto";
         if (tool === 'trash') 
             tool = "url('https://cdn4.iconfinder.com/data/icons/common-toolbar/36/Cancel-32.png'), auto";
         if (tool === 'validation') 
-            tool = "url('https://images.fatguymedia.com/wp-content/uploads/2015/09/check.png'), auto";
+            tool = "url('https://openmrs.atlassian.net/wiki/s/en_GB/7502/b9217199c27dd617c8d51f6186067d7767c5001b/_/images/icons/emoticons/check.png') 8 8, auto";
         this.floorplannerElement.style.cursor = tool;
     }
 
@@ -1152,6 +1152,8 @@ export class Editor {
 
         this.mode = Mode.EDIT_FLOOR;
         this.binder.type = Binder.RECTNODE;
+
+        // console.log("start : " + floor.start.x + ", " + floor.start.y + " - end : " + floor.end.x + ", " + floor.end.y);
     }
 
      _mouseDownRectNode() {
@@ -1354,6 +1356,8 @@ export class Editor {
         // BIND CIRCLE IF nearNode and GROUP ALL SAME XY SEG POINTS
         var wallNode = Util.nearWallNode(this.arWalls, snap, BIND_CIRCLE_DISTANCE);
         if (wallNode != null) {
+
+            // console.log("circle_binder hover : " + wallNode.x + ", " + wallNode.y + " best = " + wallNode.bestWall);
             if (this.binder == null || this.binder.type == Binder.NODE) {
                 this.binder = qSVG.create('boxBind', 'circle', {
                     id: "circlebinder",
@@ -1602,6 +1606,8 @@ export class Editor {
 
         var wallNode = Util.nearWallNode(this.arWalls, snap, BIND_CIRCLE_DISTANCE);
         if (wallNode != null) {
+            // console.log("circle_binder : " + wallNode.x + ", " + wallNode.y);
+
             this.pox = wallNode.x;
             this.poy = wallNode.y;
             this.cursor('grab');
@@ -1948,7 +1954,7 @@ export class Editor {
                     const length = 24; // 0.4m
                     this.binder = new Bathsink({x:wallSelect.x, y:wallSelect.y}, 0, 0, width, length);
                 } else if(this.mode == Mode.ADD_KITCHENSINK) {
-                    const width = 132; // 2.2m
+                    const width = 120; // 2.0m
                     const length = 30; // 0.5m
                     this.binder = new Kitchensink({x:wallSelect.x, y:wallSelect.y}, 0, 0, width, length);
                 }
@@ -2970,7 +2976,7 @@ export class Editor {
             this.cury = helpConstrucEnd.y;
         }
 
-        this.wallEndConstruc = Util.nearWall(this.arWalls, snap, 12)
+        this.wallEndConstruc = Util.nearWall(this.arWalls, snap, 10)
         if (this.wallEndConstruc != null) { // TO SNAP SEGMENT TO FINALIZE X2Y2
             this.curx = this.wallEndConstruc.x;
             this.cury = this.wallEndConstruc.y;

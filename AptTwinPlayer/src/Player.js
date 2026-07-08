@@ -49,8 +49,8 @@ export class Player {
 		// this.renderer.autoClear = false; // For HUD, uncomment this. This could be located in render loop to toggle
         // this.renderer.localClippingEnabled = true;
 
-        // this.webSockerUpdater = new HAWebSocket(this);
-        // this.restUpdater = new HARestAPI(this);
+        this.webSockerUpdater = new HAWebSocket(this);
+        this.restUpdater = new HARestAPI(this);
 
         this.updating = false;
         
@@ -229,12 +229,12 @@ export class Player {
         }
     }
 
-	initLight() {
-		// ambient light
-		var ambientLight = new THREE.AmbientLight (0xFFFFFF, 1)
+	// initLight() {
+	// 	// ambient light
+	// 	var ambientLight = new THREE.AmbientLight (0xFFFFFF, 1)
 
-		this.scene.add(ambientLight)
-	}
+	// 	this.scene.add(ambientLight)
+	// }
 
     movePlayer(yawpitch) {
         // Camera follows player body
