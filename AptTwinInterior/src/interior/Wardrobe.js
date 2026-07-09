@@ -26,6 +26,8 @@ export class Wardrobe {
         let parent = editor.getFurniture();
         editor.execute( new AddGroupCommand( editor, group, parent ) );
 
+        const doorDepth = 0.03;
+
         // Add Top & Bottom
         const panelDepth = 0.01;
         let panelTexture = textureHelper.get('WhiteWood', 4, 6);
@@ -34,7 +36,7 @@ export class Wardrobe {
         topPanel.name = name + "_TopPanel";
         topPanel.position.x = 0.0;
         topPanel.position.y = (height - panelDepth) / 2.0;
-        topPanel.position.z = 0.0;
+        topPanel.position.z = -doorDepth / 2.0;
 
         group.children.push( topPanel );
         topPanel.parent = group;
@@ -43,7 +45,7 @@ export class Wardrobe {
         bottomPanel.name = name + "_BottomPanel";
         bottomPanel.position.x = 0.0;
         bottomPanel.position.y = -(height - panelDepth) / 2.0;
-        bottomPanel.position.z = 0.0;
+        bottomPanel.position.z = -doorDepth / 2.0;
 
         group.children.push( bottomPanel );
         bottomPanel.parent = group;
@@ -53,7 +55,7 @@ export class Wardrobe {
         leftPanel.name = name + "_LeftPanel";
         leftPanel.position.x = -(width - panelDepth) / 2.0;
         leftPanel.position.y = 0.0;
-        leftPanel.position.z = 0.0;
+        leftPanel.position.z = -doorDepth / 2.0;
 
         group.children.push( leftPanel );
         leftPanel.parent = group;
@@ -62,7 +64,7 @@ export class Wardrobe {
         rightPanel.name = name + "_RightPanel";
         rightPanel.position.x = (width - panelDepth) / 2.0;
         rightPanel.position.y = 0.0;
-        rightPanel.position.z = 0.0;
+        rightPanel.position.z = -doorDepth / 2.0;
 
         group.children.push( rightPanel );
         rightPanel.parent = group;
@@ -72,7 +74,7 @@ export class Wardrobe {
         backPanel.name = name + "_BackPanel";
         backPanel.position.x = 0.0;
         backPanel.position.y = 0.0;
-        backPanel.position.z = -(depth - panelDepth) / 2.0;
+        backPanel.position.z = -(depth - panelDepth) / 2.0 - doorDepth / 2.0;
 
         group.children.push( backPanel );
         backPanel.parent = group;
@@ -88,20 +90,18 @@ export class Wardrobe {
         pole.name = name + "_pole";
         pole.position.x = 0.0;
         pole.position.y = height / 2.0 - offset_y;
-        pole.position.z = 0.0;
+        pole.position.z = -doorDepth / 2.0;
         pole.rotation.z = Math.PI / 2.0;
 
         group.children.push( pole );
         pole.parent = group;
 
-        // Add 2 doors
-        const doorDepth = 0.03;
-        
+        // Add 2 doors        
         const doorGroup = new THREE.Group();
         doorGroup.name = 'DoorGroup';
         doorGroup.position.x = 0;
         doorGroup.position.y = 0;
-        doorGroup.position.z = (depth + doorDepth) / 2.0;
+        doorGroup.position.z = (depth + doorDepth) / 2.0 - doorDepth / 2.0;
 
         group.children.push( doorGroup );
         doorGroup.parent = group;
@@ -152,15 +152,6 @@ export class Wardrobe {
 
         // Add drawers
         if(wardrobetype == 'drawer') {
-            const bottomPanel2 = new THREE.Mesh( new THREE.BoxGeometry(width, panelDepth, depth-panelDepth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
-            bottomPanel2.name = name + "_BottomPanel2";
-            bottomPanel2.position.x = 0.0;
-            bottomPanel2.position.y = height / 3.0 + panelDepth / 2.0;
-            bottomPanel2.position.z = 0.0;
-
-            group.children.push( bottomPanel2 );
-            bottomPanel2.parent = group;
-
             const drawersTotalHeight = height / 3.0;
             const oneDrawerHeight = drawersTotalHeight / noOfDrawers;
             const drawerWidth = width - (panelDepth * 2);
@@ -179,7 +170,7 @@ export class Wardrobe {
                 drawer.userData.type = 'drawer';
                 drawer.position.x = 0.0;
                 drawer.position.y = pos_y;
-                drawer.position.z = 0.0;
+                drawer.position.z = -doorDepth / 2.0;
 
 
                 group.children.push( drawer );
@@ -187,6 +178,15 @@ export class Wardrobe {
 
                 pos_y += oneDrawerHeight;
             }
+
+            const bottomPanel2 = new THREE.Mesh( new THREE.BoxGeometry(width, panelDepth, depth-panelDepth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
+            bottomPanel2.name = name + "_BottomPanel2";
+            bottomPanel2.position.x = 0.0;
+            bottomPanel2.position.y = height / 3.0 + panelDepth / 2.0 - height / 2.0;
+            bottomPanel2.position.z = -doorDepth / 2.0;
+
+            group.children.push( bottomPanel2 );
+            bottomPanel2.parent = group;
         }
 
         group.position.y = height / 2.0;
@@ -240,7 +240,7 @@ export class Wardrobe {
         let width = '0.95';
         let height = '2.06';
         let depth = '0.6';
-        let wardrobetype = 'Wood';
+        let wardrobetype = 'Long';
         let noOfDrawers = '3';
         if(modify && editor.selected) {
             name = editor.selected.name;

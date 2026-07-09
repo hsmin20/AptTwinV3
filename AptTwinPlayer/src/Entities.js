@@ -41,31 +41,56 @@ class Light {
 
 class PhsyicsObject {
     constructor(object, physicsWorld) {
-        // object is actually a group 
+        // object is actually a group
         this.obj = object;
 
+        // Make sure this object's (and its parents') world matrices are current
+        this.obj.updateWorldMatrix(true, false);
+
+        // --- Measure the object's own bounding box in a clean local frame ---
         const clone = object.clone();
-        clone.rotation.x = 0;
-        clone.rotation.y = 0;
-        clone.rotation.z = 0;
+        clone.position.set(0, 0, 0);
+        clone.rotation.set(0, 0, 0);
+        clone.scale.set(1, 1, 1);
+        clone.updateMatrixWorld(true);
+
         const box = new THREE.Box3().setFromObject(clone, true);
         const size = new THREE.Vector3();
-        box.getSize(size)
+        box.getSize(size);
 
-        const groupmass = size.x * size.y * size.z * 100000;
+        // Offset between the object's own local origin (0,0,0) and the
+        // actual geometric center of its visual bounding box
+        const localCenter = new THREE.Vector3();
+        box.getCenter(localCenter);
+        this.centerOffset = localCenter.clone();
 
-		const shape = new CANNON.Box(new CANNON.Vec3(size.x/2.0, size.y/2.0, size.z/2.0));
-		this.body = new CANNON.Body({ mass: groupmass })
-		this.body.addShape(shape);
+        // Realistic density-based mass instead of an arbitrary huge multiplier
+        const density = 500; // kg/m^3, roughly wood furniture
+        const groupmass = size.x * size.y * size.z * density;
 
-        // const pos = this.obj.position;
-        // const qua = this.obj.quaternion;
+        const shape = new CANNON.Box(new CANNON.Vec3(size.x / 2.0, size.y / 2.0, size.z / 2.0));
+        this.body = new CANNON.Body({ mass: groupmass });
+        this.body.addShape(shape);
 
-		// Use WORLD position/quaternion, not local
+        this.body.linearDamping = 0.4;
+        this.body.angularDamping = 0.9;
+
+        this.body.allowSleep = true;
+        this.body.sleepSpeedLimit = 0.05;
+        this.body.sleepTimeLimit = 0.5;
+
+        this.body.updateMassProperties();
+
+        // Use WORLD position/quaternion, not local
         const pos = new THREE.Vector3();
         const qua = new THREE.Quaternion();
         this.obj.getWorldPosition(pos);
         this.obj.getWorldQuaternion(qua);
+
+        // Shift position by the bbox-center offset, rotated into world space,
+        // so the physics box is centered where the mesh actually is
+        const worldOffset = this.centerOffset.clone().applyQuaternion(qua);
+        pos.add(worldOffset);
 
         this.body.position.set(pos.x, pos.y, pos.z);
         this.body.quaternion.set(qua.x, qua.y, qua.z, qua.w);
@@ -74,39 +99,37 @@ class PhsyicsObject {
     }
 
     updateToPhysicsBody() {
-        // this.obj.position.set(
-        //     this.body.position.x,
-        //     this.body.position.y,
-        //     this.body.position.z
-        // )
+        const bodyQuat = new THREE.Quaternion(
+            this.body.quaternion.x, this.body.quaternion.y,
+            this.body.quaternion.z, this.body.quaternion.w
+        );
 
-        // this.obj.quaternion.set(
-        //     this.body.quaternion.x,
-        //     this.body.quaternion.y,
-        //     this.body.quaternion.z,
-        //     this.body.quaternion.w
-        // )
+        // Reverse the bbox-center offset to get back to the object's origin
+        const worldOffset = this.centerOffset.clone().applyQuaternion(bodyQuat);
+
+        const bodyPos = new THREE.Vector3(
+            this.body.position.x, this.body.position.y, this.body.position.z
+        );
+        bodyPos.sub(worldOffset);
+
         if (this.obj.parent) {
-            const worldPos = new THREE.Vector3(
-                this.body.position.x, this.body.position.y, this.body.position.z
-            );
-            this.obj.parent.worldToLocal(worldPos);
-            this.obj.position.copy(worldPos);
+            const localPos = bodyPos.clone();
+            this.obj.parent.worldToLocal(localPos);
+            this.obj.position.copy(localPos);
 
-            const worldQuat = new THREE.Quaternion(
-                this.body.quaternion.x, this.body.quaternion.y,
-                this.body.quaternion.z, this.body.quaternion.w
-            );
             const parentWorldQuat = new THREE.Quaternion();
             this.obj.parent.getWorldQuaternion(parentWorldQuat);
-            this.obj.quaternion.copy(parentWorldQuat.invert().multiply(worldQuat));
+            this.obj.quaternion.copy(parentWorldQuat.invert().multiply(bodyQuat));
         } else {
-            this.obj.position.set(this.body.position.x, this.body.position.y, this.body.position.z);
-            this.obj.quaternion.set(this.body.quaternion.x, this.body.quaternion.y, this.body.quaternion.z, this.body.quaternion.w);
+            this.obj.position.copy(bodyPos);
+            this.obj.quaternion.copy(bodyQuat);
         }
+
+        // if(this.obj.name == 'Wardrobe_1')
+        //      console.log(this.body.velocity.x, this.body.velocity.y, this.body.velocity.z, this.body.position);
     }
 }
-
+ 
 class PlaneWall {
     constructor(object, physicsWorld) {
         this.object = object;
@@ -114,7 +137,7 @@ class PlaneWall {
 
         const geometry = object.geometry;
         const parameters = geometry.parameters;
-        const width = parameters.width;
+        const width = parameters.width; 
         const height = parameters.height;
         const depth = 0.0001;
 

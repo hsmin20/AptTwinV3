@@ -182,15 +182,26 @@ export class Player {
 
         // Are these needed?
         this.cannonWorld.broadphase = new CANNON.NaiveBroadphase();
-        this.cannonWorld.solver.iterations = 10;
+        this.cannonWorld.solver.iterations = 30;
+        this.cannonWorld.defaultContactMaterial.contactEquationStiffness = 1e7;
+        this.cannonWorld.defaultContactMaterial.contactEquationRelaxation = 4;
 
         // prevent from falling... maybe change later
-        const planeShape = new CANNON.Plane();
-		const planeBody = new CANNON.Body({ mass: 0 });
-		planeBody.addShape(planeShape);
-		planeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
-        planeBody.position.y = 0.0;
-		this.cannonWorld.addBody(planeBody);
+        // const planeShape = new CANNON.Plane();
+		// const planeBody = new CANNON.Body({ mass: 0 });
+		// planeBody.addShape(planeShape);
+		// planeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
+        // planeBody.position.y = 0.0;
+		// this.cannonWorld.addBody(planeBody);
+
+        const groundSize = 50; // big enough to cover your scene
+        const groundThickness = 1;
+
+        const groundShape = new CANNON.Box(new CANNON.Vec3(groundSize / 2, groundThickness / 2, groundSize / 2));
+        const planeBody = new CANNON.Body({ mass: 0 });
+        planeBody.addShape(groundShape);
+        planeBody.position.set(0, -groundThickness / 2, 0); // top surface sits at y = 0
+        this.cannonWorld.addBody(planeBody);
     }
 
     createPlayerBody() {
@@ -255,7 +266,8 @@ export class Player {
 		this.timer.update(); 
         let delta = this.timer.getDelta();
 
-        this.cannonWorld.step(delta);
+        const maxDt = 1 / 30;
+        this.cannonWorld.step(1 / 60, Math.min(delta, maxDt), 3);
 
         const yawpitch = this.control.run(delta);
         if(yawpitch != null)

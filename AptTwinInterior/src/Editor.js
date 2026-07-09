@@ -181,14 +181,22 @@ export class Editor {
 
     // Recent version has a bug exporting Camera so it's commented
     async fromJSON ( json ) {
-		var loader = new THREE.ObjectLoader(); // A loader for loading a JSON resource
+		// var loader = new THREE.ObjectLoader(); // A loader for loading a JSON resource
 		// var camera = await loader.parseAsync( json.camera );
 
 		// copy all properties, including uuid
 		// this.camera.copy( camera );
 		// this.camera.uuid = camera.uuid;
 
-		this.setScene( await loader.parseAsync( json.scene ) );
+		// this.setScene( await loader.parseAsync( json.scene ) );
+
+        const manager = new THREE.LoadingManager();
+        manager.onError = (url) => console.error('로드 실패:', url);
+        const loader = new THREE.ObjectLoader(manager);
+
+        const scene = loader.parse(json.scene);
+
+        this.setScene(scene);
 
         saveState();
         this.sidebar.refreshUI();

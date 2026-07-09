@@ -505,24 +505,25 @@ export class Editor {
 
         let doorLTexture  = null;
         let doorRTexture = null;
+        let doorSideTexture = null;
 
         if(type == ObjectType.DOOR) {
             const doorLeftTexture = (hinge == Hinge.NORMAL) ? 'DoorLeft' : 'DoorRight';
             const doorRightTexture = (hinge == Hinge.NORMAL) ? 'DoorRight' : 'DoorLeft';
             doorLTexture  = textureHelper.get(doorLeftTexture, 1, 1);
             doorRTexture = textureHelper.get(doorRightTexture, 1, 1);
+            doorSideTexture = textureHelper.get('Wood', 1, 5);
         } else if(type == ObjectType.DOOR2) {
             const doorLeftTexture = (hinge == Hinge.NORMAL) ? 'FrontDoorLeft' : 'FrontDoorRight';
             const doorRightTexture = (hinge == Hinge.NORMAL) ? 'FrontDoorRight' : 'FrontDoorLeft';
             doorLTexture  = textureHelper.get(doorLeftTexture, 1, 1);
             doorRTexture = textureHelper.get(doorRightTexture, 1, 1);
+            doorSideTexture = textureHelper.get('WhitePlastic', 1, 5);
         }
-
-        const woodTexture = textureHelper.get('Wood', 1, 5);
 
         const depth = 0.1;
         const door = new THREE.Mesh( new THREE.BoxGeometry(width, HEIGHT, depth), [  
-            new THREE.MeshStandardMaterial( { map: woodTexture } ), new THREE.MeshStandardMaterial( { map: woodTexture } ), 
+            new THREE.MeshStandardMaterial( { map: doorSideTexture } ), new THREE.MeshStandardMaterial( { map: doorSideTexture } ), 
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), 
             new THREE.MeshStandardMaterial( { map: doorRTexture } ), new THREE.MeshStandardMaterial( { map: doorLTexture } )
         ] );

@@ -121,13 +121,14 @@ export class TVTable {
                 group.add(drawerFront);
 
                 // 손잡이 (Metal 고정)
+                const radius = 0.02;
                 const handle = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.02, 0.02, 0.1, 16),
+                    new THREE.CylinderGeometry(radius, radius, 0.1, 16),
                     new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 1.0, roughness: 0.3 })
                 );
                 handle.rotation.z = Math.PI / 2;
                 handle.name = name + "_drawer" + i + "_handle";
-                handle.position.set(cur_x, -panelDepth / 2.0, depth / 2.0 + 0.05);
+                handle.position.set(cur_x, -panelDepth / 2.0, (depth + radius) / 2.0);
                 group.add(handle);
 
                 cur_x += one_layer_width;

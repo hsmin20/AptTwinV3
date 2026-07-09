@@ -161,8 +161,8 @@ export class Bookshelf {
 
         let name = 'BookShelf_1';
         let width = '1.2';
-        let height = '1.0';
-        let depth = '0.75';
+        let height = '2.0';
+        let depth = '0.35';
         let noOfLayers = '4';
         let frametype = "Wood";
         if(modify && editor.selected) {
