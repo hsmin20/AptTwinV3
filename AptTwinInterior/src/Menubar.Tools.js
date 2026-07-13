@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { UIPanel, UIRow, UIHorizontalRule } from '../../src_common/libs/ui.js';
 import { SetValueCommand } from '../../src_common/commands/SetValueCommand.js';
+import { saveState } from './AptTwinInterior.js';
 
 export class MenubarTools {
     constructor( editor ) {
@@ -88,6 +89,24 @@ export class MenubarTools {
                 alert('Done downloading');
             } catch (error) {
                 console.error('Error fetching data:', error);
+            }
+        } );
+        options.add( option );
+
+        options.add( new UIHorizontalRule() );
+
+        // Start Position
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Set a Starting Point with selected Human' );
+        option.onClick( () => {
+            const human = editor.selected;
+            if ( human !== undefined && human.userData.interiorType == "Human") {
+                human.userData.thisIsMe = true;
+                
+                saveState();
+
+                alert("Start Point Saved");
             }
         } );
         options.add( option );

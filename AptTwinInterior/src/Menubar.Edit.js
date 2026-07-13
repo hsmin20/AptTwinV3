@@ -24,6 +24,7 @@ import { GasRange } from './interior/GasRange.js';
 import { RobotVacuum } from './interior/RobotVacuum.js';
 import { Dog } from './interior/Dog.js';
 import { Cat } from './interior/Cat.js';
+import { Human } from './interior/Human.js';
 
 import { setDBConnection, showDBidConnection } from './DBidDialog.js';
 
@@ -227,7 +228,7 @@ export class MenubarEdit {
         } );
         applianceSubmenu.add( option );
 
-         // Pets
+        // Pets
         const petSubmenuTitle = new UIRow().setTextContent( 'Pets' ).addClass( 'option' ).addClass( 'submenu-title' );
         petSubmenuTitle.onMouseOver( function () {
             const { top, right } = petSubmenuTitle.dom.getBoundingClientRect();
@@ -261,6 +262,41 @@ export class MenubarEdit {
             Cat.add(editorscope);
         } );
         petSubmenu.add( option );
+
+        // Humans
+        const humanSubmenuTitle = new UIRow().setTextContent( 'Humans' ).addClass( 'option' ).addClass( 'submenu-title' );
+        humanSubmenuTitle.onMouseOver( function () {
+            const { top, right } = humanSubmenuTitle.dom.getBoundingClientRect();
+            const { paddingTop } = getComputedStyle( this.dom );
+            humanSubmenu.setLeft( right + 'px' );
+            humanSubmenu.setTop( top - parseFloat( paddingTop ) + 'px' );
+            humanSubmenu.setStyle( 'max-height', [ `calc( 100vh - ${top}px )` ] );
+            humanSubmenu.setDisplay( 'block' );
+
+        } );
+        humanSubmenuTitle.onMouseOut( function () {
+            humanSubmenu.setDisplay( 'none' );
+        } );
+        options.add( humanSubmenuTitle );
+
+        const humanSubmenu = new UIPanel().setPosition( 'fixed' ).addClass( 'options' ).setDisplay( 'none' );
+        humanSubmenuTitle.add( humanSubmenu );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Male' );
+        option.onClick( function () {
+            Human.add(editorscope, 1);
+        } );
+        humanSubmenu.add( option );
+
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Female' );
+        option.onClick( function () {
+            Human.add(editorscope, -1);
+        } );
+        humanSubmenu.add( option );
 
         //============================Horizontal
         options.add( new UIHorizontalRule() );

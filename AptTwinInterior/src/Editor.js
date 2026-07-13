@@ -194,9 +194,7 @@ export class Editor {
         manager.onError = (url) => console.error('로드 실패:', url);
         const loader = new THREE.ObjectLoader(manager);
 
-        const scene = loader.parse(json.scene);
-
-        this.setScene(scene);
+        this.setScene( await loader.parseAsync( json.scene ) );
 
         saveState();
         this.sidebar.refreshUI();
@@ -453,5 +451,16 @@ export class Editor {
         }
         
         return pet;
+    }
+
+    getHuman() {
+        let human = this.scene.getObjectByName('Human');
+        if(human == undefined) {
+            human = new THREE.Group();
+            human.name = 'Human';
+            this.scene.add(human);
+        }
+        
+        return human;
     }
 }

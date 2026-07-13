@@ -179,7 +179,7 @@ export class Wardrobe {
                 pos_y += oneDrawerHeight;
             }
 
-            const bottomPanel2 = new THREE.Mesh( new THREE.BoxGeometry(width, panelDepth, depth-panelDepth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
+            const bottomPanel2 = new THREE.Mesh( new THREE.BoxGeometry(width, panelDepth, depth), new THREE.MeshStandardMaterial( { map: panelTexture} ) );
             bottomPanel2.name = name + "_BottomPanel2";
             bottomPanel2.position.x = 0.0;
             bottomPanel2.position.y = height / 3.0 + panelDepth / 2.0 - height / 2.0;

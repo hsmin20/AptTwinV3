@@ -63,18 +63,25 @@ export class Player {
         return this.mobile;
     }
 
-    loadScene(data) {
+    async loadScene(data) {
         // Clear first
         this.scene.clear();
 
         var loader = new THREE.ObjectLoader(); // A loader for loading a JSON resource
-		// this.camera = loader.parse( data.camera );
-        this.setScene( loader.parse( data.scene ) );
 
-        if(!this.mobile) {
-            this.camera.position.set(0, 1.5, 0);
-            this.camera.lookAt(new THREE.Vector3(0, 1.2, 0));
-        }
+        this.setScene( await loader.parseAsync( data.scene ) );
+
+        let playerscope = this;
+        this.scene.traverse(function(object) {
+            if(object.userData.thisIsMe != undefined) {
+                if(object.userData.thisIsMe == true) {
+                    playerscope.playerBody.position.copy(object.position);
+                    playerscope.playerBody.quaternion.copy(object.quaternion);
+
+                    playerscope.scene.remove(object);
+                }
+            }
+        });
 
 		this.entityManager = new EntityManager(this.scene, this.cannonWorld);
 
@@ -262,6 +269,9 @@ export class Player {
 
 	animate() {
 		requestAnimationFrame(this.animate.bind(this));
+
+        if(this.entityManager == undefined)
+            return;
 
 		this.timer.update(); 
         let delta = this.timer.getDelta();

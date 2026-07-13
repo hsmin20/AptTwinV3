@@ -65,7 +65,7 @@ if(isSample|| house_id != -1) {
     player.storage.init(function() {});
     try {
         if(isSample) {
-            house_id = 47;
+            house_id = 105;
         }
         const url = './download_model.php?tblname=Houses&house_id=' + house_id;
         const response = await fetch(url);

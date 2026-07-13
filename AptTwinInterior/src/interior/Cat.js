@@ -221,9 +221,9 @@ export class Cat {
             var name = inputNameBox.value;
             const cattype = document.querySelector('input[name=cattype]:checked').value;
 
-            document.body.removeChild(dialog)
+            document.body.removeChild(dialog);
             
-            this.add_Internal(editor, name, cattype, oldPos, oldRot)
+            this.add_Internal(editor, name, cattype, oldPos, oldRot);
         });
 
         catTypeDialog.showModal();
