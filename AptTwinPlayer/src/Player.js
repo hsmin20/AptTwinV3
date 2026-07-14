@@ -71,16 +71,31 @@ export class Player {
 
         this.setScene( await loader.parseAsync( data.scene ) );
 
+        const toRemove = [];
+
         let playerscope = this;
         this.scene.traverse(function(object) {
             if(object.userData.thisIsMe != undefined) {
                 if(object.userData.thisIsMe == true) {
                     playerscope.playerBody.position.copy(object.position);
-                    playerscope.playerBody.quaternion.copy(object.quaternion);
+                    playerscope.playerBody.quaternion.set(object.quaternion.x, object.quaternion.y, object.quaternion.z, object.quaternion.w);
 
-                    playerscope.scene.remove(object);
+                    // NEW: derive yaw/pitch from the object's orientation
+                    const euler = new THREE.Euler().setFromQuaternion(object.quaternion, 'YXZ');
+                    playerscope.control.yaw   = euler.y + Math.PI;
+                    playerscope.control.pitch = euler.x;
+
+                    // Apply immediately so camera matches on load, before any mouse input
+                    playerscope.movePlayer([playerscope.control.yaw, playerscope.control.pitch]);
+
+                    // Remove from actual parent, not necessarily the scene
+                    toRemove.push(object);
                 }
             }
+        });
+
+        toRemove.forEach(obj => {
+            if (obj.parent) obj.parent.remove(obj);
         });
 
 		this.entityManager = new EntityManager(this.scene, this.cannonWorld);
