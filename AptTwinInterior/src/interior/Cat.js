@@ -7,6 +7,31 @@ import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class Cat {
     static add_Internal(editor, name, cattype, oldPos, oldRot) {
+        if(cattype == 'cat1' || cattype == 'cat2') {
+            this.addOldCat(editor, name, cattype, oldPos, oldRot);
+        } else {
+            this.addClaudeCat(editor, name, cattype, oldPos, oldRot);
+        }
+    }
+
+    static addClaudeCat(editor, name, cattype, oldPos, oldRot) {
+        const cat = new ClaudeCat();
+        const group = cat.getGroup();
+        group.userData.isInterior = true;
+        group.userData.interiorType = 'Cat';
+        group.userData.DBid = 'n/a';
+        group.userData.catType = cattype;
+
+        if(oldPos != null)
+            group.position.copy(oldPos);
+        if(oldRot != null)
+            group.rotation.copy(oldRot);
+
+        let parent = editor.getPet();
+        editor.execute( new AddGroupCommand( editor, group, parent ) );
+    }
+
+    static addOldCat(editor, name, cattype, oldPos, oldRot) {
         // Add a group first
         const group = new THREE.Group();
         group.name = name;
@@ -165,6 +190,13 @@ export class Cat {
                             <br>
                             <input type="radio" id="cat2" name="cattype" value="cat2">Cat 2
                         </div>
+
+                        <div class="gallery">
+                            <img src="./images/claudecat.jpg" alt="cat3" style="width:160px; height:140px;">
+                            <br>
+                            <input type="radio" id="cat3" name="cattype" value="cat3">Claude Cat
+                        </div>
+
                     </div>
                     <div class="clearfix"></div>
 
@@ -227,5 +259,140 @@ export class Cat {
         });
 
         catTypeDialog.showModal();
+    }
+}
+
+// ---------- Shared materials ----------
+const defaultMaterials = {
+  fur: new THREE.MeshStandardMaterial({ color: 0xd9a066, roughness: 0.85 }),
+  furDark: new THREE.MeshStandardMaterial({ color: 0x8a5a2e, roughness: 0.85 }),
+  nose: new THREE.MeshStandardMaterial({ color: 0xdb7a8c, roughness: 0.5 }),
+  eye: new THREE.MeshStandardMaterial({ color: 0x7ec97e, roughness: 0.3 }),
+  pupil: new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.3 }),
+  whisker: new THREE.MeshStandardMaterial({ color: 0xf0f0f0, roughness: 0.6 }),
+};
+
+// ---------- Cat class ----------
+// Builds a simple, stylized cat out of primitive geometries and exposes an
+// update() method for a gentle idle animation (tail sway + breathing).
+class ClaudeCat {
+    constructor({ position = { x: 0, y: 0, z: 0 }, materials = {}, scale = 0.5 } = {}) {
+        this.materials = { ...defaultMaterials, ...materials };
+        this.group = new THREE.Group();
+        this.group.position.set(position.x, position.y, position.z);
+        this.group.scale.setScalar(scale);
+
+        this._phaseOffset = Math.random() * Math.PI * 2;
+
+        this._buildLegs();
+        this._buildBody();
+        this._buildHead();
+        this._buildTail();
+    }
+
+    _addMesh(geometry, material, x, y, z, parent = this.group) {
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(x, y, z);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        parent.add(mesh);
+        return mesh;
+    }
+
+    getGroup() {
+        return this.group;
+    }
+
+    _buildLegs() {
+        const m = this.materials;
+        const legHeight = 0.26;
+        const positions = [
+            [0.13, 0.22],   // front-right
+            [-0.13, 0.22],  // front-left
+            [0.13, -0.22],  // back-right
+            [-0.13, -0.22], // back-left
+        ];
+        positions.forEach(([x, z]) => {
+            this._addMesh(new THREE.CylinderGeometry(0.042, 0.038, legHeight, 10), m.fur, x, legHeight / 2, z);
+            // Paw
+            this._addMesh(new THREE.SphereGeometry(0.046, 10, 10), m.furDark, x, 0.025, z);
+        });
+    }
+
+    _buildBody() {
+        const m = this.materials;
+        const body = this._addMesh(new THREE.SphereGeometry(0.24, 20, 16), m.fur, 0, 0.4, 0);
+        body.scale.set(0.95, 0.8, 1.5);
+    }
+
+    _buildHead() {
+        const m = this.materials;
+
+        // Neck
+        const neck = this._addMesh(new THREE.CylinderGeometry(0.09, 0.12, 0.14, 12), m.fur, 0, 0.55, 0.34);
+        neck.rotation.x = -0.4;
+
+        // Head (rounder than the dog's)
+        this._addMesh(new THREE.SphereGeometry(0.17, 18, 16), m.fur, 0, 0.65, 0.47);
+
+        // Small snout bump
+        const snout = this._addMesh(new THREE.SphereGeometry(0.09, 14, 12), m.fur, 0, 0.6, 0.6);
+        snout.scale.set(1.0, 0.8, 0.9);
+
+        // Nose (small pink triangle-ish nub)
+        this._addMesh(new THREE.ConeGeometry(0.022, 0.03, 8), m.nose, 0, 0.615, 0.675).rotation.x = Math.PI / 2;
+
+        // Eyes: green with dark pupils
+        [-1, 1].forEach((side) => {
+            this._addMesh(new THREE.SphereGeometry(0.032, 12, 12), m.eye, side * 0.075, 0.665, 0.605);
+            this._addMesh(new THREE.SphereGeometry(0.014, 8, 8), m.pupil, side * 0.075, 0.665, 0.63);
+        });
+
+        // Ears: pointed triangular cones, upright
+        [-1, 1].forEach((side) => {
+            const ear = this._addMesh(new THREE.ConeGeometry(0.06, 0.13, 4), m.fur, side * 0.09, 0.79, 0.44);
+            ear.rotation.y = Math.PI / 4;
+            ear.rotation.z = side * -0.18;
+        });
+
+        // Whiskers: thin bars on each side of the snout
+        [-1, 1].forEach((side) => {
+            [0.03, -0.01].forEach((yOff, i) => {
+            const whisker = this._addMesh(new THREE.BoxGeometry(0.16, 0.004, 0.004), m.whisker, side * 0.14, 0.6 + yOff, 0.62);
+            whisker.rotation.y = side * (0.35 + i * 0.15);
+            });
+        });
+    }
+
+    _buildTail() {
+        const m = this.materials;
+
+        // Base segment: rises up from the back
+        this.tailBase = new THREE.Group();
+        this.tailBase.position.set(0, 0.42, -0.35);
+        this.tailBase.rotation.x = -1.0;
+        this._addMesh(new THREE.CylinderGeometry(0.035, 0.045, 0.32, 10), m.fur, 0, 0.16, 0, this.tailBase);
+        this.group.add(this.tailBase);
+
+        // Tip segment: curves further, attached at the end of the base
+        this.tailTip = new THREE.Group();
+        this.tailTip.position.set(0, 0.32, 0);
+        this.tailTip.rotation.x = 0.9; // curves the tip back over
+        this._addMesh(new THREE.CylinderGeometry(0.022, 0.035, 0.26, 10), m.fur, 0, 0.13, 0, this.tailTip);
+        this.tailBase.add(this.tailTip);
+    }
+
+    addTo(scene) {
+        scene.add(this.group);
+        return this;
+    }
+
+    // Gentle idle animation: tail sway + subtle breathing
+    update(t) {
+        const phased = t + this._phaseOffset;
+        if (this.tailBase) this.tailBase.rotation.z = Math.sin(phased * 1.6) * 0.25;
+        if (this.tailTip) this.tailTip.rotation.z = Math.sin(phased * 1.6 + 0.6) * 0.3;
+        this.group.scale.y = this.group.scale.y; // no-op placeholder for future tweaks
+        this.group.scale.x = 1 + Math.sin(phased * 1.8) * 0.008;
     }
 }

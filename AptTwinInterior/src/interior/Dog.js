@@ -7,6 +7,31 @@ import { textureHelper } from '../../../src_common/TextureHelper.js';
 
 export class Dog {
     static add_Internal(editor, name, dogtype, oldPos, oldRot) {
+        if(dogtype == 'dog1' || dogtype == 'dog2') {
+            this.addOldDog(editor, name, dogtype, oldPos, oldRot);
+        } else {
+            this.addClaudeDog(editor, name, dogtype, oldPos, oldRot);
+        }
+    }
+
+    static addClaudeDog(editor, name, dogtype, oldPos, oldRot) {
+        const dog = new ClaudeDog();
+        const group = dog.getGroup();
+        group.userData.isInterior = true;
+        group.userData.interiorType = 'Dog';
+        group.userData.DBid = 'n/a';
+        group.userData.dogType = dogtype;
+
+        if(oldPos != null)
+            group.position.copy(oldPos);
+        if(oldRot != null)
+            group.rotation.copy(oldRot);
+
+        let parent = editor.getPet();
+        editor.execute( new AddGroupCommand( editor, group, parent ) );
+    }
+
+    static addOldDog(editor, name, dogtype, oldPos, oldRot) {
         // Add a group first
         const group = new THREE.Group();
         group.name = name;
@@ -166,6 +191,12 @@ export class Dog {
                             <br>
                             <input type="radio" id="dog2" name="dogtype" value="dog2">Dog 2
                         </div>
+
+                        <div class="gallery">
+                            <img src="./images/claudedog.jpg" alt="dog3" style="width:160px; height:140px;">
+                            <br>
+                            <input type="radio" id="dog3" name="dogtype" value="dog3">Claude Dog
+                        </div>
                     </div>
                     <div class="clearfix"></div>
 
@@ -227,5 +258,121 @@ export class Dog {
         });
 
         dogTypeDialog.showModal();
+    }
+}
+
+// ---------- Shared materials ----------
+const defaultMaterials = {
+  fur: new THREE.MeshStandardMaterial({ color: 0xc98a4b, roughness: 0.85 }),
+  furDark: new THREE.MeshStandardMaterial({ color: 0x7a4d26, roughness: 0.85 }),
+  nose: new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.4 }),
+  eye: new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.3 }),
+};
+
+// ---------- Dog class ----------
+// Builds a simple, stylized dog out of primitive geometries and exposes an
+// update() method for a gentle idle animation (tail wag + breathing).
+class ClaudeDog {
+    constructor({ position = { x: 0, y: 0, z: 0 }, materials = {}, scale = 0.55 } = {}) {
+        this.materials = { ...defaultMaterials, ...materials };
+        this.group = new THREE.Group();
+        this.group.position.set(position.x, position.y, position.z);
+        this.group.scale.setScalar(scale);
+
+        this._phaseOffset = Math.random() * Math.PI * 2;
+
+        this._buildLegs();
+        this._buildBody();
+        this._buildHead();
+        this._buildTail();
+    }
+
+    getGroup() {
+        return this.group;
+    }
+
+    _addMesh(geometry, material, x, y, z, parent = this.group) {
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(x, y, z);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        parent.add(mesh);
+        return mesh;
+    }
+
+    _buildLegs() {
+        const m = this.materials;
+        const legHeight = 0.34;
+        const positions = [
+            [0.16, 0.32],   // front-right
+            [-0.16, 0.32],  // front-left
+            [0.16, -0.32],  // back-right
+            [-0.16, -0.32], // back-left
+        ];
+        positions.forEach(([x, z]) => {
+            this._addMesh(new THREE.CylinderGeometry(0.055, 0.05, legHeight, 10), m.fur, x, legHeight / 2, z);
+            // Paw
+            this._addMesh(new THREE.SphereGeometry(0.06, 10, 10), m.furDark, x, 0.03, z);
+        });
+    }
+
+    _buildBody() {
+        const m = this.materials;
+        const body = this._addMesh(new THREE.SphereGeometry(0.32, 20, 16), m.fur, 0, 0.55, 0);
+        body.scale.set(1.0, 0.85, 1.55);
+    }
+
+    _buildHead() {
+        const m = this.materials;
+
+        // Neck (bridges body to head)
+        const neck = this._addMesh(new THREE.CylinderGeometry(0.13, 0.17, 0.22, 12), m.fur, 0, 0.78, 0.48);
+        neck.rotation.x = -0.5;
+
+        // Head
+        this._addMesh(new THREE.SphereGeometry(0.22, 18, 16), m.fur, 0, 0.92, 0.66);
+
+        // Snout
+        const snout = this._addMesh(new THREE.CylinderGeometry(0.09, 0.12, 0.26, 12), m.fur, 0, 0.86, 0.88);
+        snout.rotation.x = Math.PI / 2;
+
+        // Nose
+        this._addMesh(new THREE.SphereGeometry(0.045, 10, 10), m.nose, 0, 0.865, 1.005);
+
+        // Eyes
+        [-1, 1].forEach((side) => {
+            this._addMesh(new THREE.SphereGeometry(0.028, 10, 10), m.eye, side * 0.095, 0.96, 0.84);
+        });
+
+        // Ears: floppy, attached at the top sides of the head, hanging down
+        [-1, 1].forEach((side) => {
+            const ear = this._addMesh(new THREE.SphereGeometry(0.1, 12, 12), m.furDark, side * 0.19, 1.0, 0.62, this.group);
+            ear.scale.set(0.5, 1.3, 0.9);
+            ear.rotation.z = side * 0.55;
+            ear.rotation.x = 0.15;
+        });
+    }
+
+    _buildTail() {
+        const m = this.materials;
+        this.tail = new THREE.Group();
+        this.tail.position.set(0, 0.68, -0.55);
+        this.tail.rotation.x = -0.7; // angled up and back
+
+        this._addMesh(new THREE.CylinderGeometry(0.055, 0.025, 0.42, 10), m.fur, 0, 0.12, 0.1, this.tail);
+        this.group.add(this.tail);
+        }
+
+        addTo(scene) {
+        scene.add(this.group);
+        return this;
+    }
+
+    // Gentle idle animation: tail wag + subtle breathing bob
+    update(t) {
+        const phased = t + this._phaseOffset;
+        if (this.tail) this.tail.rotation.z = Math.sin(phased * 4) * 0.4;
+        this.group.position.y = this.group.position.y; // placeholder (kept for future bob use)
+        this.group.scale.y = 1 + Math.sin(phased * 1.8) * 0.01; // subtle breathing
     }
 }
