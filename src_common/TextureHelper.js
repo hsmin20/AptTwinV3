@@ -24,7 +24,7 @@ class TextureHelper {
             ['Glass', './textures/glass.jpg'], ['WhiteWood', './textures/whitewood.jpg'], ['WhitePlastic', './textures/whitePlastic.jpg'], 
             ['DrawerDoorFront', './textures/drawerFront.jpg'], ['DrumMachineFront', './textures/drummachine_front.jpg'], ['WashingMachineBack', './textures/drummachine_back.jpg'], 
             ['WashingMachineLeft', './textures/drummachine_left.jpg'], ['WashingMachineRight', './textures/drummachine_right.jpg'], ['TopLoading', './textures/topLoading.jpg'], 
-            ['Leather', './textures/leather.jpg'], ['Fabric', './textures/wool.jpg'], ['BlackFabric', './textures/blackfarbic.jpg'],
+            ['Leather', './textures/leather.jpg'], ['Fabric', './textures/wool.jpg'], ['BlackFabric', './textures/blackfabric.jpg'],
             ['GreyPlastic', './textures/greyPlastic.jpg'], ['AC', './textures/AC.jpg'], ['ACside', './textures/ACside.jpg'], 
             ['DrawerInside', './textures/drawerInside.jpg'],['WallAC', './textures/WallAC.jpg'], ['Fire', './textures/Fire.png'],
             ['Laundry', './textures/laundry.jpg'], ['Vacuum', './textures/vacuum.jpg'], ['Skin1', './textures/skin1.jpg'], ['Hand', './textures/hand.png'],
