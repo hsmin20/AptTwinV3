@@ -145,7 +145,7 @@ export class FreeLookControl {
             moveDir.x += 1;
         moveDir.normalize();
 
-        const speed = 8;
+        const speed = 6;
         const flat = new THREE.Vector3(
             Math.sin(this.yaw) * moveDir.z + Math.cos(this.yaw) * moveDir.x, 
             0, 
