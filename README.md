@@ -31,7 +31,7 @@ The project is composed of 4 sub projects.
    - This project is 3D home simulator/digital twin using Three.js
    - Furnitures and applicances are Cannon bodies
    - Default is FPS (First Person Shooter) style control (WASD + Mouse lookup)
-   - Can be connected to Home Assistance program
+   - Can be connected to Home Assistant program for realtime-update
 <img width="600" height="548" alt="player" src="https://github.com/user-attachments/assets/6a12a164-de52-45ed-b532-7e949ccd4d82" />
   
 Sample web site can be reached at http://1.220.107.66:8080
