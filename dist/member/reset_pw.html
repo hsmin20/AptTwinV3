@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APT TWIN - 비밀번호 재설정</title>
+<link rel="stylesheet" href="../css/reset.css">
+<link rel="stylesheet" href="../css/custom.css">
+</head>
+<body>
+<body class="login-page">
+  <div class="member_wrap">
+    <div class="inr">
+
+        <div class="sub_member sub_login">
+            <div class="login_box">
+                 <h3>비밀번호 재설정하기</h3>
+                <form id="resetPwForm" action="./php/reset_pw_process.php" method="POST">
+                    <fieldset>
+                        <legend>새 비밀번호 입력 및 확인</legend>
+                        <input type="hidden" name="token" id="token" value="">
+                        <ul class="form_list">
+                            <li><input type="password" name="new_password" id="new_password" placeholder="새 비밀번호"></li>
+                            <li><input type="password" name="confirm_password" id="confirm_password" placeholder="비밀번호 재확인"></li>
+                            <li><button type="submit" class="btn_wd btn_point">재설정하기</button></li>
+                        </ul>
+                    </fieldset>
+                </form>
+
+                <ul class="login_link">
+                    <li class="first"><a href="../member/login.html">로그인</a></li>
+                    <li><a href="../member/find_id.html">아이디찾기</a></li>
+                    <li><a href="../member/join_agreement.html">회원가입</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./js/reset_pw.js"></script>
+    <footer id="footer">
+        <div class="w_custom">
+            <div class="cont">
+                <ul class="link_list">
+                    <li><a href="/outline/policy.php"><em>SECURITY NOTICE</em></a></li>
+                </ul>
+                <ul class="info_list">
+                    <li class="logo_item">
+                        <img src="../main_images/logo.png" alt="Company Logo" class="footer_logo">
+                    </li>
+                    <li>
+                        <dl class="desc">
+                            <dt>Address</dt>
+                            <dd>강남구 논현로 120길 7, 501(원일빌딩)</dd>
+                        </dl>
+                    </li>
+                    <li>
+                        <dl class="desc">
+                            <dt>E-mail</dt>
+                            <dd><a href="mailto:dahan_info@dahan.co.kr">dahan_info@dahan.co.kr</a></dd>
+                        </dl>
+                        <dl class="desc">
+                            <dt>Tel</dt>
+                            <dd><a href="tel:+82-2-515-2845">+82-2-515-2845</a></dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
