@@ -286,6 +286,7 @@ export class Editor {
         const object = loader.parse( json );
         let furniture;
         let homeAppliance;
+        let pet;
 
         for (let i=0; i <object.children.length; i++) {
             const child = object.children[i];
@@ -293,6 +294,8 @@ export class Editor {
                 furniture = child;
             if(child.name == 'HomeAppliance')
                 homeAppliance = child;
+            if(child.name == 'Pet')
+                pet = child;
         }
 
         const furnitureNode = this.getFurniture();
@@ -306,6 +309,12 @@ export class Editor {
             const ha = homeAppliance.children[i];
             homeApplianceNode.add(ha);
         }
+
+        const petNode = this.getPet();
+        for (let i=0; i <pet.children.length; i++) {
+            const pe = pet.children[i];
+            petNode.add(pe);
+        }
         
         saveState();
         this.sidebar.refreshUI();
@@ -315,7 +324,7 @@ export class Editor {
     interiorToJSON() {
         var arr = [];
         this.scene.traverse(function(object) {
-            if(object.type == 'Group' && (object.name == 'Furniture' || object.name == 'HomeAppliance')) {
+            if(object.type == 'Group' && (object.name == 'Furniture' || object.name == 'HomeAppliance' || object.name == 'Pet')) {
                 arr.push(object);
             }
         });
