@@ -143,5 +143,16 @@ export class MenubarFile {
             a.remove();
         } );
         options.add( option );
+
+        options.add( new UIHorizontalRule() );
+
+        // Update House only (from ModelHouse DB)
+        option = new UIRow();
+        option.setClass( 'option' );
+        option.setTextContent( 'Update House' );
+        option.onClick( function () {
+            editor.updateHouse();
+        } );
+        options.add( option );
     }
 }

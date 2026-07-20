@@ -193,7 +193,7 @@ export class RoomBuilder {
         this.editor.objectChanged(group);
     }
 
-    addLightLamp(parent, lighttype, xpos, ypos, zpos, width, length) {
+    addLightLamp(lighttype, xpos, ypos, zpos, width, length) {
          // Add a group first
         const group = new THREE.Group();
 		group.name = 'Light';
@@ -202,7 +202,9 @@ export class RoomBuilder {
         group.userData.type = 'light';
         group.userData.DBid = 'n/a';
 
-        this.editor.execute( new AddGroupCommand( this.editor, group, parent ) );
+        const house = this.editor.getHouse();
+
+        this.editor.execute( new AddGroupCommand( this.editor, group, house ) );
 
         const texture = textureHelper.get(lighttype, 1, 1);
         let color = '#e4f1f6';
@@ -363,21 +365,21 @@ export class RoomBuilder {
     //     this.editor.execute( new AddObjectCommand( this.editor, bottomWall, group ) );
     // }
 
-    addBathtub(parent, width, length, height, xpos=0, zpos=0, angle=0) {
+    addBathtub(width, length, height, xpos=0, zpos=0, angle=0) {
         // Add four sides, making horizontal basis
 
         // Add a group first
         const group = new THREE.Group();
-		const bathtubName = "Bathtub";
-        if(parent != null)
-            bathtubName = parent.name + "_" + bathtubName;
+        const bathtubName = 'Bathtub';
         group.name = bathtubName;
 
         group.position.x = xpos;
         group.position.z = zpos;
         group.rotation.y = angle * Math.PI / 180;
 
-        this.editor.execute( new AddGroupCommand( this.editor, group/*, parent*/ ) );
+        const house = this.editor.getHouse();
+
+        this.editor.execute( new AddGroupCommand( this.editor, group, house ) );
 
         const bathtubTexture = textureHelper.get('PinkPlastic', 1, 1);
         const depth = 0.1;
@@ -457,19 +459,19 @@ export class RoomBuilder {
         this.editor.objectChanged(group);
     }
 
-    addBathroomSink(parent, xpos=0, zpos=0, angle=0) {
+    addBathroomSink(xpos=0, zpos=0, angle=0) {
         // Add a group first
         const group = new THREE.Group();
-		const bathroomSinkName = "BathSink";
-        if(parent != null)
-            bathroomSinkName =  parent.name + bathroomSinkName;
+        const bathroomSinkName = 'BathSink';
         group.name = bathroomSinkName;
 
         group.position.x = xpos;
         group.position.z = zpos;
         group.rotation.y = angle * Math.PI / 180;
 
-        this.editor.execute( new AddGroupCommand( this.editor, group/*, parent*/ ) );
+        const house = this.editor.getHouse();
+
+        this.editor.execute( new AddGroupCommand( this.editor, group, house ) );
 
         const bathroomSinkTexture = textureHelper.get('PinkPlastic', 1, 1);
         const con = new THREE.Mesh( new THREE.ConeGeometry(0.3, 0.3, 8, 1, true, 0, Math.PI), 
@@ -497,19 +499,19 @@ export class RoomBuilder {
         this.editor.objectChanged(group);
     }
 
-    addToilet(parent, xpos=0, zpos=0, angle=0) {
+    addToilet(xpos=0, zpos=0, angle=0) {
         // Add a group first
         const group = new THREE.Group();
-		const toiletName = "Toilet";
-        if(parent != null)
-            toiletName = parent.name + toiletName;
+        const toiletName = 'Toilet';
         group.name = toiletName;
 
         group.position.x = xpos;
         group.position.z = zpos;
         group.rotation.y = angle * Math.PI / 180;
 
-        this.editor.execute( new AddGroupCommand( this.editor, group, parent ) );
+        const house = this.editor.getHouse();
+
+        this.editor.execute( new AddGroupCommand( this.editor, group, house ) );
 
         const toiletTexture = textureHelper.get('PinkPlastic', 1, 1);
         const cyl = new THREE.Mesh( new THREE.CylinderGeometry(0.1, 0.4, 0.6, 20, 1, true, -Math.PI / 8, Math.PI * 9 / 8), 
@@ -550,9 +552,10 @@ export class RoomBuilder {
         this.editor.objectChanged(group);
     }
 
-    addKitchenSink(parent, name, width, length, height, xpos=0, zpos=0, angle=0) {
+    addKitchenSink(width, length, height, xpos=0, zpos=0, angle=0) {
         const group = new THREE.Group();
-        group.name = name;
+        const kitchenSinkName = 'KitchenSink';
+        group.name = kitchenSinkName;
 
         group.position.x = xpos;
         group.position.y = 0;
@@ -563,7 +566,9 @@ export class RoomBuilder {
         group.userData.interiorType = 'GasRange';
         group.userData.DBid = 'n/a';
 
-        this.editor.execute( new AddGroupCommand( this.editor, group, parent ) );
+        const house = this.editor.getHouse();
+
+        this.editor.execute( new AddGroupCommand( this.editor, group, house ) );
 
         // Sink Up-Panels
         const marbleTexture = textureHelper.get('Marble', 1, 1);
@@ -576,7 +581,7 @@ export class RoomBuilder {
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: rangeTexture}),
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: marbleTexture}), new THREE.MeshStandardMaterial()
         ] );
-        upPanel1.name = name + "_sinkUpPanel1";
+        upPanel1.name = kitchenSinkName + "_sinkUpPanel1";
         upPanel1.position.y = height + 0.05;
         upPanel1.position.x = -one_width;
 
@@ -587,7 +592,7 @@ export class RoomBuilder {
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: kitchenSinkTexture}),
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: marbleTexture}), new THREE.MeshStandardMaterial()
         ] );
-        upPanel2.name = name + "_sinkUpPanel2";
+        upPanel2.name = kitchenSinkName + "_sinkUpPanel2";
         upPanel2.position.y = height + 0.05;
         upPanel2.position.x = 0.0;
 
@@ -598,7 +603,7 @@ export class RoomBuilder {
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: marbleTexture}),
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial({map: marbleTexture}), new THREE.MeshStandardMaterial()
         ] );
-        upPanel3.name = name + "_sinkUpPanel3";
+        upPanel3.name = kitchenSinkName + "_sinkUpPanel3";
         upPanel3.position.y = height + 0.05;
         upPanel3.position.x = one_width;
 
@@ -622,7 +627,7 @@ export class RoomBuilder {
             new THREE.MeshStandardMaterial({map:sideTexture}), new THREE.MeshStandardMaterial(), 
             new THREE.MeshStandardMaterial({map:leftDoorTexture}), new THREE.MeshStandardMaterial({map:sideTexture})
         ] );
-        frontDoor1.name = name + "_sinkFrontDoor1";
+        frontDoor1.name = kitchenSinkName + "_sinkFrontDoor1";
         frontDoor1.position.x = -sinkDoorWidth * 3 / 2.0;
 
         frontDoor1.userData.type = 'door';
@@ -638,7 +643,7 @@ export class RoomBuilder {
             new THREE.MeshStandardMaterial({map:sideTexture}), new THREE.MeshStandardMaterial(), 
             new THREE.MeshStandardMaterial({map:rightDoorTexture}), new THREE.MeshStandardMaterial({map:sideTexture})
         ] );
-        frontDoor2.name = name + "_sinkFrontDoor2";
+        frontDoor2.name = kitchenSinkName + "_sinkFrontDoor2";
         frontDoor2.position.x = -sinkDoorWidth / 2.0;
 
         frontDoor2.userData.type = 'door';
@@ -654,7 +659,7 @@ export class RoomBuilder {
             new THREE.MeshStandardMaterial({map:sideTexture}), new THREE.MeshStandardMaterial(), 
             new THREE.MeshStandardMaterial({map:leftDoorTexture}), new THREE.MeshStandardMaterial({map:sideTexture})
         ] );
-        frontDoor3.name = name + "_sinkFrontDoor3";
+        frontDoor3.name = kitchenSinkName + "_sinkFrontDoor3";
         frontDoor3.position.x = sinkDoorWidth / 2.0;
 
         frontDoor3.userData.type = 'door';
@@ -670,7 +675,7 @@ export class RoomBuilder {
             new THREE.MeshStandardMaterial({map:sideTexture}), new THREE.MeshStandardMaterial(), 
             new THREE.MeshStandardMaterial({map:rightDoorTexture}), new THREE.MeshStandardMaterial({map:sideTexture})
         ] );
-        frontDoor4.name = name + "_sinkFrontDoor4";
+        frontDoor4.name = kitchenSinkName + "_sinkFrontDoor4";
         frontDoor4.position.x = sinkDoorWidth * 3 / 2.0;
 
         frontDoor4.userData.type = 'door';
@@ -690,7 +695,7 @@ export class RoomBuilder {
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
         ] );
-        east.name = name + "_sinkEast";
+        east.name = kitchenSinkName + "_sinkEast";
         east.position.x = (width - depth) / 2.0;
         east.position.y = height / 2.0;
         east.position.z = -sinkDoorDepth / 2.0;
@@ -704,7 +709,7 @@ export class RoomBuilder {
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(),
             new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial(), new THREE.MeshStandardMaterial()
         ] );
-        west.name = name + "_sinkWest";
+        west.name = kitchenSinkName + "_sinkWest";
         west.position.x = -(width - depth) / 2.0;
         west.position.y = height / 2.0;
         west.position.z = -sinkDoorDepth / 2.0;

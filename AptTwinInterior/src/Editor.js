@@ -201,6 +201,30 @@ export class Editor {
         this.viewport.render();
 	}
 
+    async updateJSON( json ) {
+
+        const manager = new THREE.LoadingManager();
+        manager.onError = (url) => console.error('로드 실패:', url);
+        const loader = new THREE.ObjectLoader(manager);
+
+        const newscene = await loader.parseAsync( json.scene );
+        const newHouse = newscene.getObjectByName('House');
+
+        const oldHouse = this.scene.getObjectByName('House');
+
+        // replace House Node
+        if (oldHouse && newHouse) {
+            this.scene.remove(oldHouse);
+            this.scene.add(newHouse);
+        }
+
+        saveState();
+        this.sidebar.refreshUI();
+        this.viewport.render();
+
+        alert('House is updated');
+    }
+
     toJSON () {
 		return {
 			metadata: {},
@@ -471,5 +495,41 @@ export class Editor {
         }
         
         return human;
+    }
+
+    getHouse() {
+        let house = this.scene.getObjectByName('House');
+        if(house == undefined) {
+            house = new THREE.Group();
+            house.name = 'House';
+            this.scene.add(house);
+        }
+        
+        return house;
+    }
+
+    async updateHouse() {
+        const urlParams = new URL(location.href).searchParams;
+        let house_id = urlParams.get('house_id');
+        if(house_id == undefined) {
+            alert('No House ID!');
+            return;
+        }
+
+        try {
+            let targetURL = './update_model.php?house_id=' + house_id;
+
+            const response = await fetch(targetURL);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            this.updateJSON( data );
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+
     }
 }

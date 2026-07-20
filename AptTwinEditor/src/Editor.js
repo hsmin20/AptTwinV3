@@ -339,6 +339,17 @@ export class Editor {
         return json;
 	}
 
+    getHouse() {
+        let house = this.scene.getObjectByName('House');
+        if(house == undefined) {
+            house = new THREE.Group();
+            house.name = 'House';
+            this.scene.add(house);
+        }
+        
+        return house;
+    }
+
     _createWallPlane(x1, z1, x2, z2, index) {
         let whichSide = THREE.FrontSide;
 
@@ -453,7 +464,9 @@ export class Editor {
         const group = new THREE.Group();
         group.name = "newWallGroup_" + i;
 
-        this.execute( new AddGroupCommand( this, group ) );
+        const house = this.getHouse();
+
+        this.execute( new AddGroupCommand( this, group, house ) );
 
         let posArray = [];
         posArray.push({ x: element.x1, z: element.z1 });
@@ -481,7 +494,9 @@ export class Editor {
         const group = new THREE.Group();
         group.name = "newDoorGroup_" + i;
 
-        this.execute( new AddGroupCommand( this, group ) );
+        const house = this.getHouse();
+
+        this.execute( new AddGroupCommand( this, group, house ) );
 
         const x = element.x;
         const z = element.z;
@@ -550,7 +565,9 @@ export class Editor {
         const group = new THREE.Group();
         group.name = "newWindowGroup_" + i;
 
-        this.execute( new AddGroupCommand( this, group ) );
+        const house = this.getHouse();
+
+        this.execute( new AddGroupCommand( this, group, house ) );
 
         const x = element.x;
         const z = element.z;
@@ -677,7 +694,9 @@ export class Editor {
         const group = new THREE.Group();
         group.name = "newWindow2Group_" + i;
 
-        this.execute( new AddGroupCommand( this, group ) );
+        const house = this.getHouse();
+
+        this.execute( new AddGroupCommand( this, group, house ) );
 
         const x = element.x;
         const z = element.z;
@@ -843,7 +862,9 @@ export class Editor {
         const group = new THREE.Group();
         group.name = "newFloorCeilingGroup_" + i;
 
-        this.execute( new AddGroupCommand( this, group ) );
+        const house = this.getHouse();
+
+        this.execute( new AddGroupCommand( this, group, house ) );
 
         const x1 = element.x1;
         const x2 = element.x2;
@@ -910,7 +931,7 @@ export class Editor {
         const zpos = element.z;
         const angle = element.angle;
 
-        this.roomBuilder.addBathtub(null, width, length, height, xpos, zpos, angle);
+        this.roomBuilder.addBathtub(width, length, height, xpos, zpos, angle);
     }
 
     constructToiletFrom2DJSON(element, i) {
@@ -922,7 +943,7 @@ export class Editor {
         const zpos = element.z;
         const angle = (element.angle - 270) * - 1;
 
-        var toiletGroup = this.roomBuilder.addToilet(null, xpos, zpos, angle);
+        this.roomBuilder.addToilet(xpos, zpos, angle);
     }
 
     constructBathsinkFrom2DJSON(element, i) {
@@ -934,7 +955,7 @@ export class Editor {
         const zpos = element.z;
         const angle = (element.angle - 270) * -1;
 
-        this.roomBuilder.addBathroomSink(null, xpos, zpos, angle);
+        this.roomBuilder.addBathroomSink(xpos, zpos, angle);
     }
 
     constructKitchensinkFrom2DJSON(element, i) {
@@ -946,7 +967,7 @@ export class Editor {
         const zpos = element.z;
         const angle = (element.angle - 180) * -1;
 
-        this.roomBuilder.addKitchenSink(null, 'KitchenSink', width, length, height, xpos, zpos, angle);
+        this.roomBuilder.addKitchenSink(width, length, height, xpos, zpos, angle);
     }
 
     constructLightFrom2DJSON(element, i) {
@@ -966,7 +987,7 @@ export class Editor {
         if(type == ObjectType.LIGHT)
             lightType = 'Light3';
 
-        this.roomBuilder.addLightLamp(null, lightType, xpos, ypos, zpos, width, length);
+        this.roomBuilder.addLightLamp(lightType, xpos, ypos, zpos, width, length);
     }
 
     constructFrom2DJSON( json ) {
