@@ -311,6 +311,7 @@ export class Editor {
         let furniture;
         let homeAppliance;
         let pet;
+        let human;
 
         for (let i=0; i <object.children.length; i++) {
             const child = object.children[i];
@@ -320,24 +321,44 @@ export class Editor {
                 homeAppliance = child;
             if(child.name == 'Pet')
                 pet = child;
+            if(child.name == 'Human')
+                human = child;
         }
 
-        const furnitureNode = this.getFurniture();
-        for (let i=0; i <furniture.children.length; i++) {
-            const fur = furniture.children[i];
-            furnitureNode.add(fur);
+        if(furniture != undefined) {
+            const furnitureNode = this.getFurniture();
+            const childrenToMove = [...furniture.children];
+
+            childrenToMove.forEach(child => {
+                furnitureNode.add(child); 
+            });
         }
 
-        const homeApplianceNode = this.getHomeAppliance();
-        for (let i=0; i <homeAppliance.children.length; i++) {
-            const ha = homeAppliance.children[i];
-            homeApplianceNode.add(ha);
+        if(homeAppliance != undefined) {
+            const homeApplianceNode = this.getHomeAppliance();
+            const childrenToMove = [...homeAppliance.children];
+
+            childrenToMove.forEach(child => {
+                homeApplianceNode.add(child); 
+            });
         }
 
-        const petNode = this.getPet();
-        for (let i=0; i <pet.children.length; i++) {
-            const pe = pet.children[i];
-            petNode.add(pe);
+        if(pet != undefined) {
+            const petNode = this.getPet();
+            const childrenToMove = [...pet.children];
+
+            childrenToMove.forEach(child => {
+                petNode.add(child); 
+            });
+        }
+
+        if(human != undefined) {
+            const humanNode = this.getHuman();
+            const childrenToMove = [...human.children];
+
+            childrenToMove.forEach(child => {
+                humanNode.add(child); 
+            });
         }
         
         saveState();
